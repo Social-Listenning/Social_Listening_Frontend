@@ -1,0 +1,73 @@
+.private-layout {
+  min-height: 100vh;
+
+  .private-header {
+    height: 4.4rem;
+    max-height: 4.4rem;
+    padding: 0;
+    background-color: #fff;
+    justify-content: space-between;
+
+    .colapse-btn {
+      margin-left: var(--padding-layout);
+      font-size: 1.8rem;
+
+      &:hover {
+        color: var(--primary-color);
+      }
+    }
+
+    .header-menu {
+      margin-right: var(--padding-layout);
+      height: 100%;
+      cursor: pointer;
+      gap: 0.8rem;
+
+      .name-wrapper {
+        height: 100%;
+      }
+    }
+  }
+
+  .private-content {
+    margin: 0 var(--padding-layout) var(--padding-layout);
+    display: flex;
+    flex-direction: column;
+
+    #title {
+      margin: var(--padding-layout) 0;
+    }
+
+    .body {
+      flex: 1;
+      padding: 2.4rem;
+      background-color: #fff;
+    }
+  }
+}
+
+.public-layout {
+  position: relative;
+
+  .layer-wrapper {
+    --layer-height: 40vh;
+    .layer-primary {
+      height: var(--layer-height);
+      background-color: var(--light-primary-color);
+    }
+
+    .layer-dark {
+      height: calc(100vh - var(--layer-height));
+      background-color: var(--gray-layout-color);
+    }
+  }
+
+  .outlet-wrapper {
+    --outlet-wrapper-padding: 4rem;
+    padding: var(--outlet-wrapper-padding);
+    width: calc(56rem - var(--outlet-wrapper-padding));
+    // height: calc(76vh - var(--outlet-wrapper-padding));
+    background-color: #fff;
+    border-radius: 0.4rem;
+  }
+}
