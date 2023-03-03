@@ -28,11 +28,12 @@ axiosInstance.interceptors.response.use(
     return resp;
   },
   (error) => {
-    if (error.response.status === 401) {
+    console.log(error)
+    if (error.response.data.status === 401) {
       notifyService.showErrorMessage("Unauthorized");
       customHistory.push("/login");
     }
-    else if (error.response.status === 403) {
+    else if (error.response.data.status === 403) {
       notifyService.showErrorMessage("Forbidden");
       customHistory.push("/forbidden");
     }
@@ -41,8 +42,8 @@ axiosInstance.interceptors.response.use(
     //   customHistory.push("/error");
     // }
     else {
-      if (error.response.message) {
-        notifyService.showErrorMessage(error.response.message);
+      if (error.response.data.message) {
+        notifyService.showErrorMessage(error.response.data.message);
       }
     }
   }

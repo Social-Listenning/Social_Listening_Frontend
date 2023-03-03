@@ -1,23 +1,26 @@
-import { Layout, Menu, Tooltip } from 'antd';
+import { Layout, Menu } from 'antd';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   DownOutlined,
 } from '@ant-design/icons';
-import { useNavigate } from 'react-router-dom';
 import useToggle from '../../hooks/useToggle';
 import { Getter } from '../../utils/dataGetter';
 import { Converter } from '../../utils/dataConverter';
+import { customHistory } from '../CustomRouter';
+import { apiService } from '../../services/apiService';
+import { localStorageService } from '../../services/localStorageService';
+import { notifyService } from '../../services/notifyService';
 import { menuSidebar } from '../../constants/menu/sidebar';
 import { menuUserHeader } from '../../constants/menu/header';
 import Title from '../../components/shared/element/Title';
+import ToolTipWrapper from '../../components/shared/antd/ToolTipWrapper';
 import ClassicDropdown from '../../components/shared/antd/Dropdown/Classic';
 import BasicAvatar from '../../components/shared/antd/BasicAvatar';
 import '../route.scss';
 
 const { Header, Content, Sider } = Layout;
 export default function PrivateLayout(props) {
-  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useToggle(false);
 
   const listPath = Getter.getPathNameUrl();
@@ -29,7 +32,15 @@ export default function PrivateLayout(props) {
   );
 
   function handleMenuHeader(e) {
-    console.log(e);
+    if (menuUserHeader[e.key] == 'Logout') {
+      apiService.post('/auth/log-out').then((resp) => {
+        if (resp?.data?.result) {
+          localStorageService.clear('token');
+          customHistory.push('/login');
+          notifyService.showSucsessMessage('Logout successfully');
+        }
+      });
+    }
   }
 
   return (
@@ -50,7 +61,9 @@ export default function PrivateLayout(props) {
         />
         <Menu
           onSelect={(e) => {
-            navigate(`/${Converter.toLowerCaseFirstLetter(e.key)}`);
+            customHistory.push(
+              `/${Converter.toLowerCaseFirstLetter(e.key)}`
+            );
           }}
           theme="dark"
           mode="inline"
@@ -65,7 +78,7 @@ export default function PrivateLayout(props) {
 
       <Layout>
         <Header className="private-header flex-center">
-          <Tooltip
+          <ToolTipWrapper
             title={!collapsed ? 'Collapse Menu' : 'Open Menu'}
             placement="right"
             className="colapse-btn"
@@ -76,7 +89,7 @@ export default function PrivateLayout(props) {
             ) : (
               <MenuFoldOutlined />
             )}
-          </Tooltip>
+          </ToolTipWrapper>
 
           <ClassicDropdown
             list={menuUserHeader}

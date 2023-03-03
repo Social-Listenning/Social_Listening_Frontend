@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import { CustomBrowserRouter } from './CustomRouter';
 import PrivateRoute from './private/PrivateRoute';
 import PublicRoute from './public/PublicRoute';
+import LoadingFallback from '../components/shared/element/LoadingFallback';
 import {
   publicRoutes,
   privateRoutes,
@@ -12,7 +13,7 @@ import {
 export default function AppRoutes() {
   return (
     <CustomBrowserRouter>
-      <Suspense>
+      <Suspense fallback={<LoadingFallback />}>
         <Routes>
           {/* authenticated routes*/}
           <Route path="/" element={<PrivateRoute />}>

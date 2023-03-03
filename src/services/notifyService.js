@@ -2,21 +2,21 @@ import { notification } from 'antd';
 
 const showSucsessMessage = (content) => {
   notification.success({
-    message: 'Success',
-    description: content,
+    message: content,
+    // description: content,
   });
 };
 
 const showErrorMessage = (content) => {
   notification.error({
-    message: 'Error',
+    // message: 'Error',
     description: content,
   });
 };
 
 const showWarningMessage = (content) => {
   notification.warning({
-    message: 'Warning',
+    // message: 'Warning',
     description: content,
   });
 };
