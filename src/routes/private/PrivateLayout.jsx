@@ -4,10 +4,10 @@ import {
   MenuUnfoldOutlined,
   DownOutlined,
 } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 import useToggle from '../../hooks/useToggle';
 import { Getter } from '../../utils/dataGetter';
 import { Converter } from '../../utils/dataConverter';
-import { customHistory } from '../CustomRouter';
 import { apiService } from '../../services/apiService';
 import { localStorageService } from '../../services/localStorageService';
 import { notifyService } from '../../services/notifyService';
@@ -22,21 +22,23 @@ import '../route.scss';
 const { Header, Content, Sider } = Layout;
 export default function PrivateLayout(props) {
   const [collapsed, setCollapsed] = useToggle(false);
+  const navigate = useNavigate();
 
   const listPath = Getter.getPathNameUrl();
   const currentPath = listPath.pop();
 
-  let openKey = Getter.getOpenKeyForMenu(
+  const openKey = Getter.getOpenKeyForMenu(
     menuSidebar,
     Converter.convertStringToTitleCase(currentPath)
   );
 
   function handleMenuHeader(e) {
-    if (menuUserHeader[e.key] == 'Logout') {
+    // logout option
+    if (menuUserHeader[e.key] === 'Logout') {
       apiService.post('/auth/log-out').then((resp) => {
         if (resp?.data?.result) {
           localStorageService.clear('token');
-          customHistory.push('/login');
+          navigate('/login');
           notifyService.showSucsessMessage('Logout successfully');
         }
       });
@@ -61,9 +63,7 @@ export default function PrivateLayout(props) {
         />
         <Menu
           onSelect={(e) => {
-            customHistory.push(
-              `/${Converter.toLowerCaseFirstLetter(e.key)}`
-            );
+            navigate(`/${Converter.toLowerCaseFirstLetter(e.key)}`);
           }}
           theme="dark"
           mode="inline"

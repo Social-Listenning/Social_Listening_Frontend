@@ -9,11 +9,9 @@ import IconButton from '../Button/IconButton';
 export default function TabelUtils(props) {
   const { columnList, updateColumn, refresh } = props;
 
-  // get the title only
-  const formatColumnList = columnList?.map((x) => x?.title);
   // selected value in dropdown
   const [selectedKeys, setSelectedKeys] = useState(
-    formatColumnList.map((_, index) => index.toString())
+    columnList.map((_, index) => index.toString())
   );
 
   // get the current path
@@ -25,17 +23,17 @@ export default function TabelUtils(props) {
     // if it not empty, have to check the list
     if (!Checker.isNullOrEmpty(dataFromLocal)) {
       const columnLocal = JSON.parse(dataFromLocal);
-      // if the column want to add (formatColumnList) not exist, then add new
+      // if the column want to add (columnList) not exist, then add new
       if (
         columnLocal?.filter((x) =>
-          Checker.isEqualArrays(x.col, formatColumnList)
+          Checker.isEqualArrays(x.col, columnList)
         )?.length === 0
       ) {
         localStorageService.setItem(
           'table-columns',
           JSON.stringify([
             ...columnLocal,
-            { path: path, col: formatColumnList, org: columnList },
+            { path: path, col: columnList },
           ])
         );
       }
@@ -44,9 +42,7 @@ export default function TabelUtils(props) {
     else {
       localStorageService.setItem(
         'table-columns',
-        JSON.stringify([
-          { path: path, col: formatColumnList, org: columnList },
-        ])
+        JSON.stringify([{ path: path, col: columnList }])
       );
     }
   });
@@ -55,14 +51,18 @@ export default function TabelUtils(props) {
   const colSuitableWithPath = JSON.parse(
     localStorageService.getItem('table-columns')
   )?.filter((x) => x.path === path)[0];
-  const originFormatCol = colSuitableWithPath?.col;
-  const originCol = colSuitableWithPath?.org;
+  // the origin one (this can't be change)
+  const originCol = colSuitableWithPath?.col;
+  // the column that will display to UI (this can be change)
+  const originFormatCol =
+    originCol?.map((x) => x?.title) ??
+    columnList?.map((x) => x?.title);
 
   return (
     <div className="table-utils flex-center">
       <WithCheckbox
         clickTrigger
-        list={originFormatCol ?? formatColumnList}
+        list={originFormatCol}
         selectedKeys={selectedKeys}
         handleItemClick={(e) => {
           // hide column

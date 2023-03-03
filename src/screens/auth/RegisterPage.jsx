@@ -1,8 +1,8 @@
 import { Form, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { apiService } from '../../services/apiService';
-import { customHistory } from '../../routes/CustomRouter';
+import { notifyService } from '../../services/notifyService';
 import useToggle from '../../hooks/useToggle';
 import authImage from '../../assets/images/auth.png';
 import ToolTipWrapper from '../../components/shared/antd/ToolTipWrapper';
@@ -10,12 +10,17 @@ import './auth.scss';
 
 export default function RegisterPage() {
   const [loading, toggleLoading] = useToggle(false);
+  const navigate = useNavigate();
 
   async function handleSubmit(model) {
     toggleLoading(true);
     await apiService.post('/auth/register', model).then((resp) => {
       if (resp?.result) {
-        customHistory.push('/confirm-email');
+        navigate('/confirm-email', { state: { email: model.email } });
+        notifyService.showSucsessMessage('Register successfully');
+        // dont need to toggle loading
+        // because it will redirect user
+        return;
       }
     });
     toggleLoading(true);
@@ -48,6 +53,7 @@ export default function RegisterPage() {
                 },
                 {
                   type: 'email',
+                  message: 'Only email is allowed',
                 },
               ]}
             >

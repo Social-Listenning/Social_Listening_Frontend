@@ -21,7 +21,7 @@ export default function LoginPage() {
         customHistory.push('/');
         notifyService.showSucsessMessage("Login successfully")
         // dont need to toggle loading
-        // because it will redirect user to home page
+        // because it will redirect user
         return;
       }
     });

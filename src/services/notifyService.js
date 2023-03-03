@@ -3,21 +3,21 @@ import { notification } from 'antd';
 const showSucsessMessage = (content) => {
   notification.success({
     message: content,
-    // description: content,
+    duration: 3,
   });
 };
 
 const showErrorMessage = (content) => {
   notification.error({
-    // message: 'Error',
-    description: content,
+    message: content,
+    duration: 3,
   });
 };
 
 const showWarningMessage = (content) => {
   notification.warning({
-    // message: 'Warning',
-    description: content,
+    message: content,
+    duration: 3,
   });
 };
 
