@@ -1,4 +1,5 @@
-import { Button, Tooltip } from 'antd';
+import { Button } from 'antd';
+import ToolTipWrapper from '../ToolTipWrapper';
 import './button.scss';
 
 export default function IconButton(props) {
@@ -11,8 +12,13 @@ export default function IconButton(props) {
   } = props;
 
   return (
-    <Tooltip title={tooltip} placement={placement}>
-      <Button className={`icon-btn ${className}`} shape="circle" icon={icon} {...other} />
-    </Tooltip>
+    <ToolTipWrapper tooltip={tooltip} placement={placement}>
+      <Button
+        className={`icon-btn ${className}`}
+        shape="circle"
+        icon={icon}
+        {...other}
+      />
+    </ToolTipWrapper>
   );
 }

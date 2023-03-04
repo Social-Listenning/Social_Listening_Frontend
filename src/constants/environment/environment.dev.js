@@ -1,4 +1,4 @@
-const baseUrl = 'localhost:5000/api';
+const baseUrl = 'http://localhost:3000';
 
 const environment = {
   baseUrl: baseUrl,
