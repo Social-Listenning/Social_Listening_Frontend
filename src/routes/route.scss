@@ -2,8 +2,7 @@
   min-height: 100vh;
 
   .private-header {
-    height: 4.4rem;
-    max-height: 4.4rem;
+    height: 4rem;
     padding: 0;
     background-color: #fff;
     justify-content: space-between;
@@ -23,8 +22,9 @@
       cursor: pointer;
       gap: 0.8rem;
 
-      .name-wrapper {
-        height: 100%;
+      .anticon {
+        font-size: 1.2rem;
+        // color: #c5c5c5;
       }
     }
   }
@@ -41,6 +41,7 @@
     .body {
       flex: 1;
       padding: 2.4rem;
+      border-radius: 0.4rem;
       background-color: #fff;
     }
   }

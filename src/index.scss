@@ -65,6 +65,12 @@ a:hover {
   -webkit-box-orient: vertical;
 }
 
+.redirect-btn {
+  font-size: 1.6rem;
+  height: 4rem;
+  width: 12rem;
+}
+
 // #region config antd
 .ant-menu-title-content {
   font-size: var(--app-font-size);
@@ -76,6 +82,13 @@ a:hover {
 }
 .ant-avatar {
   background-color: var(--primary-color);
+}
+.ant-notification-notice {
+  .ant-notification-notice-content {
+    .ant-notification-notice-message {
+      margin-bottom: 0;
+    }
+  }
 }
 // #endregion
 
