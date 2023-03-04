@@ -45,6 +45,9 @@ axiosInstance.interceptors.response.use(
       if (error.response.data.message) {
         notifyService.showErrorMessage(error.response.data.message);
       }
+      else {
+        notifyService.showErrorMessage(error.message)
+      }
     }
   }
 );
