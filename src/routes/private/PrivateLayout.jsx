@@ -5,6 +5,7 @@ import {
   DownOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useJwt } from 'react-jwt';
 import useToggle from '../../hooks/useToggle';
 import { Getter } from '../../utils/dataGetter';
 import { Converter } from '../../utils/dataConverter';
@@ -32,6 +33,16 @@ export default function PrivateLayout(props) {
     Converter.convertStringToTitleCase(currentPath)
   );
 
+  const token = localStorageService.getItem('token');
+  const { decodedToken, isExpired } = useJwt(token);
+
+  if (isExpired) {
+    navigate('/login');
+    notifyService.showWarningMessage(
+      'Your session has expired, please login again'
+    );
+  }
+
   function handleMenuHeader(e) {
     // logout option
     if (menuUserHeader[e.key] === 'Logout') {
@@ -42,6 +53,8 @@ export default function PrivateLayout(props) {
           notifyService.showSucsessMessage('Logout successfully');
         }
       });
+    } else if (menuUserHeader[e.key] === 'Profile') {
+      navigate('/profile');
     }
   }
 
@@ -96,8 +109,8 @@ export default function PrivateLayout(props) {
             handleItemClick={handleMenuHeader}
           >
             <div className="header-menu flex-center">
-              <BasicAvatar name="Thắng" />
-              <span>Thắng ngoo</span>
+              <BasicAvatar name={decodedToken?.userName} />
+              <span>{decodedToken?.userName}</span>
               <DownOutlined />
             </div>
           </ClassicDropdown>
