@@ -1,13 +1,13 @@
 import { Form, Input, Checkbox, Button } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
-import { customHistory } from '../../routes/CustomRouter';
-import { apiService } from '../../services/apiService';
-import { localStorageService } from '../../services/localStorageService';
-import { notifyService } from '../../services/notifyService';
-import useToggle from '../../hooks/useToggle';
-import ToolTipWrapper from '../../components/shared/antd/ToolTipWrapper';
-import authImage from '../../assets/images/auth.png';
+import { customHistory } from '../../../routes/CustomRouter';
+import { apiService } from '../../../services/apiService';
+import { localStorageService } from '../../../services/localStorageService';
+import { notifyService } from '../../../services/notifyService';
+import useToggle from '../../../hooks/useToggle';
+import ToolTipWrapper from '../../../components/shared/antd/ToolTipWrapper';
+import authImage from '../../../assets/images/auth.png';
 import './auth.scss';
 
 export default function LoginPage() {
