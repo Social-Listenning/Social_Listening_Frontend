@@ -167,4 +167,5 @@ export const Checker = {
   isEqualArrays,
   hasPropsInObject,
   isEmptyOrSpaces,
+  checkURL,
 };

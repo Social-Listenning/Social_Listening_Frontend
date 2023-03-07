@@ -38,6 +38,7 @@ export default function PrivateLayout(props) {
 
   if (isExpired) {
     navigate('/login');
+    localStorageService.clear('token');
     notifyService.showWarningMessage(
       'Your session has expired, please login again'
     );
