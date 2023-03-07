@@ -1,17 +1,16 @@
 import {
-  UsergroupAddOutlined,
+  SafetyOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 
 // automatic add key = label => label must be unique
 export const menuSidebar = [
   {
-    label: 'Account',
-    icon: <UsergroupAddOutlined />,
+    label: 'Admin',
+    icon: <SafetyOutlined />,
     children: [
-      { label: 'Admin' },
-      { label: 'Employee' },
-      { label: 'Customer' },
+      { label: 'Users' },
+      { label: 'Roles' },
     ],
   },
   {

@@ -7,7 +7,7 @@ export default function TableAction(props) {
   const { actionList, selectedRecord, openAddEdit, onClickDelete } =
     props;
 
-  const formatActionList = actionList.map((element) => {
+  const formatActionList = actionList?.map((element) => {
     return (
       <>
         {element?.icon}
@@ -20,6 +20,7 @@ export default function TableAction(props) {
 
   function handleAction(e) {
     if (actionList[e.key]?.action === 'Edit') {
+      openAddEdit(true);
     } else if (actionList[e.key]?.action === 'Delete') {
       onClickDelete(selectedRecord);
     }

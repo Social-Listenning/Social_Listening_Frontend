@@ -16,6 +16,9 @@ const ConfirmEmailPage = lazy(() =>
 const ProfilePage = lazy(() =>
   import('../../screens/private/profile/ProfilePage')
 );
+const UserManagementPage = lazy(() =>
+  import('../../screens/private/admin/Users/UserManagementPage')
+);
 // #endregion
 
 // #region error routes
@@ -32,6 +35,7 @@ export const publicRoutes = [
 
 export const privateRoutes = [
   { path: 'profile', element: <ProfilePage /> },
+  { path: 'users', element: <UserManagementPage /> },
 ];
 
 export const errorRoutes = [

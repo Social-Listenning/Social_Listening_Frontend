@@ -14,6 +14,7 @@ import { Tooltip } from 'antd';
 export default function TableHeader(props) {
   const {
     title = '',
+    propsName = '',
     filter,
     sort = true,
     disableFilter = false,
@@ -49,7 +50,7 @@ export default function TableHeader(props) {
           old[index].sortDir = type;
           return [...old];
         } else {
-          return [...old, { props: title, sortDir: type }];
+          return [...old, { props: propsName, sortDir: type }];
         }
       });
     } else {
@@ -82,7 +83,7 @@ export default function TableHeader(props) {
   function formatFilter() {
     if (value) {
       updateFilter((old) => {
-        let index = old.findIndex((x) => x?.props === title);
+        let index = old.findIndex((x) => x?.props === propsName);
         if (index >= 0) {
           old[index].value = value;
           old[index].filterOperator = filterOperator.current;
@@ -91,7 +92,7 @@ export default function TableHeader(props) {
           return [
             ...old,
             {
-              props: title,
+              props: propsName,
               value: value,
               filterOperator: filterOperator.current,
             },
@@ -100,8 +101,8 @@ export default function TableHeader(props) {
       });
     } else {
       updateFilter((old) => {
-        if (old.filter((x) => x?.props === title)?.length > 0) {
-          let removeOldFilter = old.filter((x) => x?.props !== title);
+        if (old.filter((x) => x?.props === propsName)?.length > 0) {
+          let removeOldFilter = old.filter((x) => x?.props !== propsName);
           return removeOldFilter;
         } else return old;
       });
