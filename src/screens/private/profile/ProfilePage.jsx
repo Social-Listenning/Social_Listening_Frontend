@@ -38,7 +38,7 @@ export default function ProfilePage() {
     };
 
     await apiService.post('', accountProfile).then((resp) => {
-      if (resp?.data?.result) {
+      if (resp?.result) {
         notifyService.showSucsessMessage('Save profile successfully');
       }
     });

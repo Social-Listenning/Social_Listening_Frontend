@@ -48,7 +48,7 @@ export default function PrivateLayout(props) {
     // logout option
     if (menuUserHeader[e.key] === 'Logout') {
       apiService.post('/auth/log-out').then((resp) => {
-        if (resp?.data?.result) {
+        if (resp?.result) {
           localStorageService.clear('token');
           navigate('/login');
           notifyService.showSucsessMessage('Logout successfully');

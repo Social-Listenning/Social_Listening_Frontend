@@ -51,6 +51,7 @@ export default function AdminTable(props) {
   // #endregion
 
   // #region handle filter, sorter, refresh data
+  let maxWidth = 100 + columns.length * 50;
   const [data, setData] = useState([]);
   const [filterType, setFilterType] = useState([]);
   const [sorter, setSorter] = useState([]);
@@ -67,10 +68,18 @@ export default function AdminTable(props) {
 
   // refresh table
   async function refreshData() {
+    // remove the select
     if (selectedRowKeys?.length > 0) {
-      setSelectedRowKeys([]); // remove the select
+      setSelectedRowKeys([]);
     }
-    tableContent?.scrollTo(0, 0); // scroll back to 0
+    // scroll back to 0
+    tableContent?.scrollTo(0, 0);
+
+    // remove the action and record
+    if (actionType) {
+      setActionType(null);
+      selectedRecord.current = null;
+    }
 
     if (apiGetData) {
       toggleLoading(true);
@@ -83,9 +92,9 @@ export default function AdminTable(props) {
           totalElement: 10000,
         })
         .then((resp) => {
-          if (resp?.data?.Data) {
+          if (resp?.Data) {
             setData(
-              resp.data.Data.map((x, index) => {
+              resp.Data.map((x, index) => {
                 return {
                   ...x,
                   key: index,
@@ -155,9 +164,11 @@ export default function AdminTable(props) {
 
   function formatHeaders(column) {
     return column.map((col) => {
+      maxWidth += col.width ?? 150;
       return {
-        resizeable: true, //default header can resize (you can change this if you want)
         ...col,
+        resizeable: true, //default header can resize (you can change this if you want)
+        width: col.width ?? 150,
         title: (
           //custom header with filter, sorter
           <TableHeader
@@ -219,6 +230,7 @@ export default function AdminTable(props) {
       <TabelUtils
         columnList={columnUtil}
         updateColumn={setColumnUtil}
+        selectAction={setActionType}
         openAddEdit={toggleOpenAddEdit}
         showDelete={selectedRowKeys?.length > 0}
         deleteMultiple={onMultipleDelete}
@@ -232,7 +244,7 @@ export default function AdminTable(props) {
           size="small"
           scroll={{
             y: 600,
-            // x: 2500,
+            x: maxWidth,
           }}
           components={{
             header: {

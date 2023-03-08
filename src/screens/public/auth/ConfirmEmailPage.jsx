@@ -20,10 +20,10 @@ export default function ConfirmEmail() {
   async function handleLogin() {
     toggleLoading(true);
     await apiService.post('/auth/log-in', authModel).then((resp) => {
-      if (resp?.data?.result) {
+      if (resp?.result) {
         localStorageService.setItem(
           'token',
-          resp.data.result?.access
+          resp.result?.access
         );
         customHistory.push('/');
         notifyService.showSucsessMessage('Login successfully');

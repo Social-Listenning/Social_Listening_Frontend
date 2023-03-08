@@ -25,7 +25,7 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (resp) => {
-    return resp;
+    return resp?.data;
   },
   (error) => {
     console.log(error)

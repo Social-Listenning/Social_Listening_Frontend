@@ -12,6 +12,7 @@ export default function TabelUtils(props) {
   const {
     columnList,
     updateColumn,
+    selectAction,
     openAddEdit,
     showDelete,
     deleteMultiple,
@@ -72,6 +73,7 @@ export default function TabelUtils(props) {
       <div className="table-toolbars flex-center">
         <NewButton
           onClick={() => {
+            selectAction('Add');
             openAddEdit(true);
           }}
         />

@@ -16,8 +16,8 @@ export default function LoginPage() {
   async function handleSubmit(model) {
     toggleLoading(true);
     await apiService.post('/auth/log-in', model).then((resp) => {
-      if (resp?.data?.result) {
-        localStorageService.setItem("token", resp.data.result?.access);
+      if (resp?.result) {
+        localStorageService.setItem("token", resp.result?.access);
         customHistory.push('/');
         notifyService.showSucsessMessage("Login successfully")
         // dont need to toggle loading
