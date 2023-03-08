@@ -7,7 +7,7 @@ import { Checker } from '../../../utils/dataChecker';
 import { gender } from '../../../constants/profile/profile';
 import useEffectOnce from '../../../hooks/useEffectOnce';
 import useToggle from '../../../hooks/useToggle';
-import SaveButton from '../../../components/shared/antd/Button/SaveButton'
+import SaveButton from '../../../components/shared/antd/Button/SaveButton';
 import './profile.scss';
 
 export default function ProfilePage() {
@@ -27,7 +27,7 @@ export default function ProfilePage() {
         role: decodedToken?.role,
       });
     }
-  }, [decodedToken]);
+  });
 
   const [loading, toggleLoading] = useToggle(false);
   async function handleSave() {

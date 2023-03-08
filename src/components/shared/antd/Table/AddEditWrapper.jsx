@@ -1,9 +1,17 @@
+import React from 'react';
 import { Space, Drawer } from 'antd';
 import SaveButton from '../Button/SaveButton';
 import CancelButton from '../Button/CancelButton';
 
 export default function AddEditWrapper(props) {
-  const { open, toggleOpen, record, handleConfirm, ...other } = props;
+  const {
+    open,
+    toggleOpen,
+    actionType,
+    record,
+    handleConfirm,
+    ...other
+  } = props;
 
   function closeDrawer() {
     toggleOpen(false);
@@ -22,7 +30,10 @@ export default function AddEditWrapper(props) {
       }
       {...other}
     >
-      {props.children}
+      {React.cloneElement(props.children, {
+        data: record,
+        action: actionType,
+      })}
     </Drawer>
   );
 }

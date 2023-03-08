@@ -121,6 +121,7 @@ export default function AdminTable(props) {
 
   // #region add filter, action to header
   const [openAddEdit, toggleOpenAddEdit] = useToggle(false);
+  const [actionType, setActionType] = useState(null);
   const selectedRecord = useRef(null);
   const actionCol = [
     {
@@ -133,6 +134,7 @@ export default function AdminTable(props) {
         <TableAction
           actionList={actionList}
           selectedRecord={record}
+          selectAction={setActionType}
           openAddEdit={toggleOpenAddEdit}
           onClickDelete={onClickDelete}
         />
@@ -243,6 +245,7 @@ export default function AdminTable(props) {
         open={openAddEdit}
         toggleOpen={toggleOpenAddEdit}
         record={selectedRecord.current}
+        actionType={actionType}
       >
         {addEditComponent}
       </AddEditWrapper>

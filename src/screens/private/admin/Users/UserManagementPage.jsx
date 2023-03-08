@@ -1,5 +1,6 @@
-import React from 'react';
 import AdminTable from '../../../../components/shared/antd/Table/Table';
+import BooleanRow from '../../../../components/shared/element/BooleanRow';
+import AddEditUser from './AddEditUser';
 
 export default function UserManagement() {
   const columns = [
@@ -10,6 +11,14 @@ export default function UserManagement() {
     {
       title: 'Active',
       dataIndex: 'isActive',
+      render: (record) => {
+        return <BooleanRow active={record} />;
+      },
+      onCell: (record, _) => ({
+        style: {
+          textAlign: 'center',
+        },
+      }),
     },
     {
       title: 'Email',
@@ -33,5 +42,11 @@ export default function UserManagement() {
     },
   ];
 
-  return <AdminTable columns={columns} apiGetData="/user" />;
+  return (
+    <AdminTable
+      columns={columns}
+      apiGetData="/user"
+      addEditComponent={<AddEditUser />}
+    />
+  );
 }

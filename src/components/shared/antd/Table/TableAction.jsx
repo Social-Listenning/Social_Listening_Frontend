@@ -4,8 +4,13 @@ import IconButton from '../Button/IconButton';
 import { Tooltip } from 'antd';
 
 export default function TableAction(props) {
-  const { actionList, selectedRecord, openAddEdit, onClickDelete } =
-    props;
+  const {
+    selectAction,
+    actionList,
+    selectedRecord,
+    openAddEdit,
+    onClickDelete,
+  } = props;
 
   const formatActionList = actionList?.map((element) => {
     return (
@@ -19,6 +24,7 @@ export default function TableAction(props) {
   });
 
   function handleAction(e) {
+    selectAction(actionList[e.key]?.action);
     if (actionList[e.key]?.action === 'Edit') {
       openAddEdit(true);
     } else if (actionList[e.key]?.action === 'Delete') {
