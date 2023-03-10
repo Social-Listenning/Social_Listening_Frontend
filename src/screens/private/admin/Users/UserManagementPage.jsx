@@ -15,9 +15,7 @@ export default function UserManagement() {
         return <BooleanRow active={record} />;
       },
       onCell: (record, _) => ({
-        style: {
-          textAlign: 'center',
-        },
+        className: 'text-center',
       }),
     },
     {

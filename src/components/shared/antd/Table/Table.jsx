@@ -39,19 +39,30 @@ export default function AdminTable(props) {
 
   useUpdateEffect(() => {
     if (refreshFS) {
-      setResizeCol(formatHeaderCols);
+      if (columnUtil?.length !== columns?.length) {
+        setColumnUtil(
+          columns.map((col, index) => {
+            return {
+              ...col,
+              key: index.toString(),
+            };
+          })
+        );
+      } else {
+        setResizeCol(formatHeaderCols);
+      }
     }
   }, [refreshFS]);
 
   // display columns
   useUpdateEffect(() => {
     setResizeCol(actionCol.concat(formatHeaders(columnUtil)));
-    refreshData();
+    refreshData(false);
   }, [columnUtil]);
   // #endregion
 
   // #region handle filter, sorter, refresh data
-  let maxWidth = 100 + columns.length * 50;
+  let maxWidth = 100 * columns.length; // 100 is the select row and action column
   const [data, setData] = useState([]);
   const [filterType, setFilterType] = useState([]);
   const [sorter, setSorter] = useState([]);
@@ -67,7 +78,7 @@ export default function AdminTable(props) {
   }, [filterType, sorter]);
 
   // refresh table
-  async function refreshData() {
+  async function refreshData(resetData = true) {
     // remove the select
     if (selectedRowKeys?.length > 0) {
       setSelectedRowKeys([]);
@@ -81,7 +92,7 @@ export default function AdminTable(props) {
       selectedRecord.current = null;
     }
 
-    if (apiGetData) {
+    if (apiGetData && resetData) {
       toggleLoading(true);
       await apiService
         .post(apiGetData, {
@@ -167,10 +178,10 @@ export default function AdminTable(props) {
       maxWidth += col.width ?? 150;
       return {
         ...col,
-        resizeable: true, //default header can resize (you can change this if you want)
+        resizeable: true, // default header can resize (you can change this if you want)
         width: col.width ?? 150,
         title: (
-          //custom header with filter, sorter
+          // custom header with filter, sorter
           <TableHeader
             title={col.title}
             propsName={col.dataIndex}
@@ -243,7 +254,7 @@ export default function AdminTable(props) {
           rowSelection={rowSelection}
           size="small"
           scroll={{
-            y: 600,
+            // y: 600,
             x: maxWidth,
           }}
           components={{

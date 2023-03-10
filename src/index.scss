@@ -39,6 +39,9 @@ a:hover {
   top: 50%;
   transform: translate(-50%, -50%);
 }
+.text-center {
+  text-align: center;
+}
 .full-width,
 .ant-spin-nested-loading {
   width: 100%;
@@ -51,6 +54,11 @@ a:hover {
 }
 .pointer {
   cursor: pointer;
+}
+.long-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .limit-line {
   width: 100%;

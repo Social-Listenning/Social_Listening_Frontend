@@ -20,6 +20,7 @@ export default function AddEditWrapper(props) {
   return (
     <Drawer
       maskClosable={false}
+      destroyOnClose
       onClose={closeDrawer}
       open={open}
       extra={

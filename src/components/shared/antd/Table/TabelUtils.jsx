@@ -7,6 +7,7 @@ import WithCheckbox from '../Dropdown/WithCheckbox';
 import IconButton from '../Button/IconButton';
 import NewButton from '../Button/NewButton';
 import DeleteButton from '../Button/DeleteButton';
+import useUpdateEffect from '../../../../hooks/useUpdateEffect';
 
 export default function TabelUtils(props) {
   const {
@@ -23,6 +24,12 @@ export default function TabelUtils(props) {
   const [selectedKeys, setSelectedKeys] = useState(
     columnList.map((_, index) => index.toString())
   );
+
+  useUpdateEffect(() => {
+    if (selectedKeys?.length !== columnList?.length) {
+      setSelectedKeys(columnList.map((_, index) => index.toString()));
+    }
+  }, [columnList]);
 
   // get the current path
   const path = window.location.pathname;

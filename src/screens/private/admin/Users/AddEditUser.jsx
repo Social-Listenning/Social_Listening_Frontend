@@ -1,20 +1,25 @@
 import { Form, Input } from 'antd';
+import { role } from '../../../../constants/profile/profile';
+import ClassicSelect from '../../../../components/shared/antd/Select/Classic';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
 
 export default function AddEditUser(props) {
   const { data, action } = props;
   console.log(data, action);
+  const [addEditUserForm] = Form.useForm();
   return (
     <div>
       <Form
-        name="add-edit-form"
+        form={addEditUserForm}
+        name="add-edit-user-form"
         layout="vertical"
         autoComplete="off"
+        initialValues={{ role: 'admin' }}
         // onFinish={handleSubmit}
       >
         <ToolTipWrapper
           tooltip="Only email is allowed"
-          placement="topRight"
+          placement="left"
         >
           <Form.Item
             label="Email"
@@ -36,7 +41,7 @@ export default function AddEditUser(props) {
 
         <ToolTipWrapper
           tooltip="Password must between 8 - 50"
-          placement="topRight"
+          placement="left"
         >
           <Form.Item
             label="Password"
@@ -65,7 +70,7 @@ export default function AddEditUser(props) {
 
         <ToolTipWrapper
           tooltip="Confirm password must match"
-          placement="topRight"
+          placement="left"
         >
           <Form.Item
             label="Confirm Password"
@@ -88,6 +93,41 @@ export default function AddEditUser(props) {
             ]}
           >
             <Input.Password />
+          </Form.Item>
+        </ToolTipWrapper>
+
+        <ToolTipWrapper
+          tooltip="You can only create Admin accounts"
+          placement="left"
+        >
+          <Form.Item label="Role" name="role">
+            <ClassicSelect options={role} disabled />
+          </Form.Item>
+        </ToolTipWrapper>
+
+        <Form.Item label="Full Name" name="fullName">
+          <Input />
+        </Form.Item>
+
+        <Form.Item label="User Name" name="userName">
+          <Input />
+        </Form.Item>
+
+        <ToolTipWrapper
+          tooltip="Only 10-digit phone number allowed"
+          placement="left"
+        >
+          <Form.Item
+            label="Phone"
+            name="phoneNumber"
+            rules={[
+              {
+                pattern: /^\d{10}$/,
+                message: 'Phone number is not valid',
+              },
+            ]}
+          >
+            <Input />
           </Form.Item>
         </ToolTipWrapper>
       </Form>
