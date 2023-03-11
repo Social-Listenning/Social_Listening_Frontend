@@ -92,7 +92,6 @@ export default function PrivateLayout(props) {
         // trigger={null}
         collapsible
         collapsed={collapsed}
-        width={280}
         onCollapse={(value) => setCollapsed(value)}
       >
         {/* icon */}

@@ -22,6 +22,9 @@ const ProfilePage = lazy(() =>
 const AdminAccountManagement = lazy(() =>
   import('../../screens/private/accounts/admin/AdminAccountPage')
 );
+const OwnerAccountManagement = lazy(() =>
+  import('../../screens/private/accounts/owner/OwnerAccountPage')
+);
 // #endregion
 
 // #region error routes
@@ -40,6 +43,7 @@ export const privateRoutes = [
   { path: 'home', element: <HomePage /> },
   { path: 'profile', element: <ProfilePage /> },
   { path: 'account/admin', element: <AdminAccountManagement /> },
+  { path: 'account/owner', element: <OwnerAccountManagement /> },
 ];
 
 export const errorRoutes = [

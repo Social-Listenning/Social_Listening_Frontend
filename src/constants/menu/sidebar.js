@@ -16,7 +16,7 @@ export const menuSidebar = [
   },
   {
     key: 'account',
-    label: 'Account Management',
+    label: 'Account',
     icon: <SafetyOutlined />,
     children: [
       {
