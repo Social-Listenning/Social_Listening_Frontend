@@ -6,7 +6,7 @@ export default function BasicAvatar({ name = '', src = '' }) {
     <Avatar
       {...(!name && { icon: <UserOutlined /> })}
       alt={name ?? 'default-avt'}
-      src={src}
+      {...(src && { src: src })}
     >
       {name?.charAt(0)}
     </Avatar>

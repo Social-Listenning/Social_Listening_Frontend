@@ -3,7 +3,7 @@ import { role } from '../../../../constants/profile/profile';
 import ClassicSelect from '../../../../components/shared/antd/Select/Classic';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
 
-export default function AddEditUser(props) {
+export default function AddEditAdminAccount(props) {
   const { data, action } = props;
   console.log(data, action);
   const [addEditUserForm] = Form.useForm();

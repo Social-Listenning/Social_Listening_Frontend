@@ -1,7 +1,7 @@
 import { MoreOutlined } from '@ant-design/icons';
 import ClassicDropdown from '../Dropdown/Classic';
 import IconButton from '../Button/IconButton';
-import { Tooltip } from 'antd';
+import ToolTipWrapper from '../ToolTipWrapper';
 
 export default function TableAction(props) {
   const {
@@ -33,7 +33,7 @@ export default function TableAction(props) {
   }
 
   return (
-    <Tooltip title="Actions">
+    <ToolTipWrapper tooltip="Actions">
       <div className="flex-center">
         <ClassicDropdown
           clickTrigger
@@ -45,6 +45,6 @@ export default function TableAction(props) {
           />
         </ClassicDropdown>
       </div>
-    </Tooltip>
+    </ToolTipWrapper>
   );
 }

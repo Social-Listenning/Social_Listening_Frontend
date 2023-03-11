@@ -9,7 +9,7 @@ import { FilterType } from '../../../../constants/table/filter';
 import ClassicDropdown from '../Dropdown/Classic';
 import ClassicSelect from '../Select/Classic';
 import FloatInput from '../FloatingInput/FloatInput';
-import { Tooltip } from 'antd';
+import ToolTipWrapper from '../ToolTipWrapper';
 
 export default function TableHeader(props) {
   const {
@@ -133,7 +133,7 @@ export default function TableHeader(props) {
         title
       ) : (
         <>
-          <Tooltip title="Filters">
+          <ToolTipWrapper tooltip="Filters">
             <div className="flex-center">
               <ClassicDropdown
                 list={listFilter}
@@ -144,7 +144,7 @@ export default function TableHeader(props) {
                 <FilterOutlined className="table-filter-icon" />
               </ClassicDropdown>
             </div>
-          </Tooltip>
+          </ToolTipWrapper>
           <FloatInput
             id={title}
             className="table-input-title"
@@ -160,7 +160,7 @@ export default function TableHeader(props) {
       )}
       {/* <ClassicSelect placeHolder={title}/> */}
       {sort && (
-        <Tooltip title="Sorts">
+        <ToolTipWrapper tooltip="Sorts">
           <div
             className={
               'flex-center table-sorter pointer ' +
@@ -175,7 +175,7 @@ export default function TableHeader(props) {
               <CaretDownOutlined id="sort-descending" />
             )}
           </div>
-        </Tooltip>
+        </ToolTipWrapper>
       )}
     </div>
   );

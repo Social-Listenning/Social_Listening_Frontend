@@ -1,8 +1,8 @@
 import AdminTable from '../../../../components/shared/antd/Table/Table';
 import BooleanRow from '../../../../components/shared/element/BooleanRow';
-import AddEditUser from './AddEditUser';
+import AddEditAdminAccount from './AddEditAdminAccount';
 
-export default function UserManagement() {
+export default function AdminAccountManagement() {
   const columns = [
     {
       title: 'Id',
@@ -44,7 +44,7 @@ export default function UserManagement() {
     <AdminTable
       columns={columns}
       apiGetData="/user"
-      addEditComponent={<AddEditUser />}
+      addEditComponent={<AddEditAdminAccount />}
     />
   );
 }
