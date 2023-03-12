@@ -1,6 +1,10 @@
+function getPathName() {
+  return window.location.pathname.substring(1);
+}
+
 // example: home/product/add -> return ['home','product','add']
-function getPathNameUrl() {
-  return window.location.pathname.substring(1).split('/');
+function getListPathName() {
+  return getPathName().split('/');
 }
 
 // example: home?id=3&model=temp -> return [{id: '3'}, {model: 'temp'}]
@@ -33,8 +37,30 @@ function getOpenKeyForMenu(list, current) {
   return openKey;
 }
 
+// get current activated item in the menu
+function getCurrentActivatedItemInMenu(hasChild = false, menu, key) {
+  if (hasChild) {
+    for (let item of menu) {
+      if (item?.children?.length > 0) {
+        for (let child of item.children) {
+          if (child?.key === key) {
+            return child;
+          }
+        }
+      }
+    }
+  } else {
+    for (let item of menu) {
+      if (item?.key === key) {
+        return item;
+      }
+    }
+  }
+}
 export const Getter = {
-  getPathNameUrl,
+  getPathName,
+  getListPathName,
   getQueryParamsFromUrl,
   getOpenKeyForMenu,
+  getCurrentActivatedItemInMenu,
 };

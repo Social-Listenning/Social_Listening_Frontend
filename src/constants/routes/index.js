@@ -13,8 +13,17 @@ const ConfirmEmailPage = lazy(() =>
 // #endregion
 
 // #region private routes
+const HomePage = lazy(() =>
+  import('../../screens/private/home/HomePage')
+);
 const ProfilePage = lazy(() =>
   import('../../screens/private/profile/ProfilePage')
+);
+const AdminAccountManagement = lazy(() =>
+  import('../../screens/private/accounts/admin/AdminAccountPage')
+);
+const OwnerAccountManagement = lazy(() =>
+  import('../../screens/private/accounts/owner/OwnerAccountPage')
 );
 // #endregion
 
@@ -31,7 +40,10 @@ export const publicRoutes = [
 ];
 
 export const privateRoutes = [
+  { path: 'home', element: <HomePage /> },
   { path: 'profile', element: <ProfilePage /> },
+  { path: 'account/admin', element: <AdminAccountManagement /> },
+  { path: 'account/owner', element: <OwnerAccountManagement /> },
 ];
 
 export const errorRoutes = [

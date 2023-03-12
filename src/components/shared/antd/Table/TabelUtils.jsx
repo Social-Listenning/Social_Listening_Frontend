@@ -5,14 +5,31 @@ import { Checker } from '../../../../utils/dataChecker';
 import useEffectOnce from '../../../../hooks/useEffectOnce';
 import WithCheckbox from '../Dropdown/WithCheckbox';
 import IconButton from '../Button/IconButton';
+import NewButton from '../Button/NewButton';
+import DeleteButton from '../Button/DeleteButton';
+import useUpdateEffect from '../../../../hooks/useUpdateEffect';
 
 export default function TabelUtils(props) {
-  const { columnList, updateColumn, refresh } = props;
+  const {
+    columnList,
+    updateColumn,
+    selectAction,
+    openAddEdit,
+    showDelete,
+    deleteMultiple,
+    refresh,
+  } = props;
 
   // selected value in dropdown
   const [selectedKeys, setSelectedKeys] = useState(
     columnList.map((_, index) => index.toString())
   );
+
+  useUpdateEffect(() => {
+    if (selectedKeys?.length !== columnList?.length) {
+      setSelectedKeys(columnList.map((_, index) => index.toString()));
+    }
+  }, [columnList]);
 
   // get the current path
   const path = window.location.pathname;
@@ -59,50 +76,67 @@ export default function TabelUtils(props) {
     columnList?.map((x) => x?.title);
 
   return (
-    <div className="table-utils flex-center">
-      <WithCheckbox
-        clickTrigger
-        list={originFormatCol}
-        selectedKeys={selectedKeys}
-        handleItemClick={(e) => {
-          // hide column
-          if (selectedKeys?.includes(e)) {
-            // uncheck the column for dropdown
-            setSelectedKeys(selectedKeys.filter((x) => x !== e));
-            // remove the column from table
-            updateColumn((old) => {
-              return old?.filter(
-                (x) => x.title !== originFormatCol[e]
-              );
-            });
-          }
-          // show column
-          else {
-            // check the column for dropdown
-            setSelectedKeys((old) => {
-              return [...old, e].sort();
-            });
-            // add column back to table
-            updateColumn((old) => {
-              return [...old, originCol[e]].sort(
-                (a, b) => +a?.key.localeCompare(b?.key)
-              );
-            });
-          }
-        }}
-      >
-        <IconButton
-          tooltip="Display Columns"
-          className="table-utils-icon"
-          icon={<TableOutlined className="pointer" />}
+    <>
+      <div className="table-toolbars flex-center">
+        <NewButton
+          onClick={() => {
+            selectAction('Add');
+            openAddEdit(true);
+          }}
         />
-      </WithCheckbox>
-      <IconButton
-        tooltip="Refresh Table"
-        className="table-utils-icon"
-        icon={<ReloadOutlined className="pointer" />}
-        onClick={refresh}
-      />
-    </div>
+        {showDelete && (
+          <DeleteButton
+            onClick={() => {
+              deleteMultiple();
+            }}
+          />
+        )}
+      </div>
+      <div className="table-utils flex-center">
+        <WithCheckbox
+          clickTrigger
+          list={originFormatCol}
+          selectedKeys={selectedKeys}
+          handleItemClick={(e) => {
+            // hide column
+            if (selectedKeys?.includes(e)) {
+              // uncheck the column for dropdown
+              setSelectedKeys(selectedKeys.filter((x) => x !== e));
+              // remove the column from table
+              updateColumn((old) => {
+                return old?.filter(
+                  (x) => x.title !== originFormatCol[e]
+                );
+              });
+            }
+            // show column
+            else {
+              // check the column for dropdown
+              setSelectedKeys((old) => {
+                return [...old, e].sort();
+              });
+              // add column back to table
+              updateColumn((old) => {
+                return [...old, originCol[e]].sort(
+                  (a, b) => +a?.key.localeCompare(b?.key)
+                );
+              });
+            }
+          }}
+        >
+          <IconButton
+            tooltip="Display Columns"
+            className="table-utils-icon"
+            icon={<TableOutlined className="pointer" />}
+          />
+        </WithCheckbox>
+        <IconButton
+          tooltip="Refresh Table"
+          className="table-utils-icon"
+          icon={<ReloadOutlined className="pointer" />}
+          onClick={refresh}
+        />
+      </div>
+    </>
   );
 }

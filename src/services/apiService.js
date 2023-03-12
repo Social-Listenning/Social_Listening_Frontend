@@ -25,16 +25,16 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (resp) => {
-    return resp;
+    return resp?.data;
   },
   (error) => {
     console.log(error)
-    if (error.response.data.status === 401) {
+    if (error.response.status === 401) {
       notifyService.showErrorMessage("Unauthorized");
       customHistory.push("/login");
     }
-    else if (error.response.data.status === 403) {
-      notifyService.showErrorMessage("Forbidden");
+    else if (error.response.status === 403) {
+      notifyService.showErrorMessage("Forbidden Resource");
       customHistory.push("/forbidden");
     }
     // else if (error.response.status === 500) {

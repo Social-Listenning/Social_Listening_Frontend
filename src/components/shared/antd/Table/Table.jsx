@@ -1,6 +1,7 @@
 import { Table } from 'antd';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { apiService } from '../../../../services/apiService';
+import { defaultAction } from '../../../../constants/table/action';
 import useEffectOnce from '../../../../hooks/useEffectOnce';
 import useUpdateEffect from '../../../../hooks/useUpdateEffect';
 import useToggle from '../../../../hooks/useToggle';
@@ -8,16 +9,18 @@ import TabelUtils from './TabelUtils';
 import TableHeader from './TableHeader';
 import TableAction from './TableAction';
 import ResizeableTitle from './ResizeableTitle';
+import AddEditWrapper from './AddEditWrapper';
+import LoadingWrapper from '../LoadingWrapper';
 import './table.scss';
 
 export default function AdminTable(props) {
   const {
     columns = [],
-    data,
-    actionList,
+    actionList = defaultAction,
     apiGetData,
     apiDeleteOne,
     apiDeleteMultiple,
+    addEditComponent,
     keyProps = columns[0]?.dataIndex,
   } = props;
 
@@ -36,18 +39,31 @@ export default function AdminTable(props) {
 
   useUpdateEffect(() => {
     if (refreshFS) {
-      setResizeCol(formatHeaderCols);
+      if (columnUtil?.length !== columns?.length) {
+        setColumnUtil(
+          columns.map((col, index) => {
+            return {
+              ...col,
+              key: index.toString(),
+            };
+          })
+        );
+      } else {
+        setResizeCol(formatHeaderCols);
+      }
     }
   }, [refreshFS]);
 
   // display columns
   useUpdateEffect(() => {
     setResizeCol(actionCol.concat(formatHeaders(columnUtil)));
-    refreshData();
+    refreshData(false);
   }, [columnUtil]);
   // #endregion
 
   // #region handle filter, sorter, refresh data
+  let maxWidth = 100 * columns.length; // 100 is the select row and action column
+  const [data, setData] = useState([]);
   const [filterType, setFilterType] = useState([]);
   const [sorter, setSorter] = useState([]);
   const [loading, toggleLoading] = useToggle(false); // loading state
@@ -62,18 +78,42 @@ export default function AdminTable(props) {
   }, [filterType, sorter]);
 
   // refresh table
-  async function refreshData() {
+  async function refreshData(resetData = true) {
+    // remove the select
     if (selectedRowKeys?.length > 0) {
-      setSelectedRowKeys([]); // remove the select
+      setSelectedRowKeys([]);
     }
-    tableContent?.scrollTo(0, 0); // scroll back to 0
+    // scroll back to 0
+    tableContent?.scrollTo(0, 0);
 
-    if (apiGetData) {
+    // remove the action and record
+    if (actionType) {
+      setActionType(null);
+      selectedRecord.current = null;
+    }
+
+    if (apiGetData && resetData) {
       toggleLoading(true);
-      await apiService.post(apiGetData, {
-        sort: sorter,
-        filter: filterType,
-      });
+      await apiService
+        .post(apiGetData, {
+          orders: sorter,
+          filter: filterType,
+          size: 25,
+          pageNumber: 1,
+          totalElement: 10000,
+        })
+        .then((resp) => {
+          if (resp?.Data) {
+            setData(
+              resp.Data.map((x, index) => {
+                return {
+                  ...x,
+                  key: index,
+                };
+              })
+            );
+          }
+        });
       toggleLoading(false);
     }
   }
@@ -94,10 +134,15 @@ export default function AdminTable(props) {
     }
   }
 
-  function onMultipleDelete(list) {}
+  function onMultipleDelete() {
+    console.log(selectedRowKeys);
+  }
   // #endregion
 
   // #region add filter, action to header
+  const [openAddEdit, toggleOpenAddEdit] = useToggle(false);
+  const [actionType, setActionType] = useState(null);
+  const selectedRecord = useRef(null);
   const actionCol = [
     {
       dataIndex: 'action',
@@ -108,10 +153,19 @@ export default function AdminTable(props) {
       render: (_, record) => (
         <TableAction
           actionList={actionList}
-          onClickDelete={onClickDelete}
           selectedRecord={record}
+          selectAction={setActionType}
+          openAddEdit={toggleOpenAddEdit}
+          onClickDelete={onClickDelete}
         />
       ),
+      onCell: (record, _) => {
+        return {
+          onClick: () => {
+            selectedRecord.current = record;
+          },
+        };
+      },
     },
   ];
 
@@ -121,13 +175,16 @@ export default function AdminTable(props) {
 
   function formatHeaders(column) {
     return column.map((col) => {
+      maxWidth += col.width ?? 150;
       return {
-        resizeable: true, //default header can resize (you can change this if you want)
         ...col,
+        resizeable: true, // default header can resize (you can change this if you want)
+        width: col.width ?? 150,
         title: (
-          //custom header with filter, sorter
+          // custom header with filter, sorter
           <TableHeader
             title={col.title}
+            propsName={col.dataIndex}
             filter={col.filter}
             sort={col.sort}
             disableFilter={col.disableFilter}
@@ -184,24 +241,37 @@ export default function AdminTable(props) {
       <TabelUtils
         columnList={columnUtil}
         updateColumn={setColumnUtil}
+        selectAction={setActionType}
+        openAddEdit={toggleOpenAddEdit}
+        showDelete={selectedRowKeys?.length > 0}
+        deleteMultiple={onMultipleDelete}
         refresh={setRefreshFS}
       />
-      <Table
-        columns={resizeColumns}
-        dataSource={data}
-        rowSelection={rowSelection}
-        size="small"
-        scroll={{
-          y: 500,
-          x: 2500,
-        }}
-        components={{
-          header: {
-            cell: ResizeableTitle,
-          },
-        }}
-        loading={loading}
-      />
+      <LoadingWrapper size="large" loading={loading}>
+        <Table
+          columns={resizeColumns}
+          dataSource={data}
+          rowSelection={rowSelection}
+          size="small"
+          scroll={{
+            // y: 600,
+            x: maxWidth,
+          }}
+          components={{
+            header: {
+              cell: ResizeableTitle,
+            },
+          }}
+        />
+      </LoadingWrapper>
+      <AddEditWrapper
+        open={openAddEdit}
+        toggleOpen={toggleOpenAddEdit}
+        record={selectedRecord.current}
+        actionType={actionType}
+      >
+        {addEditComponent}
+      </AddEditWrapper>
     </>
   );
 }

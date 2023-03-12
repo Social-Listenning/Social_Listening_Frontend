@@ -1,12 +1,13 @@
-import { Button, Form, Input, Radio } from 'antd';
+import { Form, Input, Radio } from 'antd';
 import { decodeToken } from 'react-jwt';
 import { localStorageService } from '../../../services/localStorageService';
 import { apiService } from '../../../services/apiService';
 import { notifyService } from '../../../services/notifyService';
 import { Checker } from '../../../utils/dataChecker';
+import { gender } from '../../../constants/profile/profile';
 import useEffectOnce from '../../../hooks/useEffectOnce';
 import useToggle from '../../../hooks/useToggle';
-import { gender } from '../../../constants/profile/profile';
+import SaveButton from '../../../components/shared/antd/Button/SaveButton';
 import './profile.scss';
 
 export default function ProfilePage() {
@@ -21,11 +22,12 @@ export default function ProfilePage() {
       profileForm.setFieldsValue({
         fullName: decodedToken?.fullName,
         userName: decodedToken?.userName,
+        gender: decodedToken?.gender ?? 'male',
         phoneNumber: decodedToken?.phoneNumber,
         role: decodedToken?.role,
       });
     }
-  }, [decodedToken]);
+  });
 
   const [loading, toggleLoading] = useToggle(false);
   async function handleSave() {
@@ -36,7 +38,7 @@ export default function ProfilePage() {
     };
 
     await apiService.post('', accountProfile).then((resp) => {
-      if (resp?.data?.result) {
+      if (resp?.result) {
         notifyService.showSucsessMessage('Save profile successfully');
       }
     });
@@ -49,6 +51,7 @@ export default function ProfilePage() {
         <img
           className="profile-img"
           src="https://i.pinimg.com/736x/25/78/61/25786134576ce0344893b33a051160b1.jpg"
+          alt="profile-avt"
         />
         <Form
           form={accountForm}
@@ -131,7 +134,7 @@ export default function ProfilePage() {
           </Form.Item>
 
           <Form.Item label="Gender" name="gender">
-            <Radio.Group defaultValue={'male'} options={gender} />
+            <Radio.Group options={gender} />
           </Form.Item>
 
           <Form.Item label="Phone" name="phoneNumber">
@@ -143,9 +146,7 @@ export default function ProfilePage() {
           </Form.Item>
         </Form>
 
-        <Button type="primary" onClick={handleSave} loading={loading}>
-          Save
-        </Button>
+        <SaveButton onClick={handleSave} loading={loading} />
       </div>
     </div>
   );

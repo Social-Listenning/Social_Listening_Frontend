@@ -6,7 +6,7 @@ export default function ResizeableTitle(props) {
     onResize,
     width = 150,
     minWidth = 100,
-    maxWidth = 600,
+    maxWidth = 500,
     ...restProps
   } = props;
 

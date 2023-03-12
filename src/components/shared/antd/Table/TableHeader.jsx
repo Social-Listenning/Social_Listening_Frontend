@@ -9,11 +9,12 @@ import { FilterType } from '../../../../constants/table/filter';
 import ClassicDropdown from '../Dropdown/Classic';
 import ClassicSelect from '../Select/Classic';
 import FloatInput from '../FloatingInput/FloatInput';
-import { Tooltip } from 'antd';
+import ToolTipWrapper from '../ToolTipWrapper';
 
 export default function TableHeader(props) {
   const {
     title = '',
+    propsName = '',
     filter,
     sort = true,
     disableFilter = false,
@@ -49,7 +50,7 @@ export default function TableHeader(props) {
           old[index].sortDir = type;
           return [...old];
         } else {
-          return [...old, { props: title, sortDir: type }];
+          return [...old, { props: propsName, sortDir: type }];
         }
       });
     } else {
@@ -82,7 +83,7 @@ export default function TableHeader(props) {
   function formatFilter() {
     if (value) {
       updateFilter((old) => {
-        let index = old.findIndex((x) => x?.props === title);
+        let index = old.findIndex((x) => x?.props === propsName);
         if (index >= 0) {
           old[index].value = value;
           old[index].filterOperator = filterOperator.current;
@@ -91,7 +92,7 @@ export default function TableHeader(props) {
           return [
             ...old,
             {
-              props: title,
+              props: propsName,
               value: value,
               filterOperator: filterOperator.current,
             },
@@ -100,8 +101,8 @@ export default function TableHeader(props) {
       });
     } else {
       updateFilter((old) => {
-        if (old.filter((x) => x?.props === title)?.length > 0) {
-          let removeOldFilter = old.filter((x) => x?.props !== title);
+        if (old.filter((x) => x?.props === propsName)?.length > 0) {
+          let removeOldFilter = old.filter((x) => x?.props !== propsName);
           return removeOldFilter;
         } else return old;
       });
@@ -132,7 +133,7 @@ export default function TableHeader(props) {
         title
       ) : (
         <>
-          <Tooltip title="Filters">
+          <ToolTipWrapper tooltip="Filters">
             <div className="flex-center">
               <ClassicDropdown
                 list={listFilter}
@@ -143,7 +144,7 @@ export default function TableHeader(props) {
                 <FilterOutlined className="table-filter-icon" />
               </ClassicDropdown>
             </div>
-          </Tooltip>
+          </ToolTipWrapper>
           <FloatInput
             id={title}
             className="table-input-title"
@@ -159,7 +160,7 @@ export default function TableHeader(props) {
       )}
       {/* <ClassicSelect placeHolder={title}/> */}
       {sort && (
-        <Tooltip title="Sorts">
+        <ToolTipWrapper tooltip="Sorts">
           <div
             className={
               'flex-center table-sorter pointer ' +
@@ -174,7 +175,7 @@ export default function TableHeader(props) {
               <CaretDownOutlined id="sort-descending" />
             )}
           </div>
-        </Tooltip>
+        </ToolTipWrapper>
       )}
     </div>
   );
