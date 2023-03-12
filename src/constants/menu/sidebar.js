@@ -29,7 +29,7 @@ export const menuSidebar = [
         key: 'account/owner',
         label: 'Owner',
         icon: <SmileOutlined />,
-        permissions: 'OWNER, ADMIN',
+        permissions: 'OWNER',
       },
     ],
   },
