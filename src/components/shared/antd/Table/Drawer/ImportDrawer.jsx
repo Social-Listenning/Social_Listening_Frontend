@@ -1,5 +1,7 @@
 import { useState, useRef } from 'react';
 import { Drawer, Space, Steps } from 'antd';
+import { apiService } from '../../../../../services/apiService';
+import { notifyService } from '../../../../../services/notifyService';
 import useUpdateEffect from '../../../../../hooks/useUpdateEffect';
 import useToggle from '../../../../../hooks/useToggle';
 import CancelButton from '../../Button/CancelButton';
@@ -9,11 +11,12 @@ import UploadFile from '../Utils/UploadFile';
 import TableMapData from '../Utils/TableMapData';
 
 export default function ImportDrawer(props) {
-  const { open, toggleOpen, tableColumn } = props;
+  const { open, toggleOpen, apiImport, tableColumn } = props;
 
   // const [data, setData] = useState([]); // rows data in excel
   const propsMapped = useRef([]); // header mapped to table col props
-  const [header, setHeader] = useState([]); // headers in excel
+  const file = useRef(null); // file excel
+  const header = useRef([]); // headers in excel
   const [colMapped, setColMapped] = useState([]); // header in excel mapped to table
   const [currentStep, setCurrentStep] = useState(0);
 
@@ -30,6 +33,12 @@ export default function ImportDrawer(props) {
     }
   }
 
+  function getDataFromFile(fileExcel, headerExcel) {
+    file.current = fileExcel;
+    header.current = headerExcel;
+    setCurrentStep(currentStep + 1);
+  }
+
   // map header in excel to props in table
   if (colMapped?.length > 0) {
     propsMapped.current = colMapped
@@ -44,22 +53,44 @@ export default function ImportDrawer(props) {
       .filter((item) => item.header);
   }
 
+  // get any error cols to block next button
   const [hadErrorCol, setHadErrorCol] = useToggle(false);
   useUpdateEffect(() => {
-    setHadErrorCol(
+    if (
+      hadErrorCol !==
       document.querySelectorAll('.required-column.error-column')
-        ?.length > 0
-    );
+        ?.length >
+        0
+    ) {
+      setHadErrorCol(
+        document.querySelectorAll('.required-column.error-column')
+          ?.length > 0
+      );
+    }
   }, [colMapped]);
+
+  async function importFile() {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append(
+      'mappingColumn',
+      JSON.stringify(propsMapped.current)
+    );
+
+    await apiService.post(apiImport, formData).then((resp) => {
+      if (resp?.result) {
+        notifyService.showSucsessMessage('Import is processing');
+      }
+    });
+  }
 
   function closeDrawer() {
     toggleOpen(false);
     finished.current = false;
-    if (currentStep != 0) {
+    file.current = null;
+    header.current = [];
+    if (currentStep !== 0) {
       setCurrentStep(0);
-    }
-    if (header != null) {
-      setHeader(null);
     }
   }
 
@@ -77,7 +108,7 @@ export default function ImportDrawer(props) {
             <PreviousButton
               onClick={() => {
                 if (currentStep === 1) {
-                  setHeader([]);
+                  header.current = [];
                 }
                 setCurrentStep(currentStep - 1);
               }}
@@ -86,10 +117,13 @@ export default function ImportDrawer(props) {
           {currentStep < 2 && (
             <NextButton
               disabled={
-                (currentStep === 0 && header?.length === 0) ||
+                (currentStep === 0 && header.current?.length === 0) ||
                 hadErrorCol
               }
               onClick={() => {
+                if (currentStep === 1) {
+                  importFile();
+                }
                 setCurrentStep(currentStep + 1);
               }}
             />
@@ -101,27 +135,22 @@ export default function ImportDrawer(props) {
         current={currentStep}
         onChange={(value) => {
           if (value === 0) {
-            setHeader([]);
+            header.current = [];
+          }
+          if (value === 2) {
+            importFile();
           }
           setCurrentStep(value);
         }}
         items={[
           {
             title: (
-              <UploadFile
-                // getData={setData}
-                getHeader={setHeader}
-                moveToStep={setCurrentStep}
-              >
+              <UploadFile getDataFromFile={getDataFromFile}>
                 Step 1
               </UploadFile>
             ),
             description: (
-              <UploadFile
-                // getData={setData}
-                getHeader={setHeader}
-                moveToStep={setCurrentStep}
-              >
+              <UploadFile getDataFromFile={getDataFromFile}>
                 Choose file
               </UploadFile>
             ),
@@ -130,19 +159,20 @@ export default function ImportDrawer(props) {
           {
             title: 'Step 2',
             description: 'Map data',
-            disabled: currentStep === 0 && header?.length === 0,
+            disabled:
+              currentStep === 0 && header.current?.length === 0,
           },
           {
             title: 'Step 3',
             description: 'Status',
-            disabled: currentStep === 0,
+            disabled: currentStep === 0 || hadErrorCol,
           },
         ]}
       />
       <div className="import-content">
         {currentStep === 1 && (
           <TableMapData
-            leftCol={header}
+            leftCol={header.current}
             rightCol={tableColumn}
             getColMapped={setColMapped}
           />

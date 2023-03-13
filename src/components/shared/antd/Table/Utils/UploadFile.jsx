@@ -2,7 +2,7 @@ import { Upload } from 'antd';
 import { read, utils } from 'xlsx';
 
 export default function UploadFile(props) {
-  const { getData, getHeader, moveToStep } = props;
+  const { getDataFromFile } = props;
 
   async function handleUpload(file) {
     const reader = new FileReader();
@@ -10,12 +10,11 @@ export default function UploadFile(props) {
       const workbook = read(e.target.result, { type: 'binary' });
       const worksheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[worksheetName];
-      getHeader(getHeaderRow(worksheet));
-      // const sheetData = utils.sheet_to_json(worksheet);
-      // getData(sheetData);
+      const header = getHeaderRow(worksheet) ?? [];
+      getDataFromFile(file, header)
+      // const sheetData = utils.sheet_to_json(worksheet); // get all data from excel
     };
     reader.readAsBinaryString(file);
-    moveToStep((step) => step + 1);
     return false;
   }
 

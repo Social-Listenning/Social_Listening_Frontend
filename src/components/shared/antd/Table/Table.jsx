@@ -21,6 +21,7 @@ export default function AdminTable(props) {
     apiGetData,
     apiDeleteOne,
     apiDeleteMultiple,
+    apiImport,
     addEditComponent,
     keyProps = columns[0]?.dataIndex,
   } = props;
@@ -248,6 +249,7 @@ export default function AdminTable(props) {
       <TabelUtils
         columnList={columnUtil}
         importColumns={importColumns}
+        apiImport={apiImport}
         updateColumn={setColumnUtil}
         selectAction={setActionType}
         openAddEdit={toggleOpenAddEdit}

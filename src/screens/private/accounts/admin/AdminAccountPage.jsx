@@ -26,6 +26,7 @@ export default function AdminAccountManagement() {
     {
       title: 'Role',
       dataIndex: 'role',
+      required: true,
     },
     {
       title: 'Full Name',
@@ -48,6 +49,7 @@ export default function AdminAccountManagement() {
   return (
     <AdminTable
       apiGetData="/user"
+      apiImport="/user/import"
       columns={columns}
       importColumns={importColumns}
       addEditComponent={<AddEditAdminAccount />}

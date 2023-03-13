@@ -15,6 +15,7 @@ import ExportButton from '../../Button/ExportButton';
 export default function TabelUtils(props) {
   const {
     columnList,
+    apiImport,
     importColumns,
     updateColumn,
     selectAction,
@@ -154,6 +155,7 @@ export default function TabelUtils(props) {
       <ImportDrawer
         open={openImport}
         toggleOpen={setOpenImport}
+        apiImport={apiImport}
         tableColumn={importColumns}
       />
     </>
