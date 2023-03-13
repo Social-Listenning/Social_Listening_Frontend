@@ -3,7 +3,7 @@ import { DeleteOutlined } from '@ant-design/icons';
 
 export default function DeleteButton(props) {
   return (
-    <Button icon={<DeleteOutlined />} {...props}>
+    <Button icon={<DeleteOutlined />} danger {...props}>
       Delete
     </Button>
   );

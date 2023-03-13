@@ -1,5 +1,5 @@
 import { Resizable } from 'react-resizable';
-import { Checker } from '../../../../utils/dataChecker';
+import { Checker } from '../../../../../utils/dataChecker';
 
 export default function ResizeableTitle(props) {
   const {

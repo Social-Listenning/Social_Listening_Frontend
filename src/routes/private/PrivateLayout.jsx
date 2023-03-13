@@ -89,7 +89,7 @@ export default function PrivateLayout(props) {
   return (
     <Layout className="private-layout">
       <Sider
-        // trigger={null}
+        trigger={null}
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
@@ -118,7 +118,7 @@ export default function PrivateLayout(props) {
       <Layout>
         <Header className="private-header flex-center">
           <ToolTipWrapper
-            title={!collapsed ? 'Collapse Menu' : 'Open Menu'}
+            title={!collapsed ? 'Collapse menu' : 'Open menu'}
             placement="right"
             className="colapse-btn"
             onClick={() => setCollapsed()}

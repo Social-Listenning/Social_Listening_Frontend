@@ -1,17 +1,22 @@
 import { useState } from 'react';
 import { ReloadOutlined, TableOutlined } from '@ant-design/icons';
-import { localStorageService } from '../../../../services/localStorageService';
-import { Checker } from '../../../../utils/dataChecker';
-import useEffectOnce from '../../../../hooks/useEffectOnce';
-import WithCheckbox from '../Dropdown/WithCheckbox';
-import IconButton from '../Button/IconButton';
-import NewButton from '../Button/NewButton';
-import DeleteButton from '../Button/DeleteButton';
-import useUpdateEffect from '../../../../hooks/useUpdateEffect';
+import { localStorageService } from '../../../../../services/localStorageService';
+import { Checker } from '../../../../../utils/dataChecker';
+import useEffectOnce from '../../../../../hooks/useEffectOnce';
+import useUpdateEffect from '../../../../../hooks/useUpdateEffect';
+import WithCheckbox from '../../Dropdown/WithCheckbox';
+import ImportDrawer from '../Drawer/ImportDrawer';
+import IconButton from '../../Button/IconButton';
+import NewButton from '../../Button/NewButton';
+import DeleteButton from '../../Button/DeleteButton';
+import ImportButton from '../../Button/ImportButton';
+import ExportButton from '../../Button/ExportButton';
 
 export default function TabelUtils(props) {
   const {
     columnList,
+    apiImport,
+    importColumns,
     updateColumn,
     selectAction,
     openAddEdit,
@@ -20,6 +25,7 @@ export default function TabelUtils(props) {
     refresh,
   } = props;
 
+  // #region display columns section
   // selected value in dropdown
   const [selectedKeys, setSelectedKeys] = useState(
     columnList.map((_, index) => index.toString())
@@ -74,6 +80,9 @@ export default function TabelUtils(props) {
   const originFormatCol =
     originCol?.map((x) => x?.title) ??
     columnList?.map((x) => x?.title);
+  // #endregion
+
+  const [openImport, setOpenImport] = useState(false);
 
   return (
     <>
@@ -84,6 +93,12 @@ export default function TabelUtils(props) {
             openAddEdit(true);
           }}
         />
+        <ImportButton
+          onClick={() => {
+            setOpenImport(true);
+          }}
+        />
+        <ExportButton onClick={() => {}} />
         {showDelete && (
           <DeleteButton
             onClick={() => {
@@ -125,18 +140,24 @@ export default function TabelUtils(props) {
           }}
         >
           <IconButton
-            tooltip="Display Columns"
+            tooltip="Click to open column display options"
             className="table-utils-icon"
             icon={<TableOutlined className="pointer" />}
           />
         </WithCheckbox>
         <IconButton
-          tooltip="Refresh Table"
+          tooltip="Click to refresh table"
           className="table-utils-icon"
           icon={<ReloadOutlined className="pointer" />}
           onClick={refresh}
         />
       </div>
+      <ImportDrawer
+        open={openImport}
+        toggleOpen={setOpenImport}
+        apiImport={apiImport}
+        tableColumn={importColumns}
+      />
     </>
   );
 }

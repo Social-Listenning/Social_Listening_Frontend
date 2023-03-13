@@ -5,21 +5,23 @@ import { defaultAction } from '../../../../constants/table/action';
 import useEffectOnce from '../../../../hooks/useEffectOnce';
 import useUpdateEffect from '../../../../hooks/useUpdateEffect';
 import useToggle from '../../../../hooks/useToggle';
-import TabelUtils from './TabelUtils';
-import TableHeader from './TableHeader';
-import TableAction from './TableAction';
-import ResizeableTitle from './ResizeableTitle';
-import AddEditWrapper from './AddEditWrapper';
+import TableHeader from './Header/TableHeader';
+import ResizeableTitle from './Header/ResizeableTitle';
+import TabelUtils from './Utils/TabelUtils';
+import TableAction from './Utils/TableAction';
+import AddEditWrapper from './Drawer/AddEditWrapper';
 import LoadingWrapper from '../LoadingWrapper';
 import './table.scss';
 
 export default function AdminTable(props) {
   const {
     columns = [],
+    importColumns = columns,
     actionList = defaultAction,
     apiGetData,
     apiDeleteOne,
     apiDeleteMultiple,
+    apiImport,
     addEditComponent,
     keyProps = columns[0]?.dataIndex,
   } = props;
@@ -143,6 +145,12 @@ export default function AdminTable(props) {
   const [openAddEdit, toggleOpenAddEdit] = useToggle(false);
   const [actionType, setActionType] = useState(null);
   const selectedRecord = useRef(null);
+
+  // remove the record when action is add
+  if (actionType === 'Add') {
+    selectedRecord.current = null;
+  }
+
   const actionCol = [
     {
       dataIndex: 'action',
@@ -240,6 +248,8 @@ export default function AdminTable(props) {
     <>
       <TabelUtils
         columnList={columnUtil}
+        importColumns={importColumns}
+        apiImport={apiImport}
         updateColumn={setColumnUtil}
         selectAction={setActionType}
         openAddEdit={toggleOpenAddEdit}

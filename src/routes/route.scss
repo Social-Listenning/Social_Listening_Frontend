@@ -1,6 +1,14 @@
 .private-layout {
   min-height: 100vh;
 
+  .ant-layout-sider {
+    background-color: #000;
+
+    .ant-menu {
+      background-color: #000 !important;
+    }
+  }
+
   // .ant-menu {
   //   .ant-menu-item {
   //     padding-left: 1.2rem !important;
