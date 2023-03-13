@@ -71,7 +71,7 @@ export default function ImportDrawer(props) {
 
   async function importFile() {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('file', file.current);
     formData.append(
       'mappingColumn',
       JSON.stringify(propsMapped.current)
@@ -79,7 +79,10 @@ export default function ImportDrawer(props) {
 
     await apiService.post(apiImport, formData).then((resp) => {
       if (resp?.result) {
-        notifyService.showSucsessMessage('Import is processing');
+        closeDrawer();
+        notifyService.showSucsessMessage(
+          'Importing is processing, please wait for the success alert'
+        );
       }
     });
   }
