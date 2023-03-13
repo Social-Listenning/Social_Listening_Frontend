@@ -56,16 +56,11 @@ export default function ImportDrawer(props) {
   // get any error cols to block next button
   const [hadErrorCol, setHadErrorCol] = useToggle(false);
   useUpdateEffect(() => {
-    if (
-      hadErrorCol !==
+    const checkErrorCol =
       document.querySelectorAll('.required-column.error-column')
-        ?.length >
-        0
-    ) {
-      setHadErrorCol(
-        document.querySelectorAll('.required-column.error-column')
-          ?.length > 0
-      );
+        ?.length > 0;
+    if (hadErrorCol !== checkErrorCol) {
+      setHadErrorCol(checkErrorCol);
     }
   }, [colMapped]);
 
