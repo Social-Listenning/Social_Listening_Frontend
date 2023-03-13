@@ -4,12 +4,12 @@ import {
   CaretUpOutlined,
   CaretDownOutlined,
 } from '@ant-design/icons';
-import useUpdateEffect from '../../../../hooks/useUpdateEffect';
-import { FilterType } from '../../../../constants/table/filter';
-import ClassicDropdown from '../Dropdown/Classic';
-import ClassicSelect from '../Select/Classic';
-import FloatInput from '../FloatingInput/FloatInput';
-import ToolTipWrapper from '../ToolTipWrapper';
+import useUpdateEffect from '../../../../../hooks/useUpdateEffect';
+import { FilterType } from '../../../../../constants/table/filter';
+import ClassicDropdown from '../../Dropdown/Classic';
+import ClassicSelect from '../../Select/Classic';
+import FloatInput from '../../FloatingInput/FloatInput';
+import ToolTipWrapper from '../../ToolTipWrapper';
 
 export default function TableHeader(props) {
   const {
@@ -133,7 +133,7 @@ export default function TableHeader(props) {
         title
       ) : (
         <>
-          <ToolTipWrapper tooltip="Filters">
+          <ToolTipWrapper tooltip="Click to open filters">
             <div className="flex-center">
               <ClassicDropdown
                 list={listFilter}
@@ -160,7 +160,7 @@ export default function TableHeader(props) {
       )}
       {/* <ClassicSelect placeHolder={title}/> */}
       {sort && (
-        <ToolTipWrapper tooltip="Sorts">
+        <ToolTipWrapper tooltip="Click to sort">
           <div
             className={
               'flex-center table-sorter pointer ' +

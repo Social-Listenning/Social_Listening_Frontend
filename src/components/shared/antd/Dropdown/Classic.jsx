@@ -6,6 +6,7 @@ export default function ClassicDropdown(props) {
     list,
     selectedKeys = [],
     clickTrigger = false,
+    noneOption = false,
     handleItemClick,
   } = props;
 
@@ -16,6 +17,12 @@ export default function ClassicDropdown(props) {
         key: index,
       };
     }) ?? [];
+
+  const none = [{ label: 'None', key: -1 }];
+
+  if (noneOption) {
+    items = none.concat(items);
+  }
 
   function handleMenuClick(e) {
     if (!Checker.isNullOrEmpty(handleItemClick)) {

@@ -4,10 +4,10 @@ import AddEditOwnerAccount from './AddEditOwnerAccount';
 
 export default function OwnerAccountManagement() {
   const columns = [
-    {
-      title: 'Id',
-      dataIndex: 'id',
-    },
+    // {
+    //   title: 'Id',
+    //   dataIndex: 'id',
+    // },
     {
       title: 'Active',
       dataIndex: 'isActive',

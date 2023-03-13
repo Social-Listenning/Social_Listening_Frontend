@@ -16,6 +16,21 @@
   }
 }
 
+.import-content {
+  height: 90%;
+  margin-top: 2.8rem;
+
+  .required-column {
+    &::after {
+      content: ' *';
+    }
+  }
+
+  .error-column {
+    color: var(--error-color);
+  }
+}
+
 .ant-table-thead {
   height: 6rem;
 

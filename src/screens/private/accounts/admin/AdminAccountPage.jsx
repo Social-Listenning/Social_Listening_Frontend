@@ -4,10 +4,10 @@ import AddEditAdminAccount from './AddEditAdminAccount';
 
 export default function AdminAccountManagement() {
   const columns = [
-    {
-      title: 'Id',
-      dataIndex: 'id',
-    },
+    // {
+    //   title: 'Id',
+    //   dataIndex: 'id',
+    // },
     {
       title: 'Active',
       dataIndex: 'isActive',
@@ -21,6 +21,7 @@ export default function AdminAccountManagement() {
     {
       title: 'Email',
       dataIndex: 'email',
+      required: true,
     },
     {
       title: 'Role',
@@ -40,10 +41,15 @@ export default function AdminAccountManagement() {
     },
   ];
 
+  const importColumns = columns.filter(
+    (col) => col?.title !== 'Active'
+  );
+
   return (
     <AdminTable
-      columns={columns}
       apiGetData="/user"
+      columns={columns}
+      importColumns={importColumns}
       addEditComponent={<AddEditAdminAccount />}
     />
   );

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Space, Drawer } from 'antd';
-import SaveButton from '../Button/SaveButton';
-import CancelButton from '../Button/CancelButton';
+import SaveButton from '../../Button/SaveButton';
+import CancelButton from '../../Button/CancelButton';
 
 export default function AddEditWrapper(props) {
   const {
