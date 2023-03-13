@@ -105,9 +105,9 @@ export default function AdminTable(props) {
           totalElement: 10000,
         })
         .then((resp) => {
-          if (resp?.Data) {
+          if (resp?.data) {
             setData(
-              resp.Data.map((x, index) => {
+              resp.data.map((x, index) => {
                 return {
                   ...x,
                   key: index,
