@@ -21,10 +21,12 @@ export default function OwnerAccountManagement() {
     {
       title: 'Email',
       dataIndex: 'email',
+      required: true,
     },
     {
       title: 'Role',
       dataIndex: 'role',
+      required: true,
     },
     {
       title: 'Full Name',
@@ -40,10 +42,16 @@ export default function OwnerAccountManagement() {
     },
   ];
 
+  const importColumns = columns.filter(
+    (col) => col?.title !== 'Active'
+  );
+
   return (
     <AdminTable
-      columns={columns}
       apiGetData="/user/all"
+      columns={columns}
+      importColumns={importColumns}
+      apiImport="/user/import"
       addEditComponent={<AddEditOwnerAccount />}
     />
   );

@@ -93,11 +93,13 @@ export default function TabelUtils(props) {
             openAddEdit(true);
           }}
         />
-        <ImportButton
-          onClick={() => {
-            setOpenImport(true);
-          }}
-        />
+        {apiImport && importColumns?.length > 0 && (
+          <ImportButton
+            onClick={() => {
+              setOpenImport(true);
+            }}
+          />
+        )}
         <ExportButton onClick={() => {}} />
         {showDelete && (
           <DeleteButton
