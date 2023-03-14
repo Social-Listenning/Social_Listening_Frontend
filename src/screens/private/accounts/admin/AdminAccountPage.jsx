@@ -17,6 +17,9 @@ export default function AdminAccountManagement() {
       onCell: (record, _) => ({
         className: 'text-center',
       }),
+      sort: false,
+      width: 60,
+      maxWidth: 60,
     },
     {
       title: 'Email',
@@ -25,7 +28,7 @@ export default function AdminAccountManagement() {
     },
     {
       title: 'Role',
-      dataIndex: 'role',
+      dataIndex: 'role.roleName',
       required: true,
     },
     {

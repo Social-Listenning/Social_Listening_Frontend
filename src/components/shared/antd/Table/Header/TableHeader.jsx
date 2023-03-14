@@ -45,7 +45,7 @@ export default function TableHeader(props) {
   function formatSorter(type) {
     if (type) {
       updateSorter((old) => {
-        let index = old.findIndex((x) => x?.props === title);
+        let index = old.findIndex((x) => x?.props === propsName);
         if (index >= 0) {
           old[index].sortDir = type;
           return [...old];
@@ -55,7 +55,7 @@ export default function TableHeader(props) {
       });
     } else {
       updateSorter((old) => {
-        let removeOldSorter = old.filter((x) => x?.props !== title);
+        let removeOldSorter = old.filter((x) => x?.props !== propsName);
         return removeOldSorter;
       });
     }
@@ -121,8 +121,6 @@ export default function TableHeader(props) {
       }
 
       setValue(null);
-      updateSorter([]);
-      updateFilter([]);
     }
   }, [refreshFilterSorter]);
   // #endregion

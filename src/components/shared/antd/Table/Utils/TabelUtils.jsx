@@ -120,11 +120,14 @@ export default function TabelUtils(props) {
               // uncheck the column for dropdown
               setSelectedKeys(selectedKeys.filter((x) => x !== e));
               // remove the column from table
-              updateColumn((old) => {
-                return old?.filter(
-                  (x) => x.title !== originFormatCol[e]
-                );
-              });
+              // updateColumn((old) => {
+              //   return old?.filter(
+              //     (x) => x.title !== originFormatCol[e]
+              //   );
+              // });
+              updateColumn(
+                columnList?.filter((x) => x.title !== originFormatCol[e])
+              );
             }
             // show column
             else {
@@ -133,11 +136,16 @@ export default function TabelUtils(props) {
                 return [...old, e].sort();
               });
               // add column back to table
-              updateColumn((old) => {
-                return [...old, originCol[e]].sort(
+              // updateColumn((old) => {
+              //   return [...old, originCol[e]].sort(
+              //     (a, b) => +a?.key.localeCompare(b?.key)
+              //   );
+              // });
+              updateColumn(
+                [...columnList, originCol[e]].sort(
                   (a, b) => +a?.key.localeCompare(b?.key)
-                );
-              });
+                )
+              );
             }
           }}
         >

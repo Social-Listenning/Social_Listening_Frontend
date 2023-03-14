@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { Table } from 'antd';
 import { ArrowRightOutlined, DownOutlined } from '@ant-design/icons';
-import useEffectOnce from '../../../../../hooks/useEffectOnce';
+import useEffectOnce from '../../../../hooks/useEffectOnce';
 import useUpdateEffect from '../../../../hooks/useUpdateEffect';
 import ClassicDropdown from '../../Dropdown/Classic';
 import ToolTipWrapper from '../../ToolTipWrapper';
