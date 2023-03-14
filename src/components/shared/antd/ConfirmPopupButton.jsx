@@ -1,5 +1,5 @@
 import { Button, Popconfirm } from 'antd';
-import useToggle from '../../../hooks/useToggle';
+import useToggle from '../../../components/hooks/useToggle';
 
 export default function ConfirmPopupButton(props) {
   const {

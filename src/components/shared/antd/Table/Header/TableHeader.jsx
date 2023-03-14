@@ -4,7 +4,7 @@ import {
   CaretUpOutlined,
   CaretDownOutlined,
 } from '@ant-design/icons';
-import useUpdateEffect from '../../../../../hooks/useUpdateEffect';
+import useUpdateEffect from '../../../../hooks/useUpdateEffect';
 import { FilterType } from '../../../../../constants/table/filter';
 import ClassicDropdown from '../../Dropdown/Classic';
 import ClassicSelect from '../../Select/Classic';
