@@ -17,6 +17,7 @@ export default function AdminTable(props) {
   const {
     columns = [],
     importColumns = columns,
+    dumpImportData = [],
     actionList = defaultAction,
     apiGetData,
     apiDeleteOne,
@@ -68,6 +69,10 @@ export default function AdminTable(props) {
   const [sorter, setSorter] = useState([]);
   const [loading, toggleLoading] = useToggle(false); // loading state
   const tableContent = document.querySelector('.ant-table-body'); // table selector (for javascript purpose)
+  // get all the props that was nested (example: role.roleName)
+  const propsNested = columns
+    .filter((x) => x.dataIndex.includes('.'))
+    .map((x) => x.dataIndex);
 
   useEffectOnce(() => {
     refreshData();
@@ -104,6 +109,13 @@ export default function AdminTable(props) {
         })
         .then((resp) => {
           if (resp?.data) {
+            for (let prop of propsNested) {
+              resp.data.map(x => {
+                let dataNested = prop.split('.').reduce((obj, propertyName) => obj[propertyName], x)
+                x[prop] = dataNested;
+                return x;
+              })
+            }
             setData(
               resp.data.map((x, index) => {
                 return {
@@ -187,8 +199,8 @@ export default function AdminTable(props) {
     return column.map((col) => {
       maxWidth += col.width ?? 150;
       return {
-        ...col,
         resizeable: true, // default header can resize (you can change this if you want)
+        ...col,
         width: col.width ?? 150,
         title: (
           // custom header with filter, sorter
@@ -245,12 +257,13 @@ export default function AdminTable(props) {
     },
   };
   // #endregion
-  console.log('a');
+
   return (
     <>
       <TabelUtils
         columnList={columnUtil.current}
         importColumns={importColumns}
+        dumpImportData={dumpImportData}
         apiImport={apiImport}
         updateColumn={handleDisplayColumns}
         selectAction={selectAction}

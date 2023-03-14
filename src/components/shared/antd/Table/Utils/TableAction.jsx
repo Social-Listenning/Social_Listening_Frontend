@@ -1,6 +1,6 @@
 import { MoreOutlined } from '@ant-design/icons';
 import ClassicDropdown from '../../Dropdown/Classic';
-import IconButton from '../../Button/IconButton';
+import IconButton from '../../../element/Button/IconButton';
 import ToolTipWrapper from '../../ToolTipWrapper';
 
 export default function TableAction(props) {

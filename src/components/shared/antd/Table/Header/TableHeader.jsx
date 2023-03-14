@@ -8,7 +8,7 @@ import useUpdateEffect from '../../../../hooks/useUpdateEffect';
 import { FilterType } from '../../../../../constants/table/filter';
 import ClassicDropdown from '../../Dropdown/Classic';
 import ClassicSelect from '../../Select/Classic';
-import FloatInput from '../../FloatingInput/FloatInput';
+import FloatInput from '../../../element/FloatingInput/FloatInput';
 import ToolTipWrapper from '../../ToolTipWrapper';
 
 export default function TableHeader(props) {
@@ -55,7 +55,9 @@ export default function TableHeader(props) {
       });
     } else {
       updateSorter((old) => {
-        let removeOldSorter = old.filter((x) => x?.props !== propsName);
+        let removeOldSorter = old.filter(
+          (x) => x?.props !== propsName
+        );
         return removeOldSorter;
       });
     }
@@ -74,9 +76,7 @@ export default function TableHeader(props) {
           .findIndex((x) => x === filterOperator.current)
           ?.toString()
       );
-      if (value) {
-        formatFilter();
-      }
+      formatFilter();
     }
   }
 
@@ -102,7 +102,9 @@ export default function TableHeader(props) {
     } else {
       updateFilter((old) => {
         if (old.filter((x) => x?.props === propsName)?.length > 0) {
-          let removeOldFilter = old.filter((x) => x?.props !== propsName);
+          let removeOldFilter = old.filter(
+            (x) => x?.props !== propsName
+          );
           return removeOldFilter;
         } else return old;
       });

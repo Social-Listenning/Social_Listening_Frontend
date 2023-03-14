@@ -7,7 +7,7 @@ import { Checker } from '../../../utils/dataChecker';
 import { gender } from '../../../constants/profile/profile';
 import useEffectOnce from '../../../components/hooks/useEffectOnce';
 import useToggle from '../../../components/hooks/useToggle';
-import SaveButton from '../../../components/shared/antd/Button/SaveButton';
+import SaveButton from '../../../components/shared/element/Button/SaveButton';
 import './profile.scss';
 
 export default function ProfilePage() {

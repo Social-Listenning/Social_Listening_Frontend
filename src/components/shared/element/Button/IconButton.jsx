@@ -1,5 +1,5 @@
 import { Button } from 'antd';
-import ToolTipWrapper from '../ToolTipWrapper';
+import ToolTipWrapper from '../../antd/ToolTipWrapper';
 import './button.scss';
 
 export default function IconButton(props) {

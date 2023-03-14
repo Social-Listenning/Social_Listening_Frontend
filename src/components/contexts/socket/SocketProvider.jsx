@@ -1,6 +1,6 @@
 import { useState, createContext, useContext } from 'react';
 import io from 'socket.io-client';
-import environment from '../../constants/environment/environment.dev';
+import environment from '../../../constants/environment/environment.dev';
 
 export const SocketContext = createContext();
 

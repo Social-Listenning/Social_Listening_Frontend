@@ -14,7 +14,7 @@ import { localStorageService } from '../../services/localStorageService';
 import { notifyService } from '../../services/notifyService';
 import { menuSidebar } from '../../constants/menu/sidebar';
 import { menuUserHeader } from '../../constants/menu/header';
-import { useSocket } from '../../components/socket/SocketProvider';
+import { useSocket } from '../../components/contexts/socket/SocketProvider';
 import useEffectOnce from '../../components/hooks/useEffectOnce';
 import useToggle from '../../components/hooks/useToggle';
 import Title from '../../components/shared/element/Title';

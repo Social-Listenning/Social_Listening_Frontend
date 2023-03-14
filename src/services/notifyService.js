@@ -1,5 +1,9 @@
 import { notification } from 'antd';
 
+notification.config({
+  maxCount: 5,
+});
+
 const showSucsessMessage = (content) => {
   notification.success({
     message: content,
