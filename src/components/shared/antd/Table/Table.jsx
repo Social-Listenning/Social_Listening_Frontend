@@ -267,6 +267,7 @@ export default function AdminTable(props) {
   return (
     <>
       <TabelUtils
+        originColumn={columns}
         columnList={columnUtil.current}
         importColumns={importColumns}
         dumpImportData={dumpImportData}
