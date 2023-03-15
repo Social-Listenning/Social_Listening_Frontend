@@ -111,9 +111,9 @@ export default function AdminTable(props) {
           totalElement: 10000,
         })
         .then((resp) => {
-          if (resp?.data) {
+          if (resp?.result?.data) {
             for (let prop of propsNested) {
-              resp.data.map((x) => {
+              resp.result.data.map((x) => {
                 let dataNested = prop
                   .split('.')
                   .reduce(
@@ -125,7 +125,7 @@ export default function AdminTable(props) {
               });
             }
             setData(
-              resp.data.map((x, index) => {
+              resp.result.data.map((x, index) => {
                 return {
                   ...x,
                   key: index,

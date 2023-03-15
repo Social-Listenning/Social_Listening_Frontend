@@ -13,7 +13,8 @@ const SocketProvider = ({ children }) => {
     }
 
     const token = localStorage.getItem('token');
-    const sk = io(environment.baseUrl, {
+    const sk = io(environment.webSocket, {
+      transports: ['websocket'],
       autoConnect: false,
     });
 
@@ -21,12 +22,14 @@ const SocketProvider = ({ children }) => {
       sk.auth = { token };
       sk.connect();
       setSocket(sk);
+      console.log('Connect to socket');
     }
   };
 
   const disconnect = () => {
     if (socket) {
       socket.close();
+      console.log('Disconnect to socket');
     }
   };
 

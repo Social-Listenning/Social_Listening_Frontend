@@ -66,7 +66,7 @@ export default function PrivateLayout(props) {
 
   useEffectOnce(
     () => {
-      // connect();
+      connect();
       setAvailableMenu(
         filterMenuByRole(menuSidebar, decodedToken?.role)
       );
@@ -82,6 +82,7 @@ export default function PrivateLayout(props) {
     if (menuUserHeader[e.key] === 'Logout') {
       apiService.post('/auth/log-out').then((resp) => {
         if (resp?.result) {
+          disconnect();
           localStorage.removeItem('token');
           navigate('/login');
           notifyService.showSucsessMessage(
