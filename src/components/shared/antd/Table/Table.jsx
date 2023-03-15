@@ -24,7 +24,7 @@ export default function AdminTable(props) {
     apiDeleteMultiple,
     apiImport,
     addEditComponent,
-    keyProps = columns[0]?.dataIndex,
+    keyProps = columns[0]?.dataIndex, // for delete purpose
   } = props;
 
   // #region table utils
@@ -70,12 +70,15 @@ export default function AdminTable(props) {
   const [loading, toggleLoading] = useToggle(false); // loading state
   const tableContent = document.querySelector('.ant-table-body'); // table selector (for javascript purpose)
   // get all the props that was nested (example: role.roleName)
-  const propsNested = columns
-    .filter((x) => x.dataIndex.includes('.'))
-    .map((x) => x.dataIndex);
+  let propsNested = [];
 
   useEffectOnce(() => {
     refreshData();
+
+    // get props nested once (don't need to get multiple times)
+    propsNested = columns
+      .filter((x) => x.dataIndex.includes('.'))
+      .map((x) => x.dataIndex);
   });
 
   useUpdateEffect(() => {
@@ -110,11 +113,16 @@ export default function AdminTable(props) {
         .then((resp) => {
           if (resp?.data) {
             for (let prop of propsNested) {
-              resp.data.map(x => {
-                let dataNested = prop.split('.').reduce((obj, propertyName) => obj[propertyName], x)
+              resp.data.map((x) => {
+                let dataNested = prop
+                  .split('.')
+                  .reduce(
+                    (obj, propertyName) => obj[propertyName],
+                    x
+                  );
                 x[prop] = dataNested;
                 return x;
-              })
+              });
             }
             setData(
               resp.data.map((x, index) => {
@@ -136,13 +144,11 @@ export default function AdminTable(props) {
     if (row && apiDeleteOne) {
       const key = row[keyProps]; // get value with object key
 
-      apiService
-        .delete(`${apiDeleteOne}?${keyProps}=${key}`)
-        .then((resp) => {
-          if (resp?.result) {
-            refreshData();
-          }
-        });
+      apiService.delete(`${apiDeleteOne}/${key}`).then((resp) => {
+        if (resp?.result) {
+          refreshData();
+        }
+      });
     }
   }
 

@@ -34,11 +34,12 @@
   .mapped-row {
     height: 5rem;
     justify-content: start;
+    gap: 0.4rem;
   }
 
   .required-column {
     &::after {
-      content: ' *';
+      content: '*';
     }
   }
 

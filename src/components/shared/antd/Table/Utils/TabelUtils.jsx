@@ -162,7 +162,7 @@ export default function TabelUtils(props) {
         toggleOpen={setOpenImport}
         apiImport={apiImport}
         dumpImportData={dumpImportData}
-        tableColumn={importColumns}
+        importColumns={importColumns}
       />
     </>
   );

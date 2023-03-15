@@ -15,28 +15,29 @@ import TableMapData from '../Utils/TableMapData';
 import Hint from '../../../element/Hint';
 
 export default function ImportDrawer(props) {
-  const { open, toggleOpen, apiImport, tableColumn, dumpImportData } =
-    props;
+  const {
+    open,
+    toggleOpen,
+    apiImport,
+    importColumns,
+    dumpImportData,
+  } = props;
 
   const downloadUrl = useRef(null);
   function generateExcelFile(data) {
-    // Generate the file data
-    const headers = [
-      tableColumn.map((item) => {
-        if (item.required) {
-          item.title += ' *';
-        }
-        return item.title;
-      }),
-    ];
-
-    const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.json_to_sheet([]);
-    XLSX.utils.sheet_add_aoa(worksheet, headers);
+    // write data to excel
+    const workbook = XLSX.utils.book_new(); // create workbook
+    const worksheet = XLSX.utils.json_to_sheet([]); //create worksheet
+    // write first row (header)
+    XLSX.utils.sheet_add_aoa(worksheet, [
+      importColumns.map((item) => item.title),
+    ]);
+    // write second row to end (data)
     XLSX.utils.sheet_add_json(worksheet, data, {
       origin: 'A2',
       skipHeader: true,
     });
+    // append to sheet 1
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
     const file = XLSX.write(workbook, {
       type: 'buffer',
@@ -44,17 +45,9 @@ export default function ImportDrawer(props) {
     });
 
     // Create url
-    const url = window.URL.createObjectURL(new Blob([file]));
-    downloadUrl.current = url;
-    // const link = document.createElement('a');
-    // link.href = url;
-    // link.setAttribute('download', 'data.xlsx');
-    // document.body.appendChild(link);
-    // link.click();
-
-    // // Cleanup
-    // document.body.removeChild(link);
-    // URL.revokeObjectURL(url);
+    downloadUrl.current = window.URL.createObjectURL(
+      new Blob([file])
+    );
   }
   useEffectOnce(() => {
     generateExcelFile(dumpImportData);
@@ -92,7 +85,7 @@ export default function ImportDrawer(props) {
       .map((item) => {
         return {
           header: item.leftCol,
-          props: tableColumn.filter(
+          props: importColumns.filter(
             (col) => col?.title === item?.rightCol
           )[0]?.dataIndex,
         };
@@ -245,7 +238,7 @@ export default function ImportDrawer(props) {
         ) : currentStep === 1 ? (
           <TableMapData
             leftCol={header.current}
-            rightCol={tableColumn}
+            rightCol={importColumns}
             getColMapped={setColMapped}
           />
         ) : null}

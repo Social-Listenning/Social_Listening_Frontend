@@ -92,6 +92,8 @@ export default function OwnerAccountManagement() {
       importColumns={importColumns}
       dumpImportData={dumpImportData}
       apiImport="/user/import"
+      apiDeleteOne="/remove"
+      keyProps="id"
       addEditComponent={<AddEditOwnerAccount />}
     />
   );
