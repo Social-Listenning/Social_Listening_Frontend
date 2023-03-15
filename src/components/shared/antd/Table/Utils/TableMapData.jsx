@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
 import { Table } from 'antd';
 import { ArrowRightOutlined, DownOutlined } from '@ant-design/icons';
-import useEffectOnce from '../../../../../hooks/useEffectOnce';
-import useUpdateEffect from '../../../../../hooks/useUpdateEffect';
+import useEffectOnce from '../../../../hooks/useEffectOnce';
+import useUpdateEffect from '../../../../hooks/useUpdateEffect';
 import ClassicDropdown from '../../Dropdown/Classic';
 import ToolTipWrapper from '../../ToolTipWrapper';
 
@@ -19,7 +19,7 @@ export default function TableMapData(props) {
       key: 'leftCol',
       render: (text) => (
         <ToolTipWrapper
-          tooltip="Click to open options"
+          tooltip="Click to choose excel column"
           placement="left"
         >
           <div>
@@ -35,10 +35,7 @@ export default function TableMapData(props) {
                 getColMapped([...dataSource]);
               }}
             >
-              <div
-                className="pointer flex-center"
-                style={{ height: '5rem' }}
-              >
+              <div className="pointer flex-center mapped-row">
                 <span style={{ flex: '1' }}>{text}</span>
                 <DownOutlined style={{ fontSize: '1rem' }} />
               </div>
@@ -68,14 +65,30 @@ export default function TableMapData(props) {
       dataIndex: 'rightCol',
       key: 'rightCol',
       render: (text, record) => {
-        let className = '';
+        let className = 'mapped-row flex-center';
         if (rightCol[record.key]?.required) {
-          className = 'required-column';
+          className += ' required-column';
           if (!record.leftCol) {
             className += ' error-column';
           }
         }
-        return <div className={className}>{text}</div>;
+        return (
+          <ToolTipWrapper
+            tooltip={
+              rightCol[record.key]?.required
+                ? 'This column is required'
+                : ''
+            }
+            placement="left"
+          >
+            <div className={className}>{text}</div>
+          </ToolTipWrapper>
+        );
+      },
+      onCell: () => {
+        return {
+          style: { padding: '0 1.6rem' },
+        };
       },
     },
   ];
@@ -100,20 +113,20 @@ export default function TableMapData(props) {
   // push data to table
   function getDataSource() {
     if (leftCol?.length > 0 && rightCol?.length > 0) {
-      let dumbData = [];
+      let dumpData = [];
       for (let i = 0; i < rightCol.length; i++) {
         let leftColData = leftCol.filter((item) =>
           mapLeftToRight(item, rightCol[i]?.title)
         )[0];
 
-        dumbData.push({
+        dumpData.push({
           key: i,
           leftCol: leftColData,
           rightCol: rightCol[i]?.title,
         });
       }
-      setDataSource(dumbData);
-      getColMapped(dumbData);
+      setDataSource(dumpData);
+      getColMapped(dumpData);
     }
   }
 

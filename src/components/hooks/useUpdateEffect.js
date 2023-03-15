@@ -1,6 +1,10 @@
 import { useEffect, useRef } from 'react';
 
-export default function useUpdateEffect(callback, dependencies) {
+export default function useUpdateEffect(
+  callback,
+  dependencies,
+  destroy = null
+) {
   const firstRenderRef = useRef(true);
 
   useEffect(() => {
@@ -13,6 +17,7 @@ export default function useUpdateEffect(callback, dependencies) {
       return callback();
     }
     return () => {
+      if (destroy !== null) destroy();
       onDestroy = true;
     };
   }, dependencies);

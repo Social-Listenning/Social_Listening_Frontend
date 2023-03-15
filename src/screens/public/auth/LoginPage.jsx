@@ -5,7 +5,7 @@ import { customHistory } from '../../../routes/CustomRouter';
 import { apiService } from '../../../services/apiService';
 import { localStorageService } from '../../../services/localStorageService';
 import { notifyService } from '../../../services/notifyService';
-import useToggle from '../../../hooks/useToggle';
+import useToggle from '../../../components/hooks/useToggle';
 import ToolTipWrapper from '../../../components/shared/antd/ToolTipWrapper';
 import authImage from '../../../assets/images/auth.png';
 import './auth.scss';

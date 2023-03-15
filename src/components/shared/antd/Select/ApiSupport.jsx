@@ -3,8 +3,8 @@ import { Select } from 'antd';
 import { apiService } from '../../../../services/apiService';
 import { Checker } from '../../../../utils/dataChecker';
 import { Converter } from '../../../../utils/dataConverter';
-import useEffectOnce from '../../../../hooks/useEffectOnce';
-import useToggle from '../../../../hooks/useToggle';
+import useEffectOnce from '../../../../components/hooks/useEffectOnce';
+import useToggle from '../../../../components/hooks/useToggle';
 import LoadingWrapper from '../LoadingWrapper';
 
 export default function ApiSupportSelect(props) {

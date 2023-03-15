@@ -2,20 +2,21 @@ import { useState } from 'react';
 import { ReloadOutlined, TableOutlined } from '@ant-design/icons';
 import { localStorageService } from '../../../../../services/localStorageService';
 import { Checker } from '../../../../../utils/dataChecker';
-import useEffectOnce from '../../../../../hooks/useEffectOnce';
-import useUpdateEffect from '../../../../../hooks/useUpdateEffect';
+import useEffectOnce from '../../../../hooks/useEffectOnce';
+import useUpdateEffect from '../../../../hooks/useUpdateEffect';
 import WithCheckbox from '../../Dropdown/WithCheckbox';
 import ImportDrawer from '../Drawer/ImportDrawer';
-import IconButton from '../../Button/IconButton';
-import NewButton from '../../Button/NewButton';
-import DeleteButton from '../../Button/DeleteButton';
-import ImportButton from '../../Button/ImportButton';
-import ExportButton from '../../Button/ExportButton';
+import IconButton from '../../../element/Button/IconButton';
+import NewButton from '../../../element/Button/NewButton';
+import DeleteButton from '../../../element/Button/DeleteButton';
+import ImportButton from '../../../element/Button/ImportButton';
+import ExportButton from '../../../element/Button/ExportButton';
 
 export default function TabelUtils(props) {
   const {
     columnList,
     apiImport,
+    dumpImportData,
     importColumns,
     updateColumn,
     selectAction,
@@ -82,8 +83,10 @@ export default function TabelUtils(props) {
     columnList?.map((x) => x?.title);
   // #endregion
 
+  // #region drawer section
   const [openImport, setOpenImport] = useState(false);
-
+  // #endregion
+  
   return (
     <>
       <div className="table-toolbars flex-center">
@@ -120,11 +123,11 @@ export default function TabelUtils(props) {
               // uncheck the column for dropdown
               setSelectedKeys(selectedKeys.filter((x) => x !== e));
               // remove the column from table
-              updateColumn((old) => {
-                return old?.filter(
+              updateColumn(
+                columnList?.filter(
                   (x) => x.title !== originFormatCol[e]
-                );
-              });
+                )
+              );
             }
             // show column
             else {
@@ -133,11 +136,11 @@ export default function TabelUtils(props) {
                 return [...old, e].sort();
               });
               // add column back to table
-              updateColumn((old) => {
-                return [...old, originCol[e]].sort(
+              updateColumn(
+                [...columnList, originCol[e]].sort(
                   (a, b) => +a?.key.localeCompare(b?.key)
-                );
-              });
+                )
+              );
             }
           }}
         >
@@ -158,7 +161,8 @@ export default function TabelUtils(props) {
         open={openImport}
         toggleOpen={setOpenImport}
         apiImport={apiImport}
-        tableColumn={importColumns}
+        dumpImportData={dumpImportData}
+        importColumns={importColumns}
       />
     </>
   );

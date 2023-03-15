@@ -5,7 +5,7 @@ import { apiService } from '../../../services/apiService';
 import { notifyService } from '../../../services/notifyService';
 import { localStorageService } from '../../../services/localStorageService';
 import { customHistory } from '../../../routes/CustomRouter';
-import useToggle from '../../../hooks/useToggle';
+import useToggle from '../../../components/hooks/useToggle';
 import './auth.scss';
 
 export default function ConfirmEmail() {

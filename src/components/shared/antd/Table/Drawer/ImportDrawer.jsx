@@ -1,17 +1,57 @@
 import { useState, useRef } from 'react';
 import { Drawer, Space, Steps } from 'antd';
+import * as XLSX from 'xlsx';
 import { apiService } from '../../../../../services/apiService';
 import { notifyService } from '../../../../../services/notifyService';
-import useUpdateEffect from '../../../../../hooks/useUpdateEffect';
-import useToggle from '../../../../../hooks/useToggle';
-import CancelButton from '../../Button/CancelButton';
-import NextButton from '../../Button/NextButton';
-import PreviousButton from '../../Button/PreviousButton';
+import useEffectOnce from '../../../../hooks/useEffectOnce';
+import useUpdateEffect from '../../../../hooks/useUpdateEffect';
+import useToggle from '../../../../hooks/useToggle';
+import CancelButton from '../../../element/Button/CancelButton';
+import NextButton from '../../../element/Button/NextButton';
+import PreviousButton from '../../../element/Button/PreviousButton';
+import UploadButton from '../../../element/Button/UploadButton';
 import UploadFile from '../Utils/UploadFile';
 import TableMapData from '../Utils/TableMapData';
+import Hint from '../../../element/Hint';
 
 export default function ImportDrawer(props) {
-  const { open, toggleOpen, apiImport, tableColumn } = props;
+  const {
+    open,
+    toggleOpen,
+    apiImport,
+    importColumns,
+    dumpImportData,
+  } = props;
+
+  const downloadUrl = useRef(null);
+  function generateExcelFile(data) {
+    // write data to excel
+    const workbook = XLSX.utils.book_new(); // create workbook
+    const worksheet = XLSX.utils.json_to_sheet([]); //create worksheet
+    // write first row (header)
+    XLSX.utils.sheet_add_aoa(worksheet, [
+      importColumns.map((item) => item.title),
+    ]);
+    // write second row to end (data)
+    XLSX.utils.sheet_add_json(worksheet, data, {
+      origin: 'A2',
+      skipHeader: true,
+    });
+    // append to sheet 1
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+    const file = XLSX.write(workbook, {
+      type: 'buffer',
+      bookType: 'xlsx',
+    });
+
+    // Create url
+    downloadUrl.current = window.URL.createObjectURL(
+      new Blob([file])
+    );
+  }
+  useEffectOnce(() => {
+    generateExcelFile(dumpImportData);
+  });
 
   // const [data, setData] = useState([]); // rows data in excel
   const propsMapped = useRef([]); // header mapped to table col props
@@ -45,7 +85,7 @@ export default function ImportDrawer(props) {
       .map((item) => {
         return {
           header: item.leftCol,
-          props: tableColumn.filter(
+          props: importColumns.filter(
             (col) => col?.title === item?.rightCol
           )[0]?.dataIndex,
         };
@@ -168,13 +208,43 @@ export default function ImportDrawer(props) {
         ]}
       />
       <div className="import-content">
-        {currentStep === 1 && (
+        {currentStep === 0 ? (
+          <div className="flex-center first-step">
+            <Hint
+              message={
+                <div className="import-hint">
+                  <span>
+                    Only excel files (.xlsx, .xls) are allowed.
+                  </span>
+                  <span>
+                    You can download example Excel file by clicking
+                    the Download button below or click{' '}
+                    <a
+                      href={downloadUrl.current}
+                      download="example.xlsx"
+                    >
+                      here
+                    </a>
+                    .
+                  </span>
+                  <span>
+                    You must choose file by clicking the Choose file
+                    button below.
+                  </span>
+                </div>
+              }
+            />
+            <UploadFile getDataFromFile={getDataFromFile}>
+              <UploadButton>Choose file</UploadButton>
+            </UploadFile>
+          </div>
+        ) : currentStep === 1 ? (
           <TableMapData
             leftCol={header.current}
-            rightCol={tableColumn}
+            rightCol={importColumns}
             getColMapped={setColMapped}
           />
-        )}
+        ) : null}
       </div>
     </Drawer>
   );

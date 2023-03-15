@@ -1,8 +1,11 @@
-import AppRoutes from "./routes";
+import AppRoutes from './routes';
+import SocketProvider from './components/contexts/socket/SocketProvider';
 
 function App() {
   return (
-    <AppRoutes />
+    <SocketProvider>
+      <AppRoutes />
+    </SocketProvider>
   );
 }
 

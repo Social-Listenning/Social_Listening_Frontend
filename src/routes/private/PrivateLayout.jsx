@@ -7,7 +7,6 @@ import {
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { decodeToken } from 'react-jwt';
-import useToggle from '../../hooks/useToggle';
 import { Getter } from '../../utils/dataGetter';
 import { Converter } from '../../utils/dataConverter';
 import { apiService } from '../../services/apiService';
@@ -15,7 +14,9 @@ import { localStorageService } from '../../services/localStorageService';
 import { notifyService } from '../../services/notifyService';
 import { menuSidebar } from '../../constants/menu/sidebar';
 import { menuUserHeader } from '../../constants/menu/header';
-import useEffectOnce from '../../hooks/useEffectOnce';
+import { useSocket } from '../../components/contexts/socket/SocketProvider';
+import useEffectOnce from '../../components/hooks/useEffectOnce';
+import useToggle from '../../components/hooks/useToggle';
 import Title from '../../components/shared/element/Title';
 import ToolTipWrapper from '../../components/shared/antd/ToolTipWrapper';
 import ClassicDropdown from '../../components/shared/antd/Dropdown/Classic';
@@ -26,6 +27,7 @@ const { Header, Content, Sider } = Layout;
 export default function PrivateLayout(props) {
   const [collapsed, setCollapsed] = useToggle(false);
   const navigate = useNavigate();
+  const { socket, connect, disconnect } = useSocket();
 
   const path = Getter.getPathName(); // also the key of the menu sidebar
   const listPath = path?.split('/');
@@ -63,11 +65,18 @@ export default function PrivateLayout(props) {
       .filter(Boolean);
   }
 
-  useEffectOnce(() => {
-    setAvailableMenu(
-      filterMenuByRole(menuSidebar, decodedToken?.role)
-    );
-  });
+  useEffectOnce(
+    () => {
+      // connect();
+      setAvailableMenu(
+        filterMenuByRole(menuSidebar, decodedToken?.role)
+      );
+    },
+    // onDestroy function
+    () => {
+      disconnect();
+    }
+  );
 
   function handleMenuHeader(e) {
     // logout option

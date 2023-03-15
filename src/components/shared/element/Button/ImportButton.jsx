@@ -1,6 +1,6 @@
 import { Button } from 'antd';
 import { ImportOutlined } from '@ant-design/icons';
-import ToolTipWrapper from '../ToolTipWrapper';
+import ToolTipWrapper from '../../antd/ToolTipWrapper';
 
 export default function ImportButton(props) {
   return (

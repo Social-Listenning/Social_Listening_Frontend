@@ -5,9 +5,9 @@ import { apiService } from '../../../services/apiService';
 import { notifyService } from '../../../services/notifyService';
 import { Checker } from '../../../utils/dataChecker';
 import { gender } from '../../../constants/profile/profile';
-import useEffectOnce from '../../../hooks/useEffectOnce';
-import useToggle from '../../../hooks/useToggle';
-import SaveButton from '../../../components/shared/antd/Button/SaveButton';
+import useEffectOnce from '../../../components/hooks/useEffectOnce';
+import useToggle from '../../../components/hooks/useToggle';
+import SaveButton from '../../../components/shared/element/Button/SaveButton';
 import './profile.scss';
 
 export default function ProfilePage() {

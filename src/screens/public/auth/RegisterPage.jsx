@@ -3,7 +3,7 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiService } from '../../../services/apiService';
 import { notifyService } from '../../../services/notifyService';
-import useToggle from '../../../hooks/useToggle';
+import useToggle from '../../../components/hooks/useToggle';
 import authImage from '../../../assets/images/auth.png';
 import ToolTipWrapper from '../../../components/shared/antd/ToolTipWrapper';
 import './auth.scss';

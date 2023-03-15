@@ -2,9 +2,9 @@ import { Table } from 'antd';
 import { useState, useRef } from 'react';
 import { apiService } from '../../../../services/apiService';
 import { defaultAction } from '../../../../constants/table/action';
-import useEffectOnce from '../../../../hooks/useEffectOnce';
-import useUpdateEffect from '../../../../hooks/useUpdateEffect';
-import useToggle from '../../../../hooks/useToggle';
+import useEffectOnce from '../../../hooks/useEffectOnce';
+import useUpdateEffect from '../../../hooks/useUpdateEffect';
+import useToggle from '../../../hooks/useToggle';
 import TableHeader from './Header/TableHeader';
 import ResizeableTitle from './Header/ResizeableTitle';
 import TabelUtils from './Utils/TabelUtils';
@@ -17,20 +17,21 @@ export default function AdminTable(props) {
   const {
     columns = [],
     importColumns = columns,
+    dumpImportData = [],
     actionList = defaultAction,
     apiGetData,
     apiDeleteOne,
     apiDeleteMultiple,
     apiImport,
     addEditComponent,
-    keyProps = columns[0]?.dataIndex,
+    keyProps = columns[0]?.dataIndex, // for delete purpose
   } = props;
 
   // #region table utils
   // refresh the filters and sorters
   const [refreshFS, setRefreshFS] = useState(null);
   // user can show/hide columns they want
-  const [columnUtil, setColumnUtil] = useState(
+  const columnUtil = useRef(
     columns.map((col, index) => {
       return {
         ...col,
@@ -41,38 +42,43 @@ export default function AdminTable(props) {
 
   useUpdateEffect(() => {
     if (refreshFS) {
-      if (columnUtil?.length !== columns?.length) {
-        setColumnUtil(
-          columns.map((col, index) => {
-            return {
-              ...col,
-              key: index.toString(),
-            };
-          })
-        );
-      } else {
-        setResizeCol(formatHeaderCols);
-      }
+      handleDisplayColumns(
+        columns.map((col, index) => {
+          return {
+            ...col,
+            key: index.toString(),
+          };
+        })
+      );
+      setFilterType([]);
+      setSorter([]);
     }
   }, [refreshFS]);
 
-  // display columns
-  useUpdateEffect(() => {
-    setResizeCol(actionCol.concat(formatHeaders(columnUtil)));
+  function handleDisplayColumns(newCol) {
+    columnUtil.current = newCol;
+    setResizeCol(actionCol.concat(formatHeaders(newCol)));
     refreshData(false);
-  }, [columnUtil]);
+  }
   // #endregion
 
   // #region handle filter, sorter, refresh data
-  let maxWidth = 100 * columns.length; // 100 is the select row and action column
+  let maxWidth = 100; // 100 is the select row and action column
   const [data, setData] = useState([]);
   const [filterType, setFilterType] = useState([]);
   const [sorter, setSorter] = useState([]);
   const [loading, toggleLoading] = useToggle(false); // loading state
   const tableContent = document.querySelector('.ant-table-body'); // table selector (for javascript purpose)
+  // get all the props that was nested (example: role.roleName)
+  let propsNested = [];
 
   useEffectOnce(() => {
     refreshData();
+
+    // get props nested once (don't need to get multiple times)
+    propsNested = columns
+      .filter((x) => x.dataIndex.includes('.'))
+      .map((x) => x.dataIndex);
   });
 
   useUpdateEffect(() => {
@@ -89,8 +95,8 @@ export default function AdminTable(props) {
     tableContent?.scrollTo(0, 0);
 
     // remove the action and record
-    if (actionType) {
-      setActionType(null);
+    if (actionType.current) {
+      actionType.current = null;
       selectedRecord.current = null;
     }
 
@@ -106,6 +112,18 @@ export default function AdminTable(props) {
         })
         .then((resp) => {
           if (resp?.data) {
+            for (let prop of propsNested) {
+              resp.data.map((x) => {
+                let dataNested = prop
+                  .split('.')
+                  .reduce(
+                    (obj, propertyName) => obj[propertyName],
+                    x
+                  );
+                x[prop] = dataNested;
+                return x;
+              });
+            }
             setData(
               resp.data.map((x, index) => {
                 return {
@@ -126,13 +144,11 @@ export default function AdminTable(props) {
     if (row && apiDeleteOne) {
       const key = row[keyProps]; // get value with object key
 
-      apiService
-        .delete(`${apiDeleteOne}?${keyProps}=${key}`)
-        .then((resp) => {
-          if (resp?.result) {
-            refreshData();
-          }
-        });
+      apiService.delete(`${apiDeleteOne}/${key}`).then((resp) => {
+        if (resp?.result) {
+          refreshData();
+        }
+      });
     }
   }
 
@@ -143,12 +159,16 @@ export default function AdminTable(props) {
 
   // #region add filter, action to header
   const [openAddEdit, toggleOpenAddEdit] = useToggle(false);
-  const [actionType, setActionType] = useState(null);
+  const actionType = useRef(null);
   const selectedRecord = useRef(null);
 
   // remove the record when action is add
   if (actionType === 'Add') {
     selectedRecord.current = null;
+  }
+
+  function selectAction(action) {
+    actionType.current = action;
   }
 
   const actionCol = [
@@ -162,7 +182,7 @@ export default function AdminTable(props) {
         <TableAction
           actionList={actionList}
           selectedRecord={record}
-          selectAction={setActionType}
+          selectAction={selectAction}
           openAddEdit={toggleOpenAddEdit}
           onClickDelete={onClickDelete}
         />
@@ -178,15 +198,15 @@ export default function AdminTable(props) {
   ];
 
   const formatHeaderCols = actionCol.concat(
-    formatHeaders(columnUtil)
+    formatHeaders(columnUtil.current)
   );
 
   function formatHeaders(column) {
     return column.map((col) => {
       maxWidth += col.width ?? 150;
       return {
-        ...col,
         resizeable: true, // default header can resize (you can change this if you want)
+        ...col,
         width: col.width ?? 150,
         title: (
           // custom header with filter, sorter
@@ -247,11 +267,12 @@ export default function AdminTable(props) {
   return (
     <>
       <TabelUtils
-        columnList={columnUtil}
+        columnList={columnUtil.current}
         importColumns={importColumns}
+        dumpImportData={dumpImportData}
         apiImport={apiImport}
-        updateColumn={setColumnUtil}
-        selectAction={setActionType}
+        updateColumn={handleDisplayColumns}
+        selectAction={selectAction}
         openAddEdit={toggleOpenAddEdit}
         showDelete={selectedRowKeys?.length > 0}
         deleteMultiple={onMultipleDelete}
@@ -278,7 +299,7 @@ export default function AdminTable(props) {
         open={openAddEdit}
         toggleOpen={toggleOpenAddEdit}
         record={selectedRecord.current}
-        actionType={actionType}
+        actionType={actionType.current}
       >
         {addEditComponent}
       </AddEditWrapper>

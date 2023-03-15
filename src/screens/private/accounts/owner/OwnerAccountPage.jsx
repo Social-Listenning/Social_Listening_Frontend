@@ -4,23 +4,53 @@ import AddEditOwnerAccount from './AddEditOwnerAccount';
 
 export default function OwnerAccountManagement() {
   const columns = [
-    // {
-    //   title: 'Id',
-    //   dataIndex: 'id',
-    // },
     {
       title: 'Active',
       dataIndex: 'isActive',
       render: (record) => {
         return <BooleanRow active={record} />;
       },
-      onCell: (record, _) => ({
+      onCell: () => ({
         className: 'text-center',
       }),
+      sort: false,
+      resizeable: false,
+      width: 80,
     },
     {
       title: 'Email',
       dataIndex: 'email',
+      required: true,
+    },
+    {
+      title: 'Role',
+      dataIndex: 'role.RoleName',
+      required: true,
+      sort: false,
+    },
+    {
+      title: 'Full Name',
+      dataIndex: 'fullName',
+    },
+    {
+      title: 'User Name',
+      dataIndex: 'userName',
+    },
+    {
+      title: 'Phone',
+      dataIndex: 'phoneNumber',
+    },
+  ];
+
+  const importColumns = [
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      required: true,
+    },
+    {
+      title: 'Password',
+      dataIndex: 'password',
       required: true,
     },
     {
@@ -42,16 +72,28 @@ export default function OwnerAccountManagement() {
     },
   ];
 
-  const importColumns = columns.filter(
-    (col) => col?.title !== 'Active'
-  );
+  const dumpImportData = [
+    {
+      email: 'user1@gmail.com',
+      password: 'secret-password',
+      roleName: 'MANAGER',
+    },
+    {
+      email: 'user2@gmail.com',
+      password: 'secret-password',
+      roleName: 'SUPPORTER',
+    },
+  ];
 
   return (
     <AdminTable
-      apiGetData="/user/all"
       columns={columns}
+      apiGetData="/user/all"
       importColumns={importColumns}
+      dumpImportData={dumpImportData}
       apiImport="/user/import"
+      apiDeleteOne="/remove"
+      keyProps="id"
       addEditComponent={<AddEditOwnerAccount />}
     />
   );

@@ -20,9 +20,26 @@
   height: 90%;
   margin-top: 2.8rem;
 
+  .first-step {
+    flex-direction: column;
+    gap: 2.4rem;
+    
+    .import-hint {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+  }
+
+  .mapped-row {
+    height: 5rem;
+    justify-content: start;
+    gap: 0.4rem;
+  }
+
   .required-column {
     &::after {
-      content: ' *';
+      content: '*';
     }
   }
 
