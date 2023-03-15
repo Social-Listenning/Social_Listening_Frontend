@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { localStorageService } from '../services/localStorageService';
 import { notifyService } from '../services/notifyService';
 import { customHistory } from '../routes/CustomRouter';
 import environment from '../constants/environment/environment.dev';
@@ -8,7 +7,7 @@ const axiosInstance = axios.create({ baseURL: environment.baseUrl });
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorageService.getItem('token');
+    const token = localStorage.getItem('token');
     if (token) {
       config.headers = {
         ...config.headers,

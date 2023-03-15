@@ -3,7 +3,6 @@ import { MailTwoTone } from '@ant-design/icons';
 import { useLocation } from 'react-router-dom';
 import { apiService } from '../../../services/apiService';
 import { notifyService } from '../../../services/notifyService';
-import { localStorageService } from '../../../services/localStorageService';
 import { customHistory } from '../../../routes/CustomRouter';
 import useToggle from '../../../components/hooks/useToggle';
 import './auth.scss';
@@ -21,7 +20,7 @@ export default function ConfirmEmail() {
     toggleLoading(true);
     await apiService.post('/auth/log-in', authModel).then((resp) => {
       if (resp?.result) {
-        localStorageService.setItem('token', resp.result?.access);
+        localStorage.setItem('token', resp.result?.access);
         customHistory.push('/');
         notifyService.showSucsessMessage(null, 'Login successfully');
         // dont need to toggle loading

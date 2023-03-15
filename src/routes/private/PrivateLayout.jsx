@@ -10,7 +10,6 @@ import { decodeToken } from 'react-jwt';
 import { Getter } from '../../utils/dataGetter';
 import { Converter } from '../../utils/dataConverter';
 import { apiService } from '../../services/apiService';
-import { localStorageService } from '../../services/localStorageService';
 import { notifyService } from '../../services/notifyService';
 import { menuSidebar } from '../../constants/menu/sidebar';
 import { menuUserHeader } from '../../constants/menu/header';
@@ -38,7 +37,7 @@ export default function PrivateLayout(props) {
     Converter.convertStringToTitleCase(currentPath)
   );
 
-  const token = localStorageService.getItem('token');
+  const token = localStorage.getItem('token');
   const decodedToken = decodeToken(token);
 
   const [availableMenu, setAvailableMenu] = useState([]);
@@ -83,7 +82,7 @@ export default function PrivateLayout(props) {
     if (menuUserHeader[e.key] === 'Logout') {
       apiService.post('/auth/log-out').then((resp) => {
         if (resp?.result) {
-          localStorageService.clear('token');
+          localStorage.removeItem('token');
           navigate('/login');
           notifyService.showSucsessMessage(
             null,
