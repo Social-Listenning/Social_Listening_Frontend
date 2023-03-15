@@ -1,5 +1,6 @@
 import { Upload } from 'antd';
 import { read, utils } from 'xlsx';
+import { notifyService } from '../../../../../services/notifyService';
 
 export default function UploadFile(props) {
   const { getDataFromFile } = props;
@@ -7,11 +8,15 @@ export default function UploadFile(props) {
   async function handleUpload(file) {
     const reader = new FileReader();
     reader.onload = (e) => {
-      const workbook = read(e.target.result, { type: 'binary' });
-      const worksheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[worksheetName];
-      const header = getHeaderRow(worksheet) ?? [];
-      getDataFromFile(file, header)
+      try {
+        const workbook = read(e.target.result, { type: 'binary' });
+        const worksheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[worksheetName];
+        const header = getHeaderRow(worksheet) ?? [];
+        getDataFromFile(file, header);
+      } catch (ex) {
+        notifyService.showWarningMessage(null, "Only excel files (.xlsx, .xls) are allowed")
+      }
       // const sheetData = utils.sheet_to_json(worksheet); // get all data from excel
     };
     reader.readAsBinaryString(file);

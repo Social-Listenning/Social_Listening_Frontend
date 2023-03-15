@@ -85,7 +85,10 @@ export default function PrivateLayout(props) {
         if (resp?.result) {
           localStorageService.clear('token');
           navigate('/login');
-          notifyService.showSucsessMessage('Logout successfully');
+          notifyService.showSucsessMessage(
+            null,
+            'Logout successfully'
+          );
         }
       });
     }

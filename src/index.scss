@@ -2,7 +2,9 @@
   --primary-color: #1677ff;
   --light-primary-color: #4096ff;
   --gray-layout-color: #f5f5f5;
-  --error-color: #ff4d4f;
+  --success-color: #28a745;
+  --warning-color: #FF8800;
+  --error-color: #ff0000;
 
   --padding-layout: 1.6rem;
   --app-font-size: 1.6rem;
@@ -86,10 +88,14 @@ a:hover {
   background-color: var(--primary-color);
 }
 .ant-notification-notice {
-  .ant-notification-notice-content {
-    .ant-notification-notice-message {
-      margin-bottom: 0;
-    }
+  .ant-notification-notice-message,
+  .ant-notification-notice-description,
+  .ant-notification-notice-close {
+    color: #fff;
+  }
+  
+  .ant-notification-notice-close:hover {
+    color: #fff;
   }
 }
 // #endregion

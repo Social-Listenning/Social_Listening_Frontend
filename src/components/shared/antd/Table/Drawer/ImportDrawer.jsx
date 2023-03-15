@@ -116,6 +116,7 @@ export default function ImportDrawer(props) {
       if (resp?.result) {
         closeDrawer();
         notifyService.showSucsessMessage(
+          null,
           'Importing is processing, please wait for the success alert'
         );
       }

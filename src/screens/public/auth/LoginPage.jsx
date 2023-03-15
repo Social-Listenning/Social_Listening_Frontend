@@ -19,7 +19,7 @@ export default function LoginPage() {
       if (resp?.result) {
         localStorageService.setItem("token", resp.result?.access);
         customHistory.push('/');
-        notifyService.showSucsessMessage("Login successfully")
+        notifyService.showSucsessMessage(null, "Login successfully")
         // dont need to toggle loading
         // because it will redirect user
         return;

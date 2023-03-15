@@ -2,26 +2,37 @@ import { notification } from 'antd';
 
 notification.config({
   maxCount: 5,
+  duration: 3,
+  placement: 'bottomRight',
 });
 
-const showSucsessMessage = (content) => {
-  notification.success({
-    message: content,
-    duration: 1.5,
+const showSucsessMessage = (title, description) => {
+  notification.open({
+    message: title ?? 'Success',
+    description: description,
+    style: {
+      backgroundColor: 'var(--success-color)',
+    }
   });
 };
 
-const showErrorMessage = (content) => {
-  notification.error({
-    message: content,
-    duration: 1.5,
+const showErrorMessage = (title, description) => {
+  notification.open({
+    message: title ?? 'Error',
+    description: description,
+    style: {
+      backgroundColor: 'var(--error-color)',
+    }
   });
 };
 
-const showWarningMessage = (content) => {
-  notification.warning({
-    message: content,
-    duration: 1.5,
+const showWarningMessage = (title, description) => {
+  notification.open({
+    message: title ?? 'Warning',
+    description: description,
+    style: {
+      backgroundColor: 'var(--warning-color)',
+    }
   });
 };
 
