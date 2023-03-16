@@ -1,8 +1,5 @@
 import { useState } from 'react';
 import { ReloadOutlined, TableOutlined } from '@ant-design/icons';
-import { localStorageService } from '../../../../../services/localStorageService';
-import { Checker } from '../../../../../utils/dataChecker';
-import useEffectOnce from '../../../../hooks/useEffectOnce';
 import useUpdateEffect from '../../../../hooks/useUpdateEffect';
 import WithCheckbox from '../../Dropdown/WithCheckbox';
 import ImportDrawer from '../Drawer/ImportDrawer';
@@ -14,6 +11,7 @@ import ExportButton from '../../../element/Button/ExportButton';
 
 export default function TabelUtils(props) {
   const {
+    originColumn,
     columnList,
     apiImport,
     dumpImportData,
@@ -38,45 +36,13 @@ export default function TabelUtils(props) {
     }
   }, [columnList]);
 
-  // get the current path
-  const path = window.location.pathname;
-  // add column to the localstorage
-  useEffectOnce(() => {
-    const dataFromLocal =
-      localStorageService.getItem('table-columns');
-    // if it not empty, have to check the list
-    if (!Checker.isNullOrEmpty(dataFromLocal)) {
-      const columnLocal = JSON.parse(dataFromLocal);
-      // if the column want to add (columnList) not exist, then add new
-      if (
-        columnLocal?.filter((x) =>
-          Checker.isEqualArrays(x.col, columnList)
-        )?.length === 0
-      ) {
-        localStorageService.setItem(
-          'table-columns',
-          JSON.stringify([
-            ...columnLocal,
-            { path: path, col: columnList },
-          ])
-        );
-      }
-    }
-    // if it empty, add new array col
-    else {
-      localStorageService.setItem(
-        'table-columns',
-        JSON.stringify([{ path: path, col: columnList }])
-      );
-    }
-  });
-  // get column from the localstorage
-  // make sure when the columnList change, the column display in dropdown will be the same
-  const colSuitableWithPath = JSON.parse(
-    localStorageService.getItem('table-columns')
-  )?.filter((x) => x.path === path)[0];
-  // the origin one (this can't be change)
-  const originCol = colSuitableWithPath?.col;
+  // the original column cant't be changed
+  const originCol = [
+    ...originColumn.map((col, index) => {
+      col['key'] = index.toString();
+      return col;
+    }),
+  ];
   // the column that will display to UI (this can be change)
   const originFormatCol =
     originCol?.map((x) => x?.title) ??
@@ -86,7 +52,7 @@ export default function TabelUtils(props) {
   // #region drawer section
   const [openImport, setOpenImport] = useState(false);
   // #endregion
-  
+
   return (
     <>
       <div className="table-toolbars flex-center">

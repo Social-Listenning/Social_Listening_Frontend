@@ -1,6 +1,5 @@
 import { Form, Input, Radio } from 'antd';
 import { decodeToken } from 'react-jwt';
-import { localStorageService } from '../../../services/localStorageService';
 import { apiService } from '../../../services/apiService';
 import { notifyService } from '../../../services/notifyService';
 import { Checker } from '../../../utils/dataChecker';
@@ -11,7 +10,7 @@ import SaveButton from '../../../components/shared/element/Button/SaveButton';
 import './profile.scss';
 
 export default function ProfilePage() {
-  const token = localStorageService.getItem('token');
+  const token = localStorage.getItem('token');
   const decodedToken = decodeToken(token);
 
   const [accountForm] = Form.useForm();
@@ -39,7 +38,9 @@ export default function ProfilePage() {
 
     await apiService.post('', accountProfile).then((resp) => {
       if (resp?.result) {
-        notifyService.showSucsessMessage('Save profile successfully');
+        notifyService.showSucsessMessage({
+          description: 'Save profile successfully',
+        });
       }
     });
     toggleLoading(false);

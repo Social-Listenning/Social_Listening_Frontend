@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { localStorageService } from '../services/localStorageService';
 import { notifyService } from '../services/notifyService';
 import { customHistory } from '../routes/CustomRouter';
 import environment from '../constants/environment/environment.dev';
@@ -8,7 +7,7 @@ const axiosInstance = axios.create({ baseURL: environment.baseUrl });
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorageService.getItem('token');
+    const token = localStorage.getItem('token');
     if (token) {
       config.headers = {
         ...config.headers,
@@ -18,7 +17,7 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error) => {
-    notifyService.showErrorMessage(error);
+    notifyService.showErrorMessage({ description: error });
     return Promise.reject(error);
   }
 );
@@ -26,28 +25,36 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (resp) => {
     if (resp?.data?.message) {
-      notifyService.showErrorMessage(resp.data.message);
+      notifyService.showErrorMessage({
+        description: resp.data.message,
+      });
     }
     return resp?.data;
   },
   (error) => {
     console.log(error);
     if (error.response.status === 401) {
-      notifyService.showErrorMessage('Unauthorized');
+      notifyService.showErrorMessage({ description: 'Unauthorized' });
       customHistory.push('/login');
     } else if (error.response.status === 403) {
-      notifyService.showErrorMessage('Forbidden Resource');
+      notifyService.showErrorMessage({
+        description: 'Forbidden Resource',
+      });
       customHistory.push('/forbidden');
     }
     // else if (error.response.status === 500) {
-    //   notifyService.showErrorMessage("Server Error");
+    //   notifyService.showErrorMessage(null, "Server Error");
     //   customHistory.push("/error");
     // }
     else {
       if (error.response.data.message) {
-        notifyService.showErrorMessage(error.response.data.message);
+        notifyService.showErrorMessage({
+          description: error.response.data.message,
+        });
       } else {
-        notifyService.showErrorMessage(error.message);
+        notifyService.showErrorMessage({
+          description: error.message,
+        });
       }
     }
   }

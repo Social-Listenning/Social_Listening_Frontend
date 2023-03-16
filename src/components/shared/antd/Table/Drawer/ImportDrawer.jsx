@@ -7,12 +7,12 @@ import useEffectOnce from '../../../../hooks/useEffectOnce';
 import useUpdateEffect from '../../../../hooks/useUpdateEffect';
 import useToggle from '../../../../hooks/useToggle';
 import CancelButton from '../../../element/Button/CancelButton';
-import NextButton from '../../../element/Button/NextButton';
 import PreviousButton from '../../../element/Button/PreviousButton';
 import UploadButton from '../../../element/Button/UploadButton';
 import UploadFile from '../Utils/UploadFile';
 import TableMapData from '../Utils/TableMapData';
 import Hint from '../../../element/Hint';
+import ImportButton from '../../../element/Button/ImportButton';
 
 export default function ImportDrawer(props) {
   const {
@@ -112,14 +112,18 @@ export default function ImportDrawer(props) {
       JSON.stringify(propsMapped.current)
     );
 
-    await apiService.post(apiImport, formData).then((resp) => {
-      if (resp?.result) {
-        closeDrawer();
-        notifyService.showSucsessMessage(
-          'Importing is processing, please wait for the success alert'
-        );
-      }
-    });
+    try {
+      closeDrawer();
+      notifyService.showWarningMessage({
+        isProcessing: true,
+        description:
+          'Importing is processing, please wait for the success alert',
+        duration: 0,
+      });
+      await apiService.post(apiImport, formData);
+    } catch (ex) {
+      notifyService.showErrorMessage({ description: ex.message });
+    }
   }
 
   function closeDrawer() {
@@ -152,17 +156,12 @@ export default function ImportDrawer(props) {
               }}
             />
           )}
-          {currentStep < 2 && (
-            <NextButton
-              disabled={
-                (currentStep === 0 && header.current?.length === 0) ||
-                hadErrorCol
-              }
+          {currentStep === 1 && (
+            <ImportButton
+              type="primary"
+              disabled={hadErrorCol}
               onClick={() => {
-                if (currentStep === 1) {
-                  importFile();
-                }
-                setCurrentStep(currentStep + 1);
+                importFile();
               }}
             />
           )}
@@ -175,9 +174,6 @@ export default function ImportDrawer(props) {
           if (value === 0) {
             header.current = [];
           }
-          if (value === 2) {
-            importFile();
-          }
           setCurrentStep(value);
         }}
         items={[
@@ -189,21 +185,16 @@ export default function ImportDrawer(props) {
             ),
             description: (
               <UploadFile getDataFromFile={getDataFromFile}>
-                Choose file
+                UPLOAD
               </UploadFile>
             ),
             disabled: finished.current,
           },
           {
             title: 'Step 2',
-            description: 'Map data',
+            description: 'MAP',
             disabled:
               currentStep === 0 && header.current?.length === 0,
-          },
-          {
-            title: 'Step 3',
-            description: 'Status',
-            disabled: currentStep === 0 || hadErrorCol,
           },
         ]}
       />

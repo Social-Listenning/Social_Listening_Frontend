@@ -3,7 +3,6 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { customHistory } from '../../../routes/CustomRouter';
 import { apiService } from '../../../services/apiService';
-import { localStorageService } from '../../../services/localStorageService';
 import { notifyService } from '../../../services/notifyService';
 import useToggle from '../../../components/hooks/useToggle';
 import ToolTipWrapper from '../../../components/shared/antd/ToolTipWrapper';
@@ -17,9 +16,11 @@ export default function LoginPage() {
     toggleLoading(true);
     await apiService.post('/auth/log-in', model).then((resp) => {
       if (resp?.result) {
-        localStorageService.setItem("token", resp.result?.access);
+        localStorage.setItem('token', resp.result?.access);
         customHistory.push('/');
-        notifyService.showSucsessMessage("Login successfully")
+        notifyService.showSucsessMessage({
+          description: 'Login successfully',
+        });
         // dont need to toggle loading
         // because it will redirect user
         return;
