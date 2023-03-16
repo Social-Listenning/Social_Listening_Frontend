@@ -1,1 +1,1 @@
-export const menuUserHeader = ['Logout'];
+export const menuUserHeader = ['Profile', 'Logout'];

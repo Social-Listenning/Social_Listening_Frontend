@@ -9,7 +9,7 @@ import { Checker } from '../../../../utils/dataChecker';
 import { Converter } from '../../../../utils/dataConverter';
 import LoadingWrapper from '../LoadingWrapper';
 import EmptyPlaceholder from '../EmptyPlaceholder';
-import useToggle from '../../../../hooks/useToggle';
+import useToggle from '../../../../components/hooks/useToggle';
 
 const SearchBar = forwardRef((props, ref) => {
   const {

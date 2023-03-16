@@ -1,13 +1,18 @@
 import { MoreOutlined } from '@ant-design/icons';
-import ClassicDropdown from '../Dropdown/Classic';
-import IconButton from '../Button/IconButton';
-import { Tooltip } from 'antd';
+import ClassicDropdown from '../../Dropdown/Classic';
+import IconButton from '../../../element/Button/IconButton';
+import ToolTipWrapper from '../../ToolTipWrapper';
 
 export default function TableAction(props) {
-  const { actionList, selectedRecord, openAddEdit, onClickDelete } =
-    props;
+  const {
+    selectAction,
+    actionList,
+    selectedRecord,
+    openAddEdit,
+    onClickDelete,
+  } = props;
 
-  const formatActionList = actionList.map((element) => {
+  const formatActionList = actionList?.map((element) => {
     return (
       <>
         {element?.icon}
@@ -19,14 +24,16 @@ export default function TableAction(props) {
   });
 
   function handleAction(e) {
+    selectAction(actionList[e.key]?.action);
     if (actionList[e.key]?.action === 'Edit') {
+      openAddEdit(true);
     } else if (actionList[e.key]?.action === 'Delete') {
       onClickDelete(selectedRecord);
     }
   }
 
   return (
-    <Tooltip title="Actions">
+    <ToolTipWrapper tooltip="Click to open actions">
       <div className="flex-center">
         <ClassicDropdown
           clickTrigger
@@ -38,6 +45,6 @@ export default function TableAction(props) {
           />
         </ClassicDropdown>
       </div>
-    </Tooltip>
+    </ToolTipWrapper>
   );
 }

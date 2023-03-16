@@ -13,11 +13,6 @@ export default function ErrorPage(props) {
     case '403':
       subTitle = 'Sorry, you are not authorized to access this page.';
       break;
-    case '500':
-      subTitle = 'Sorry, something went wrong.';
-      break;
-    default:
-      subTitle = 'Sorry, the page you visited does not exist.';
   }
 
   return (
@@ -27,15 +22,17 @@ export default function ErrorPage(props) {
       subTitle={subTitle}
       extra={
         <>
-          <Button
-            className="redirect-btn"
-            type="primary"
-            onClick={() => {
-              navigate(-1);
-            }}
-          >
-            Go Back
-          </Button>
+          {status === '404' && (
+            <Button
+              className="redirect-btn"
+              type="primary"
+              onClick={() => {
+                navigate(-1);
+              }}
+            >
+              Go Back
+            </Button>
+          )}
           <Button
             className="redirect-btn"
             onClick={() => {
