@@ -93,8 +93,9 @@ export default function PrivateLayout(props) {
   return (
     <Layout className="private-layout">
       <Sider
-        trigger={null}
         collapsible
+        trigger={null}
+        width={240}
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
       >

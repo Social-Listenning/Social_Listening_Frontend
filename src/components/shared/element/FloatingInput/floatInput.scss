@@ -1,5 +1,6 @@
 .float-input-wrapper {
   position: relative;
+  font-size: var(--app-font-size);
 }
 
 .float-input {
@@ -35,7 +36,7 @@
 
 .as-label {
   top: -0.4rem;
-  font-size: 1rem !important;
+  font-size: 1.2rem !important;
   margin-left: -1.2rem;
 }
 

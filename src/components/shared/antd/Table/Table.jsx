@@ -25,6 +25,7 @@ export default function AdminTable(props) {
     apiImport,
     addEditComponent,
     keyProps = columns[0]?.dataIndex, // for delete purpose
+    scroll,
   } = props;
 
   // #region table utils
@@ -63,7 +64,6 @@ export default function AdminTable(props) {
   // #endregion
 
   // #region handle filter, sorter, refresh data
-  let maxWidth = 1000; // 100 is the select row and action column
   const [data, setData] = useState([]);
   const [filterType, setFilterType] = useState([]);
   const [sorter, setSorter] = useState([]);
@@ -199,7 +199,6 @@ export default function AdminTable(props) {
   function formatHeaders(column) {
     return actionCol.concat(
       column.map((col) => {
-        maxWidth += col.width ?? 150;
         return {
           resizeable: true, // default header can resize (you can change this if you want)
           ...col,
@@ -282,10 +281,7 @@ export default function AdminTable(props) {
           dataSource={data}
           rowSelection={rowSelection}
           size="small"
-          scroll={{
-            // y: 600,
-            x: maxWidth,
-          }}
+          scroll={scroll}
           components={{
             header: {
               cell: ResizeableTitle,
