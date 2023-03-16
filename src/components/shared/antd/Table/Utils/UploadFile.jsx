@@ -15,7 +15,9 @@ export default function UploadFile(props) {
         const header = getHeaderRow(worksheet) ?? [];
         getDataFromFile(file, header);
       } catch (ex) {
-        notifyService.showWarningMessage(null, "Only excel files (.xlsx, .xls) are allowed")
+        notifyService.showWarningMessage({
+          description: 'Only excel files (.xlsx, .xls) are allowed',
+        });
       }
       // const sheetData = utils.sheet_to_json(worksheet); // get all data from excel
     };

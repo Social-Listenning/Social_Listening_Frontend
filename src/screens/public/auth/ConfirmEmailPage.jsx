@@ -22,7 +22,9 @@ export default function ConfirmEmail() {
       if (resp?.result) {
         localStorage.setItem('token', resp.result?.access);
         customHistory.push('/');
-        notifyService.showSucsessMessage(null, 'Login successfully');
+        notifyService.showSucsessMessage({
+          description: 'Login successfully',
+        });
         // dont need to toggle loading
         // because it will redirect user
         return;

@@ -15,6 +15,7 @@ import { menuSidebar } from '../../constants/menu/sidebar';
 import { menuUserHeader } from '../../constants/menu/header';
 import { useSocket } from '../../components/contexts/socket/SocketProvider';
 import useEffectOnce from '../../components/hooks/useEffectOnce';
+import useUpdateEffect from '../../components/hooks/useUpdateEffect';
 import useToggle from '../../components/hooks/useToggle';
 import Title from '../../components/shared/element/Title';
 import ToolTipWrapper from '../../components/shared/antd/ToolTipWrapper';
@@ -40,42 +41,34 @@ export default function PrivateLayout(props) {
   const token = localStorage.getItem('token');
   const decodedToken = decodeToken(token);
 
-  const [availableMenu, setAvailableMenu] = useState([]);
-  function filterMenuByRole(menu, role) {
-    return menu
-      .map((item) => {
-        if (item.children) {
-          const children = filterMenuByRole(item.children, role);
-          if (children.length > 0) {
-            return { ...item, children };
-          }
-        }
-        if (
-          !item.permissions ||
-          item.permissions
-            .split(',')
-            .map((p) => p.trim())
-            .includes(role)
-        ) {
-          return item;
-        }
-        return null;
-      })
-      .filter(Boolean);
-  }
+  const [availableMenu, setAvailableMenu] = useState(menuSidebar);
 
   useEffectOnce(
     () => {
       connect();
-      setAvailableMenu(
-        filterMenuByRole(menuSidebar, decodedToken?.role)
-      );
     },
     // onDestroy function
     () => {
       disconnect();
     }
   );
+
+  useUpdateEffect(() => {
+    socket.on('sendNotification', (payload) => {
+      if (payload) {
+        setTimeout(() => {
+          notifyService.showSucsessMessage({
+            title: payload.title,
+            description: payload.body,
+            duration: 0,
+          });
+        }, 1000);
+
+        // push receive back to server
+        socket.emit('receiveNotification', payload.id?.toString());
+      }
+    });
+  }, [socket]);
 
   function handleMenuHeader(e) {
     // logout option
@@ -85,10 +78,9 @@ export default function PrivateLayout(props) {
           disconnect();
           localStorage.removeItem('token');
           navigate('/login');
-          notifyService.showSucsessMessage(
-            null,
-            'Logout successfully'
-          );
+          notifyService.showSucsessMessage({
+            description: 'Logout successfully',
+          });
         }
       });
     }

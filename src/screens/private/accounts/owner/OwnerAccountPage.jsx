@@ -24,7 +24,7 @@ export default function OwnerAccountManagement() {
     },
     {
       title: 'Role',
-      dataIndex: 'role.RoleName',
+      dataIndex: 'role.roleName',
       required: true,
       sort: false,
     },
@@ -55,7 +55,7 @@ export default function OwnerAccountManagement() {
     },
     {
       title: 'Role',
-      dataIndex: 'role',
+      dataIndex: 'roleName',
       required: true,
     },
     {

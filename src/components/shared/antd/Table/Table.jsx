@@ -57,28 +57,25 @@ export default function AdminTable(props) {
 
   function handleDisplayColumns(newCol) {
     columnUtil.current = newCol;
-    setResizeCol(actionCol.concat(formatHeaders(newCol)));
+    setResizeCol(formatHeaders(newCol));
     refreshData(false);
   }
   // #endregion
 
   // #region handle filter, sorter, refresh data
-  let maxWidth = 100; // 100 is the select row and action column
+  let maxWidth = 1000; // 100 is the select row and action column
   const [data, setData] = useState([]);
   const [filterType, setFilterType] = useState([]);
   const [sorter, setSorter] = useState([]);
   const [loading, toggleLoading] = useToggle(false); // loading state
   const tableContent = document.querySelector('.ant-table-body'); // table selector (for javascript purpose)
   // get all the props that was nested (example: role.roleName)
-  let propsNested = [];
+  let originPropsNested = columns
+    .filter((x) => x.dataIndex.includes('.'))
+    .map((x) => x.dataIndex);
 
   useEffectOnce(() => {
     refreshData();
-
-    // get props nested once (don't need to get multiple times)
-    propsNested = columns
-      .filter((x) => x.dataIndex.includes('.'))
-      .map((x) => x.dataIndex);
   });
 
   useUpdateEffect(() => {
@@ -112,7 +109,7 @@ export default function AdminTable(props) {
         })
         .then((resp) => {
           if (resp?.result?.data) {
-            for (let prop of propsNested) {
+            for (let prop of originPropsNested) {
               resp.result.data.map((x) => {
                 let dataNested = prop
                   .split('.')
@@ -197,32 +194,32 @@ export default function AdminTable(props) {
     },
   ];
 
-  const formatHeaderCols = actionCol.concat(
-    formatHeaders(columnUtil.current)
-  );
+  const formatHeaderCols = formatHeaders(columnUtil.current);
 
   function formatHeaders(column) {
-    return column.map((col) => {
-      maxWidth += col.width ?? 150;
-      return {
-        resizeable: true, // default header can resize (you can change this if you want)
-        ...col,
-        width: col.width ?? 150,
-        title: (
-          // custom header with filter, sorter
-          <TableHeader
-            title={col.title}
-            propsName={col.dataIndex}
-            filter={col.filter}
-            sort={col.sort}
-            disableFilter={col.disableFilter}
-            updateSorter={setSorter}
-            updateFilter={setFilterType}
-            refreshFilterSorter={refreshFS}
-          />
-        ),
-      };
-    });
+    return actionCol.concat(
+      column.map((col) => {
+        maxWidth += col.width ?? 150;
+        return {
+          resizeable: true, // default header can resize (you can change this if you want)
+          ...col,
+          width: col.width ?? 150,
+          title: (
+            // custom header with filter, sorter
+            <TableHeader
+              title={col.title}
+              propsName={col.dataIndex}
+              filter={col.filter}
+              sort={col.sort}
+              disableFilter={col.disableFilter}
+              updateSorter={setSorter}
+              updateFilter={setFilterType}
+              refreshFilterSorter={refreshFS}
+            />
+          ),
+        };
+      })
+    );
   }
   // #endregion
 

@@ -19,10 +19,9 @@ export default function RegisterPage() {
         navigate('/confirm-email', {
           state: { email: model.email, password: model.password },
         });
-        notifyService.showSucsessMessage(
-          null,
-          'Register successfully'
-        );
+        notifyService.showSucsessMessage({
+          description: 'Register successfully',
+        });
         // dont need to toggle loading
         // because it will redirect user
         return;

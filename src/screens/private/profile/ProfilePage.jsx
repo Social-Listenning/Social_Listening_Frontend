@@ -38,10 +38,9 @@ export default function ProfilePage() {
 
     await apiService.post('', accountProfile).then((resp) => {
       if (resp?.result) {
-        notifyService.showSucsessMessage(
-          null,
-          'Save profile successfully'
-        );
+        notifyService.showSucsessMessage({
+          description: 'Save profile successfully',
+        });
       }
     });
     toggleLoading(false);

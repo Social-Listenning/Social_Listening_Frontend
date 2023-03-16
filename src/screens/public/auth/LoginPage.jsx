@@ -16,9 +16,11 @@ export default function LoginPage() {
     toggleLoading(true);
     await apiService.post('/auth/log-in', model).then((resp) => {
       if (resp?.result) {
-        localStorage.setItem("token", resp.result?.access);
+        localStorage.setItem('token', resp.result?.access);
         customHistory.push('/');
-        notifyService.showSucsessMessage(null, "Login successfully")
+        notifyService.showSucsessMessage({
+          description: 'Login successfully',
+        });
         // dont need to toggle loading
         // because it will redirect user
         return;
