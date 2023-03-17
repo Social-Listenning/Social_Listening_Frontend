@@ -26,6 +26,7 @@ export default function AdminTable(props) {
     addEditComponent,
     keyProps = columns[0]?.dataIndex, // for delete purpose
     scroll,
+    ...other
   } = props;
 
   // #region table utils
@@ -68,7 +69,7 @@ export default function AdminTable(props) {
   const [filterType, setFilterType] = useState([]);
   const [sorter, setSorter] = useState([]);
   const [loading, toggleLoading] = useToggle(false); // loading state
-  const tableContent = document.querySelector('.ant-table-body'); // table selector (for javascript purpose)
+  const tableContent = document.querySelector('.ant-table-content'); // table selector (for javascript purpose)
   // get all the props that was nested (example: role.roleName)
   let originPropsNested = columns
     .filter((x) => x.dataIndex.includes('.'))
@@ -88,8 +89,9 @@ export default function AdminTable(props) {
     if (selectedRowKeys?.length > 0) {
       setSelectedRowKeys([]);
     }
+
     // scroll back to 0
-    tableContent?.scrollTo(0, 0);
+    tableContent?.scroll(0, 0);
 
     // remove the action and record
     if (actionType.current) {
@@ -159,8 +161,9 @@ export default function AdminTable(props) {
   const actionType = useRef(null);
   const selectedRecord = useRef(null);
 
-  // remove the record when action is add
-  if (actionType === 'Add') {
+  function closeAddEdit() {
+    toggleOpenAddEdit(false);
+    actionType.current = null;
     selectedRecord.current = null;
   }
 
@@ -277,21 +280,22 @@ export default function AdminTable(props) {
       />
       <LoadingWrapper size="large" loading={loading}>
         <Table
+          size="small"
           columns={resizeColumns}
           dataSource={data}
           rowSelection={rowSelection}
-          size="small"
           scroll={scroll}
           components={{
             header: {
               cell: ResizeableTitle,
             },
           }}
+          {...other}
         />
       </LoadingWrapper>
       <AddEditWrapper
         open={openAddEdit}
-        toggleOpen={toggleOpenAddEdit}
+        onClose={closeAddEdit}
         record={selectedRecord.current}
         actionType={actionType.current}
       >

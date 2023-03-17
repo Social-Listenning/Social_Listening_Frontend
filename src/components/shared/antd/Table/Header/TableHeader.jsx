@@ -8,6 +8,7 @@ import useUpdateEffect from '../../../../hooks/useUpdateEffect';
 import { FilterType } from '../../../../../constants/table/filter';
 import ClassicDropdown from '../../Dropdown/Classic';
 import ClassicSelect from '../../Select/Classic';
+import BooleanSelect from '../../Select/Boolean';
 import FloatInput from '../../../element/FloatingInput/FloatInput';
 import ToolTipWrapper from '../../ToolTipWrapper';
 
@@ -23,8 +24,59 @@ export default function TableHeader(props) {
     refreshFilterSorter,
   } = props;
 
-  let listFilter = FilterType.Default;
   let [value, setValue] = useState(null);
+  let listFilter = FilterType.Default;
+  let inputHeader = (
+    <FloatInput
+      id={title}
+      className="table-input-title"
+      label={title}
+      value={value}
+      onChange={(e) => {
+        setValue(e.currentTarget.value);
+      }}
+      onBlur={formatFilter}
+      onPressEnter={(e) => e.currentTarget.blur()}
+    />
+  );
+  if (filter && filter.filterType) {
+    // filter dropdown list
+    listFilter = FilterType[filter.filterType];
+
+    // input UI
+    if (filter.filterType === 'Boolean') {
+      inputHeader = (
+        <BooleanSelect
+          id={title}
+          placeHolder={title}
+          value={value}
+          handleSelect={handleSelect}
+          // onBlur={formatFilter}
+        />
+      );
+    } else if (filter.filterType === 'Dropdown') {
+      inputHeader = (
+        <ClassicSelect
+          id={title}
+          placeHolder={title}
+          value={value}
+          options={filter.options}
+          handleSelect={handleSelect}
+          // onBlur={formatFilter}
+        />
+      );
+    }
+  }
+
+  function handleSelect(e) {
+    setValue(e);
+  }
+
+  useUpdateEffect(() => {
+    if (filter && filter.filterType) {
+      formatFilter();
+    }
+  }, [value]);
 
   // #region handle sorter
   const [active, setActive] = useState(null);
@@ -122,7 +174,9 @@ export default function TableHeader(props) {
         setActive(null);
       }
 
-      setValue(null);
+      if (value != null) {
+        setValue(null);
+      }
     }
   }, [refreshFilterSorter]);
   // #endregion
@@ -145,20 +199,9 @@ export default function TableHeader(props) {
               </ClassicDropdown>
             </div>
           </ToolTipWrapper>
-          <FloatInput
-            id={title}
-            className="table-input-title"
-            label={title}
-            value={value}
-            onChange={(e) => {
-              setValue(e.currentTarget.value);
-            }}
-            onBlur={formatFilter}
-            onPressEnter={(e) => e.currentTarget.blur()}
-          />
+          {inputHeader}
         </>
       )}
-      {/* <ClassicSelect placeHolder={title}/> */}
       {sort && (
         <ToolTipWrapper tooltip="Click to sort">
           <div

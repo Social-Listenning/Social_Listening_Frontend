@@ -14,7 +14,7 @@ export default function AddEditOwnerAccount(props) {
         name="add-edit-user-form"
         layout="vertical"
         autoComplete="off"
-        initialValues={{ role: 'admin' }}
+        initialValues={{ ...data, role: data?.role?.roleName }}
         // onFinish={handleSubmit}
       >
         <ToolTipWrapper
@@ -96,14 +96,9 @@ export default function AddEditOwnerAccount(props) {
           </Form.Item>
         </ToolTipWrapper>
 
-        <ToolTipWrapper
-          tooltip="You can only create Admin accounts"
-          placement="left"
-        >
-          <Form.Item label="Role" name="role">
-            <ClassicSelect options={role} disabled />
-          </Form.Item>
-        </ToolTipWrapper>
+        <Form.Item label="Role" name="role">
+          <ClassicSelect options={role.slice(1)} />
+        </Form.Item>
 
         <Form.Item label="Full Name" name="fullName">
           <Input />

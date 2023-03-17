@@ -56,18 +56,14 @@
   }
 
   .table-header {
+    gap: 0.6rem;
+
     .table-filter-icon {
       font-size: 2rem;
 
       &:hover {
         color: var(--primary-color);
       }
-    }
-
-    .float-input-wrapper,
-    .table-sorter,
-    .ant-spin-nested-loading {
-      margin-left: 0.6rem;
     }
 
     .table-sorter {

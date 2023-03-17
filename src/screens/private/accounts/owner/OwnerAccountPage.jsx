@@ -1,12 +1,18 @@
+import { role } from '../../../../constants/profile/profile';
 import AdminTable from '../../../../components/shared/antd/Table/Table';
 import BooleanRow from '../../../../components/shared/element/BooleanRow';
+import Chip from '../../../../components/shared/element/Chip';
 import AddEditOwnerAccount from './AddEditOwnerAccount';
 
+const roleData = role.slice(1);
 export default function OwnerAccountManagement() {
   const columns = [
     {
       title: 'Active',
       dataIndex: 'isActive',
+      filter: {
+        filterType: 'Boolean',
+      },
       render: (record) => {
         return <BooleanRow active={record} />;
       },
@@ -27,6 +33,13 @@ export default function OwnerAccountManagement() {
       dataIndex: 'role.roleName',
       required: true,
       sort: false,
+      filter: {
+        filterType: 'Dropdown',
+        options: roleData,
+      },
+      render: (record) => {
+        return <Chip>{record}</Chip>;
+      },
     },
     {
       title: 'Full Name',
@@ -39,6 +52,14 @@ export default function OwnerAccountManagement() {
     {
       title: 'Phone',
       dataIndex: 'phoneNumber',
+    },
+    {
+      title: 'Date Created',
+      dataIndex: 'createdAt',
+    },
+    {
+      title: 'Date Modified',
+      dataIndex: 'updatedAt',
     },
   ];
 
@@ -95,6 +116,7 @@ export default function OwnerAccountManagement() {
       apiDeleteOne="/remove"
       keyProps="id"
       addEditComponent={<AddEditOwnerAccount />}
+      scroll={{ x: 2000 }}
     />
   );
 }

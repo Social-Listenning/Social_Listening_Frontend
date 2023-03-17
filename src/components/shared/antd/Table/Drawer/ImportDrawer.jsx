@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { Drawer, Space, Steps } from 'antd';
-import * as XLSX from 'xlsx';
+import { utils, write } from 'xlsx';
 import { apiService } from '../../../../../services/apiService';
 import { notifyService } from '../../../../../services/notifyService';
 import useEffectOnce from '../../../../hooks/useEffectOnce';
@@ -26,20 +26,20 @@ export default function ImportDrawer(props) {
   const downloadUrl = useRef(null);
   function generateExcelFile(data) {
     // write data to excel
-    const workbook = XLSX.utils.book_new(); // create workbook
-    const worksheet = XLSX.utils.json_to_sheet([]); //create worksheet
+    const workbook = utils.book_new(); // create workbook
+    const worksheet = utils.json_to_sheet([]); //create worksheet
     // write first row (header)
-    XLSX.utils.sheet_add_aoa(worksheet, [
+    utils.sheet_add_aoa(worksheet, [
       importColumns.map((item) => item.title),
     ]);
     // write second row to end (data)
-    XLSX.utils.sheet_add_json(worksheet, data, {
+    utils.sheet_add_json(worksheet, data, {
       origin: 'A2',
       skipHeader: true,
     });
     // append to sheet 1
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
-    const file = XLSX.write(workbook, {
+    utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+    const file = write(workbook, {
       type: 'buffer',
       bookType: 'xlsx',
     });
@@ -59,19 +59,6 @@ export default function ImportDrawer(props) {
   const header = useRef([]); // headers in excel
   const [colMapped, setColMapped] = useState([]); // header in excel mapped to table
   const [currentStep, setCurrentStep] = useState(0);
-
-  // condition to show previous button
-  const finished = useRef(false);
-  let showPreviousBtn = false;
-  if (currentStep > 0) {
-    showPreviousBtn = true;
-    if (currentStep === 2) {
-      finished.current = true;
-    }
-    if (currentStep === 1 && finished.current === true) {
-      showPreviousBtn = false;
-    }
-  }
 
   function getDataFromFile(fileExcel, headerExcel) {
     file.current = fileExcel;
@@ -128,7 +115,6 @@ export default function ImportDrawer(props) {
 
   function closeDrawer() {
     toggleOpen(false);
-    finished.current = false;
     file.current = null;
     header.current = [];
     if (currentStep !== 0) {
@@ -146,24 +132,24 @@ export default function ImportDrawer(props) {
       extra={
         <Space>
           <CancelButton onClick={closeDrawer} />
-          {showPreviousBtn && (
-            <PreviousButton
-              onClick={() => {
-                if (currentStep === 1) {
-                  header.current = [];
-                }
-                setCurrentStep(currentStep - 1);
-              }}
-            />
-          )}
           {currentStep === 1 && (
-            <ImportButton
-              type="primary"
-              disabled={hadErrorCol}
-              onClick={() => {
-                importFile();
-              }}
-            />
+            <>
+              <PreviousButton
+                onClick={() => {
+                  if (currentStep === 1) {
+                    header.current = [];
+                  }
+                  setCurrentStep(currentStep - 1);
+                }}
+              />
+              <ImportButton
+                type="primary"
+                disabled={hadErrorCol}
+                onClick={() => {
+                  importFile();
+                }}
+              />
+            </>
           )}
         </Space>
       }
@@ -178,17 +164,12 @@ export default function ImportDrawer(props) {
         }}
         items={[
           {
-            title: (
-              <UploadFile getDataFromFile={getDataFromFile}>
-                Step 1
-              </UploadFile>
-            ),
+            title: 'Step 1',
             description: (
               <UploadFile getDataFromFile={getDataFromFile}>
                 UPLOAD
               </UploadFile>
             ),
-            disabled: finished.current,
           },
           {
             title: 'Step 2',
@@ -226,7 +207,7 @@ export default function ImportDrawer(props) {
               }
             />
             <UploadFile getDataFromFile={getDataFromFile}>
-              <UploadButton>Choose file</UploadButton>
+              <UploadButton>Upload</UploadButton>
             </UploadFile>
           </div>
         ) : currentStep === 1 ? (

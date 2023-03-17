@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Layout, Menu } from 'antd';
 import {
   MenuFoldOutlined,
@@ -21,6 +21,7 @@ import Title from '../../components/shared/element/Title';
 import ToolTipWrapper from '../../components/shared/antd/ToolTipWrapper';
 import ClassicDropdown from '../../components/shared/antd/Dropdown/Classic';
 import BasicAvatar from '../../components/shared/antd/BasicAvatar';
+import PieChartResult from '../../components/shared/antd/Chart/PieChartResult';
 import '../route.scss';
 
 const { Header, Content, Sider } = Layout;
@@ -53,13 +54,29 @@ export default function PrivateLayout(props) {
     }
   );
 
+  const [openChart, setOpenChart] = useToggle(false);
+  const title = useRef(null);
+  const resultChart = useRef(null);
+  function openChartResult() {
+    setOpenChart(true);
+  }
+
   useUpdateEffect(() => {
     socket.on('sendNotification', (payload) => {
       if (payload) {
+        title.current = payload.title;
+        if (payload.extendData) {
+          resultChart.current = JSON.parse(payload.extendData);
+        }
+
         setTimeout(() => {
           notifyService.showSucsessMessage({
             title: payload.title,
-            description: payload.body,
+            description: (
+              <div className="pointer" onClick={openChartResult}>
+                {payload.body}
+              </div>
+            ),
             duration: 0,
           });
         }, 1000);
@@ -153,6 +170,17 @@ export default function PrivateLayout(props) {
           <div className="body">{props.children}</div>
         </Content>
       </Layout>
+
+      <PieChartResult
+        open={openChart}
+        toggleOpen={setOpenChart}
+        title={title.current}
+        result={{
+          total: resultChart.current?.totalImport,
+          success: resultChart.current?.importSuccess,
+          fail: resultChart.current?.totalImport,
+        }}
+      />
     </Layout>
   );
 }

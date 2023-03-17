@@ -108,10 +108,9 @@ button.ant-btn {
   }
 }
 
-tbody.ant-table-tbody {
-  font-size: var(--app-font-size);
-}
-
+.ant-alert,
+.ant-pagination,
+tbody.ant-table-tbody,
 input.ant-input {
   font-size: var(--app-font-size);
 }
@@ -126,7 +125,16 @@ input.ant-input {
 
 ul.ant-menu.ant-menu-root {
   li.ant-menu-item {
-    padding-left: 0.8rem;
+    // padding-left: 0.8rem;
+    .anticon {
+      font-size: 2rem;
+    }
+  }
+
+  li.ant-menu-submenu {
+    .anticon {
+      font-size: 2rem;
+    }
   }
 }
 .ant-menu-title-content {
@@ -146,22 +154,27 @@ ul.ant-menu.ant-menu-root {
 }
 
 .ant-notification-notice {
-  .ant-notification-notice-message,
-  .ant-notification-notice-description,
+  .ant-notification-notice-content {
+    .ant-notification-notice-message,
+    .ant-notification-notice-description {
+      color: #fff;
+    }
+
+    .ant-notification-notice-message {
+      font-size: 2rem;
+    }
+
+    .ant-notification-notice-description {
+      font-size: 1.5rem;
+    }
+  }
+
   .ant-notification-notice-close {
     color: #fff;
 
     &:hover {
       color: #fff;
     }
-  }
-
-  .ant-notification-notice-message {
-    font-size: 2rem;
-  }
-
-  .ant-notification-notice-description {
-    font-size: 1.5rem;
   }
 }
 // #endregion
