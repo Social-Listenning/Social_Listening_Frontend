@@ -18,7 +18,13 @@ const dateTimeType = [
 
 const defaultWithoutEmpty = ['Contains', 'Does Not Contains'];
 
-const defaultType = [...defaultWithoutEmpty, 'Is Empty', 'Is Not Empty'];
+const defaultType = [
+  ...defaultWithoutEmpty,
+  'Is Empty',
+  'Is Not Empty',
+];
+
+const equalType = ['Is Equal To', 'Is Not Equal To'];
 
 export const FilterType = {
   Number: numberType,
@@ -26,5 +32,5 @@ export const FilterType = {
   DateTime: dateTimeType,
   Default: defaultType,
   Dropdown: defaultWithoutEmpty,
-  Boolean: defaultWithoutEmpty,
+  Boolean: equalType,
 };

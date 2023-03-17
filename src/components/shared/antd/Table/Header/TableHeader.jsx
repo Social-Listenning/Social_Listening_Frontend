@@ -133,7 +133,7 @@ export default function TableHeader(props) {
   }
 
   function formatFilter() {
-    if (value) {
+    if (value !== null) {
       updateFilter((old) => {
         let index = old.findIndex((x) => x?.props === propsName);
         if (index >= 0) {

@@ -7,6 +7,9 @@ export default function AddEditOwnerAccount(props) {
   const { data, action } = props;
   console.log(data, action);
   const [addEditUserForm] = Form.useForm();
+  function handleSubmit(value) {
+    console.log(value)
+  }
   return (
     <div>
       <Form
@@ -15,7 +18,7 @@ export default function AddEditOwnerAccount(props) {
         layout="vertical"
         autoComplete="off"
         initialValues={{ ...data, role: data?.role?.roleName }}
-        // onFinish={handleSubmit}
+        onFinish={handleSubmit}
       >
         <ToolTipWrapper
           tooltip="Only email is allowed"

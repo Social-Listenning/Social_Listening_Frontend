@@ -8,6 +8,12 @@ const roleData = role.slice(1);
 export default function OwnerAccountManagement() {
   const columns = [
     {
+      title: 'Email',
+      dataIndex: 'email',
+      required: true,
+      fixed: true,
+    },
+    {
       title: 'Active',
       dataIndex: 'isActive',
       filter: {
@@ -22,11 +28,6 @@ export default function OwnerAccountManagement() {
       sort: false,
       resizeable: false,
       width: 80,
-    },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-      required: true,
     },
     {
       title: 'Role',
@@ -113,7 +114,7 @@ export default function OwnerAccountManagement() {
       importColumns={importColumns}
       dumpImportData={dumpImportData}
       apiImport="/user/import"
-      apiDeleteOne="/remove"
+      apiDeleteOne="/user/remove"
       keyProps="id"
       addEditComponent={<AddEditOwnerAccount />}
       scroll={{ x: 2000 }}

@@ -143,7 +143,7 @@ export default function AdminTable(props) {
     if (row && apiDeleteOne) {
       const key = row[keyProps]; // get value with object key
 
-      apiService.delete(`${apiDeleteOne}/${key}`).then((resp) => {
+      apiService.post(`${apiDeleteOne}/${key}`, null).then((resp) => {
         if (resp?.result) {
           refreshData();
         }
