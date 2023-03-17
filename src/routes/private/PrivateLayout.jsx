@@ -4,6 +4,7 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   DownOutlined,
+  CheckCircleOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { decodeToken } from 'react-jwt';
@@ -71,6 +72,7 @@ export default function PrivateLayout(props) {
 
         setTimeout(() => {
           notifyService.showSucsessMessage({
+            icon: <CheckCircleOutlined />,
             title: payload.title,
             description: (
               <div className="pointer" onClick={openChartResult}>
