@@ -7,7 +7,7 @@
   --error-color: #da4c3b;
 
   --padding-layout: 1.6rem;
-  --app-font-size: 1.8rem;
+  --app-font-size: 1.6rem;
 }
 
 html {
@@ -84,8 +84,6 @@ a {
 }
 
 .redirect-btn {
-  font-size: 1.6rem;
-  height: 4rem;
   width: 12rem;
 }
 // #endregion
@@ -103,11 +101,18 @@ a {
 
 button.ant-btn {
   font-size: var(--app-font-size);
-  height: 4rem;
+  height: 3.6rem;
+
+  &.ant-btn-circle {
+    width: 3.6rem;
+  }
 }
 
-tbody.ant-table-tbody {
-  font-size: var(--app-font-size);  
+.ant-alert,
+.ant-pagination,
+tbody.ant-table-tbody,
+input.ant-input {
+  font-size: var(--app-font-size);
 }
 
 .ant-dropdown {
@@ -118,8 +123,22 @@ tbody.ant-table-tbody {
   }
 }
 
+ul.ant-menu.ant-menu-root {
+  li.ant-menu-item {
+    // padding-left: 0.8rem;
+    .anticon {
+      font-size: 2rem;
+    }
+  }
+
+  li.ant-menu-submenu {
+    .anticon {
+      font-size: 2rem;
+    }
+  }
+}
 .ant-menu-title-content {
-  font-size: var(--app-font-size);
+  font-size: 1.8rem;
 }
 
 .ant-form-item {
@@ -135,22 +154,27 @@ tbody.ant-table-tbody {
 }
 
 .ant-notification-notice {
-  .ant-notification-notice-message,
-  .ant-notification-notice-description,
+  .ant-notification-notice-content {
+    .ant-notification-notice-message,
+    .ant-notification-notice-description {
+      color: #fff;
+    }
+
+    .ant-notification-notice-message {
+      font-size: 2rem;
+    }
+
+    .ant-notification-notice-description {
+      font-size: 1.5rem;
+    }
+  }
+
   .ant-notification-notice-close {
     color: #fff;
 
     &:hover {
       color: #fff;
     }
-  }
-
-  .ant-notification-notice-message {
-    font-size: 2rem;
-  }
-
-  .ant-notification-notice-description {
-    font-size: 1.5rem;
   }
 }
 // #endregion

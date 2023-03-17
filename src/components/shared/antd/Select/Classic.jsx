@@ -16,7 +16,6 @@ export default function ClassicSelect(props) {
   return (
     <LoadingWrapper loading={loading}>
       <Select
-        showSearch
         disabled={disabled}
         style={{ width: '100%' }}
         placeholder={placeHolder}

@@ -6,7 +6,7 @@ import CancelButton from '../../../element/Button/CancelButton';
 export default function AddEditWrapper(props) {
   const {
     open,
-    toggleOpen,
+    onClose,
     actionType,
     record,
     handleConfirm,
@@ -14,7 +14,7 @@ export default function AddEditWrapper(props) {
   } = props;
 
   function closeDrawer() {
-    toggleOpen(false);
+    onClose();
   }
 
   return (

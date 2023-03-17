@@ -13,7 +13,6 @@
   gap: 1.6rem;
 
   .table-utils-icon {
-    scale: 1.1;
   }
 }
 
@@ -57,18 +56,14 @@
   }
 
   .table-header {
+    gap: 0.6rem;
+
     .table-filter-icon {
-      font-size: 1.8rem;
+      font-size: 2rem;
 
       &:hover {
         color: var(--primary-color);
       }
-    }
-
-    .float-input-wrapper,
-    .table-sorter,
-    .ant-spin-nested-loading {
-      margin-left: 0.6rem;
     }
 
     .table-sorter {

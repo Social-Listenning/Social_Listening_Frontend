@@ -7,6 +7,9 @@ export default function AddEditOwnerAccount(props) {
   const { data, action } = props;
   console.log(data, action);
   const [addEditUserForm] = Form.useForm();
+  function handleSubmit(value) {
+    console.log(value)
+  }
   return (
     <div>
       <Form
@@ -14,8 +17,8 @@ export default function AddEditOwnerAccount(props) {
         name="add-edit-user-form"
         layout="vertical"
         autoComplete="off"
-        initialValues={{ role: 'admin' }}
-        // onFinish={handleSubmit}
+        initialValues={{ ...data, role: data?.role?.roleName }}
+        onFinish={handleSubmit}
       >
         <ToolTipWrapper
           tooltip="Only email is allowed"
@@ -96,14 +99,9 @@ export default function AddEditOwnerAccount(props) {
           </Form.Item>
         </ToolTipWrapper>
 
-        <ToolTipWrapper
-          tooltip="You can only create Admin accounts"
-          placement="left"
-        >
-          <Form.Item label="Role" name="role">
-            <ClassicSelect options={role} disabled />
-          </Form.Item>
-        </ToolTipWrapper>
+        <Form.Item label="Role" name="role">
+          <ClassicSelect options={role.slice(1)} />
+        </Form.Item>
 
         <Form.Item label="Full Name" name="fullName">
           <Input />

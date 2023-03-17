@@ -16,16 +16,21 @@ const dateTimeType = [
   'Is After',
 ];
 
+const defaultWithoutEmpty = ['Contains', 'Does Not Contains'];
+
 const defaultType = [
-  'Contains',
-  'Does Not Contains',
+  ...defaultWithoutEmpty,
   'Is Empty',
   'Is Not Empty',
 ];
+
+const equalType = ['Is Equal To', 'Is Not Equal To'];
 
 export const FilterType = {
   Number: numberType,
   Text: textType,
   DateTime: dateTimeType,
   Default: defaultType,
+  Dropdown: defaultWithoutEmpty,
+  Boolean: equalType,
 };
