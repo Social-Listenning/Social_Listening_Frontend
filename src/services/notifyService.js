@@ -38,7 +38,7 @@ const showWarningMessage = (config) => {
 
   notification.open({
     ...(isProcessing && {
-      icon: <HourglassOutlined style={{ color: '#fff' }} />,
+      icon: <HourglassOutlined />,
     }),
     message: isProcessing
       ? title ?? 'Processing...'
