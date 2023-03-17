@@ -3,6 +3,8 @@ import {
   SafetyOutlined,
   CrownOutlined,
   SmileOutlined,
+  KeyOutlined,
+  UserSwitchOutlined,
   SettingOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -23,6 +25,18 @@ export const menuSidebar = [
         key: 'account/admin',
         label: 'Admin',
         icon: <CrownOutlined />,
+        permissions: 'ADMIN',
+      },
+      {
+        key: 'account/role',
+        label: 'Role',
+        icon: <UserSwitchOutlined />,
+        permissions: 'ADMIN',
+      },
+      {
+        key: 'account/permission',
+        label: 'Permission',
+        icon: <KeyOutlined />,
         permissions: 'ADMIN',
       },
       {

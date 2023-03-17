@@ -10,8 +10,15 @@ export default function ClassicSelect(props) {
     multiple = false,
     placeHolder = `Select ...`,
     disabled = false,
+    noneOption = false,
     ...other
   } = props;
+
+  let data = [...options];
+  const none = [{ label: 'None', value: '' }];
+  if (noneOption) {
+    data = none.concat(data);
+  }
 
   return (
     <LoadingWrapper loading={loading}>
@@ -20,7 +27,7 @@ export default function ClassicSelect(props) {
         style={{ width: '100%' }}
         placeholder={placeHolder}
         onChange={handleSelect}
-        options={options}
+        options={data}
         {...(multiple && {
           mode: 'multiple',
           maxTagCount: 'responsive',

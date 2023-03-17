@@ -23,7 +23,7 @@ export default function AdminTable(props) {
     apiDeleteOne,
     apiDeleteMultiple,
     apiImport,
-    addEditComponent,
+    addEditComponent = <></>,
     keyProps = columns[0]?.dataIndex, // for delete purpose
     scroll,
     ...other
@@ -176,6 +176,7 @@ export default function AdminTable(props) {
       dataIndex: 'action',
       key: 'action',
       width: 45,
+      maxWidth: 45,
       fixed: true,
       resizeable: false,
       render: (_, record) => (

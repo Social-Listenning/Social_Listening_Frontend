@@ -2,13 +2,23 @@ import { Select } from 'antd';
 
 export default function BooleanSelect(props) {
   const {
-    options,
     handleSelect,
     multiple = false,
     placeHolder = `Select ...`,
     disabled = false,
+    noneOption = false,
     ...other
   } = props;
+
+  const boolOption = [
+    { label: 'True', value: true },
+    { label: 'False', value: false },
+  ];
+  let data = [...boolOption];
+  const none = [{ label: 'None', value: '' }];
+  if (noneOption) {
+    data = none.concat(data);
+  }
 
   return (
     <Select
@@ -16,10 +26,7 @@ export default function BooleanSelect(props) {
       style={{ width: '100%' }}
       placeholder={placeHolder}
       onChange={handleSelect}
-      options={[
-        { label: 'True', value: true },
-        { label: 'False', value: false },
-      ]}
+      options={data}
       {...(multiple && {
         mode: 'multiple',
         maxTagCount: 'responsive',
