@@ -22,6 +22,8 @@ export default function BooleanSelect(props) {
 
   return (
     <Select
+      showArrow
+      allowClear
       disabled={disabled}
       style={{ width: '100%' }}
       placeholder={placeHolder}

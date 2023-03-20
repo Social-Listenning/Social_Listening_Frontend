@@ -7,16 +7,46 @@ import ClassicDropdown from '../../Dropdown/Classic';
 import ToolTipWrapper from '../../ToolTipWrapper';
 
 export default function TableMapData(props) {
-  const { leftCol = [], rightCol = [], getColMapped } = props;
+  const { excelHeader = [], systemCol = [], previewCol = [], getColMapped } = props;
 
   const cellIndex = useRef(null);
-
   const [dataSource, setDataSource] = useState([]);
   const columns = [
     {
-      title: 'Excel Columns',
-      dataIndex: 'leftCol',
-      key: 'leftCol',
+      title: 'System Property',
+      dataIndex: 'systemCol',
+      key: 'systemCol',
+      render: (text, record) => {
+        let className = 'mapped-row flex-center';
+        if (systemCol[record.key]?.required) {
+          className += ' required-column';
+          if (!record.excelHeader) {
+            className += ' error-column';
+          }
+        }
+        return (
+          <ToolTipWrapper
+            tooltip={
+              systemCol[record.key]?.required
+                ? 'This column is required'
+                : ''
+            }
+            placement="left"
+          >
+            <div className={className}>{text}</div>
+          </ToolTipWrapper>
+        );
+      },
+      onCell: () => {
+        return {
+          style: { padding: '0 1.6rem' },
+        };
+      },
+    },
+    {
+      title: 'Header From Excel',
+      dataIndex: 'excelHeader',
+      key: 'excelHeader',
       render: (text) => (
         <ToolTipWrapper
           tooltip="Click to choose excel column"
@@ -26,10 +56,10 @@ export default function TableMapData(props) {
             <ClassicDropdown
               clickTrigger
               noneOption
-              list={leftCol?.filter((x) => x !== text)}
+              list={excelHeader?.filter((x) => x !== text)}
               handleItemClick={(e) => {
-                dataSource[cellIndex.current].leftCol =
-                  leftCol.filter((x) => x !== text)[e.key];
+                dataSource[cellIndex.current].excelHeader =
+                  excelHeader.filter((x) => x !== text)[e.key];
 
                 setDataSource([...dataSource]);
                 getColMapped([...dataSource]);
@@ -53,43 +83,9 @@ export default function TableMapData(props) {
       },
     },
     {
-      dataIndex: 'arrowIcon',
-      key: 'arrowIcon',
-      render: () => <ArrowRightOutlined />,
-      onCell: () => ({
-        className: 'text-center',
-      }),
-    },
-    {
-      title: 'Origin Columns',
-      dataIndex: 'rightCol',
-      key: 'rightCol',
-      render: (text, record) => {
-        let className = 'mapped-row flex-center';
-        if (rightCol[record.key]?.required) {
-          className += ' required-column';
-          if (!record.leftCol) {
-            className += ' error-column';
-          }
-        }
-        return (
-          <ToolTipWrapper
-            tooltip={
-              rightCol[record.key]?.required
-                ? 'This column is required'
-                : ''
-            }
-            placement="left"
-          >
-            <div className={className}>{text}</div>
-          </ToolTipWrapper>
-        );
-      },
-      onCell: () => {
-        return {
-          style: { padding: '0 1.6rem' },
-        };
-      },
+      title: 'Preview',
+      dataIndex: 'previewCol',
+      key: 'previewCol',
     },
   ];
 
@@ -99,7 +95,7 @@ export default function TableMapData(props) {
     return str?.toLowerCase()?.replace(/\s/g, '');
   }
 
-  // compare leftCol and rightCol
+  // compare excelHeader and systemCol
   function mapLeftToRight(left, right) {
     const formatLeft = formatString(left);
     const formatRight = formatString(right);
@@ -112,19 +108,21 @@ export default function TableMapData(props) {
 
   // push data to table
   function getDataSource() {
-    if (leftCol?.length > 0 && rightCol?.length > 0) {
+    if (excelHeader?.length > 0 && systemCol?.length > 0) {
       let dumpData = [];
-      for (let i = 0; i < rightCol.length; i++) {
-        let leftColData = leftCol.filter((item) =>
-          mapLeftToRight(item, rightCol[i]?.title)
+      for (let i = 0; i < systemCol.length; i++) {
+        let excelHeaderData = excelHeader.filter((item) =>
+          mapLeftToRight(item, systemCol[i]?.title)
         )[0];
 
         dumpData.push({
           key: i,
-          leftCol: leftColData,
-          rightCol: rightCol[i]?.title,
+          excelHeader: excelHeaderData,
+          systemCol: systemCol[i]?.title,
+          previewCol: previewCol[excelHeaderData]
         });
       }
+      console.log(dumpData)
       setDataSource(dumpData);
       getColMapped(dumpData);
     }
@@ -136,7 +134,7 @@ export default function TableMapData(props) {
 
   useUpdateEffect(() => {
     getDataSource();
-  }, [leftCol]);
+  }, [excelHeader]);
   // #endregion
 
   return (

@@ -27,7 +27,7 @@ export default function OwnerAccountManagement() {
       }),
       sort: false,
       resizeable: false,
-      width: 80,
+      width: 100,
     },
     {
       title: 'Role',
@@ -41,10 +41,13 @@ export default function OwnerAccountManagement() {
       render: (record) => {
         return <Chip>{record}</Chip>;
       },
+      onCell: () => ({
+        className: 'text-center',
+      }),
     },
     {
       title: 'Full Name',
-      dataIndex: 'fullName',
+      dataIndex: 'fullName', 
     },
     {
       title: 'User Name',
@@ -57,10 +60,18 @@ export default function OwnerAccountManagement() {
     {
       title: 'Date Created',
       dataIndex: 'createdAt',
+      render: (record) => {
+        const dateFormat = new Date(record).toLocaleDateString();
+        return <span>{dateFormat}</span>;
+      },
     },
     {
       title: 'Date Modified',
       dataIndex: 'updatedAt',
+      render: (record) => {
+        const dateFormat = new Date(record).toLocaleDateString();
+        return <span>{dateFormat}</span>;
+      },
     },
   ];
 

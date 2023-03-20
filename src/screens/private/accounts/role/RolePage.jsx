@@ -1,28 +1,42 @@
-import { Card, Col, Row } from 'antd';
+import { role } from '../../../../constants/profile/profile';
+import AdminTable from '../../../../components/shared/antd/Table/Table';
+import Chip from '../../../../components/shared/element/Chip';
 
 export default function RolePage() {
-  return (
-    <Row gutter={16}>
-      <Col span={8}>
-        <Card title="Card title" bordered={false}>
-          Card content
-        </Card>
-      </Col>
-      <Col span={8}>
-        <Card title="Card title" bordered={false}>
-          Card content
-        </Card>
-      </Col>
-      <Col span={8}>
-        <Card title="Card title" bordered={false}>
-          Card content
-        </Card>
-      </Col>
-      <Col span={8}>
-        <Card title="Card title" bordered={false}>
-          Card content
-        </Card>
-      </Col>
-    </Row>
-  );
+  const columns = [
+    {
+      title: 'Role',
+      dataIndex: 'role.roleName',
+      required: true,
+      fixed: true,
+      sort: false,
+      filter: {
+        filterType: 'Dropdown',
+        options: role,
+      },
+      render: (record) => {
+        return <Chip>{record}</Chip>;
+      },
+      onCell: () => ({
+        className: 'text-center',
+      }),
+    },
+    {
+      title: 'Priority',
+      dataIndex: 'level',
+      disableFilter: true,
+    },
+    {
+      title: 'Total User',
+      dataIndex: '_count.Role_Permission',
+      disableFilter: true,
+    },
+    {
+      title: 'Total Permission',
+      dataIndex: '_count.User',
+      disableFilter: true,
+    },
+  ];
+
+  return <AdminTable columns={columns} apiGetData="/role" />;
 }

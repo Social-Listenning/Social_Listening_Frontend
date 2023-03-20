@@ -26,7 +26,7 @@ export default function AdminAccountManagement() {
       }),
       sort: false,
       resizeable: false,
-      width: 80,
+      width: 100,
     },
     {
       title: 'Email',
@@ -45,6 +45,9 @@ export default function AdminAccountManagement() {
       render: (record) => {
         return <Chip>{record}</Chip>;
       },
+      onCell: () => ({
+        className: 'text-center',
+      }),
     },
     {
       title: 'Full Name',
@@ -58,14 +61,30 @@ export default function AdminAccountManagement() {
       title: 'Phone',
       dataIndex: 'phoneNumber',
     },
+    {
+      title: 'Date Created',
+      dataIndex: 'createdAt',
+      render: (record) => {
+        const dateFormat = new Date(record).toLocaleDateString();
+        return <span>{dateFormat}</span>;
+      },
+    },
+    {
+      title: 'Date Modified',
+      dataIndex: 'updatedAt',
+      render: (record) => {
+        const dateFormat = new Date(record).toLocaleDateString();
+        return <span>{dateFormat}</span>;
+      },
+    },
   ];
-  
 
   return (
     <AdminTable
       apiGetData="/user"
       columns={columns}
       addEditComponent={<AddEditAdminAccount />}
+      scroll={{ x: 2000 }}
     />
   );
 }

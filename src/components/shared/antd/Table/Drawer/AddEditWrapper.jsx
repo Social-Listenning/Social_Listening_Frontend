@@ -9,12 +9,16 @@ export default function AddEditWrapper(props) {
     onClose,
     actionType,
     record,
-    handleConfirm,
     ...other
   } = props;
 
   function closeDrawer() {
     onClose();
+  }
+
+  function handleConfirm() {
+    // cb();
+    console.log('a')
   }
 
   return (
@@ -34,6 +38,7 @@ export default function AddEditWrapper(props) {
       {React.cloneElement(props.children, {
         data: record,
         action: actionType,
+        handleSubmit: handleConfirm
       })}
     </Drawer>
   );

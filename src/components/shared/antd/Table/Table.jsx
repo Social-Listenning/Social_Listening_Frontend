@@ -101,38 +101,42 @@ export default function AdminTable(props) {
 
     if (apiGetData && resetData) {
       toggleLoading(true);
-      await apiService
-        .post(apiGetData, {
-          orders: sorter,
-          filter: filterType,
-          size: 25,
-          pageNumber: 1,
-          totalElement: 10000,
-        })
-        .then((resp) => {
-          if (resp?.result?.data) {
-            for (let prop of originPropsNested) {
-              resp.result.data.map((x) => {
-                let dataNested = prop
-                  .split('.')
-                  .reduce(
-                    (obj, propertyName) => obj[propertyName],
-                    x
-                  );
-                x[prop] = dataNested;
-                return x;
-              });
+      try {
+        await apiService
+          .post(apiGetData, {
+            orders: sorter,
+            filter: filterType,
+            size: 25,
+            pageNumber: 1,
+            totalElement: 10000,
+          })
+          .then((resp) => {
+            if (resp?.result?.data) {
+              for (let prop of originPropsNested) {
+                resp.result.data.map((x) => {
+                  let dataNested = prop
+                    .split('.')
+                    .reduce(
+                      (obj, propertyName) => obj[propertyName],
+                      x
+                    );
+                  x[prop] = dataNested;
+                  return x;
+                });
+              }
+              setData(
+                resp.result.data.map((x, index) => {
+                  return {
+                    ...x,
+                    key: index,
+                  };
+                })
+              );
             }
-            setData(
-              resp.result.data.map((x, index) => {
-                return {
-                  ...x,
-                  key: index,
-                };
-              })
-            );
-          }
-        });
+          });
+      } catch (ex) {
+        console.log(ex)
+      }
       toggleLoading(false);
     }
   }
@@ -143,7 +147,7 @@ export default function AdminTable(props) {
     if (row && apiDeleteOne) {
       const key = row[keyProps]; // get value with object key
 
-      apiService.post(`${apiDeleteOne}/${key}`, null).then((resp) => {
+      apiService.post(`${apiDeleteOne}/${key}`).then((resp) => {
         if (resp?.result) {
           refreshData();
         }

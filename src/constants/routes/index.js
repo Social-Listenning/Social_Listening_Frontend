@@ -46,12 +46,29 @@ export const publicRoutes = [
 ];
 
 export const privateRoutes = [
+  { path: '/', element: <HomePage /> },
   { path: 'home', element: <HomePage /> },
   { path: 'profile', element: <ProfilePage /> },
-  { path: 'account/admin', element: <AdminAccountManagement /> },
-  { path: 'account/owner', element: <OwnerAccountManagement /> },
-  { path: 'account/permission', element: <PermissionManagement /> },
-  { path: 'account/role', element: <RoleManagement /> },
+  {
+    path: 'account/admin',
+    element: <AdminAccountManagement />,
+    roleRequired: 'ADMIN',
+  },
+  {
+    path: 'account/permission',
+    element: <PermissionManagement />,
+    roleRequired: 'ADMIN',
+  },
+  {
+    path: 'account/role',
+    element: <RoleManagement />,
+    roleRequired: 'ADMIN',
+  },
+  {
+    path: 'account/owner',
+    element: <OwnerAccountManagement />,
+    roleRequired: 'OWNER',
+  },
 ];
 
 export const errorRoutes = [

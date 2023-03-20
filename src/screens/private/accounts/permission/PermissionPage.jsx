@@ -1,4 +1,6 @@
+import { role } from '../../../../constants/profile/profile';
 import AdminTable from '../../../../components/shared/antd/Table/Table';
+import Chip from '../../../../components/shared/element/Chip';
 import AddEditPermissions from './AddEditPermissions'
 
 export default function PermissionManangement() {
@@ -8,24 +10,36 @@ export default function PermissionManangement() {
       dataIndex: 'role.roleName',
       required: true,
       fixed: true,
+      sort: false,
+      filter: {
+        filterType: 'Dropdown',
+        options: role,
+      },
+      render: (record) => {
+        return <Chip>{record}</Chip>;
+      },
+      onCell: () => ({
+        className: 'text-center',
+      }),
     },
     {
       title: 'Permission Name',
-      dataIndex: 'permissionName',
+      dataIndex: 'permission.displayName',
     },
     {
       title: 'Permission Key',
-      dataIndex: 'permissionKey',
+      dataIndex: 'permission.permission',
     },
     {
       title: 'Screen',
-      dataIndex: 'screen',
+      dataIndex: 'permission.screen',
     },
   ];
 
   return (
     <AdminTable
       columns={columns}
+      apiGetData="/permission"
       addEditComponent={<AddEditPermissions />}
       // scroll={{ x: 2000 }}
     />

@@ -23,6 +23,8 @@ export default function ClassicSelect(props) {
   return (
     <LoadingWrapper loading={loading}>
       <Select
+        showArrow
+        allowClear
         disabled={disabled}
         style={{ width: '100%' }}
         placeholder={placeHolder}

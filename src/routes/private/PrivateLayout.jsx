@@ -42,19 +42,41 @@ export default function PrivateLayout(props) {
 
   const token = localStorage.getItem('token');
   const decodedToken = decodeToken(token);
-
-  const [availableMenu, setAvailableMenu] = useState(menuSidebar);
+console.log(decodedToken)
+  // #region menu sidebar config with role
+  const [availableMenu, setAvailableMenu] = useState(
+    menuSidebar.map((x) => x)
+  );
+  function filterMenuSidebar(role) {
+    const filtered = menuSidebar.map((item) => {
+      if (item.children && item.children.length > 0) {
+        const filteredChildren = item.children.filter(
+          (child) => !child.role || child.role === role
+        );
+        return { ...item, children: filteredChildren };
+      } else {
+        return item;
+      }
+    });
+    return filtered.filter(
+      (item) => !item.role || item.role === role
+    );
+  }
+  // #endregion
 
   useEffectOnce(
     () => {
-      connect();
+      // filter the menu sidebar
+      setAvailableMenu(filterMenuSidebar(decodedToken.role));
+      connect(); // connect socket
     },
     // onDestroy function
-    () => {
-      disconnect();
-    }
+    // () => {
+    //   disconnect(); // disconnect socket
+    // }
   );
 
+  // #region chart notification
   const [openChart, setOpenChart] = useToggle(false);
   const title = useRef(null);
   const resultChart = useRef(null);
@@ -88,18 +110,20 @@ export default function PrivateLayout(props) {
       }
     });
   }, [socket]);
+  // #endregion
 
   function handleMenuHeader(e) {
     // logout option
     if (menuUserHeader[e.key] === 'Logout') {
+      localStorage.removeItem('token');
+      navigate('/login');
+      notifyService.showSucsessMessage({
+        description: 'Logout successfully',
+      });
+      
       apiService.post('/auth/log-out').then((resp) => {
         if (resp?.result) {
           disconnect();
-          localStorage.removeItem('token');
-          navigate('/login');
-          notifyService.showSucsessMessage({
-            description: 'Logout successfully',
-          });
         }
       });
     }

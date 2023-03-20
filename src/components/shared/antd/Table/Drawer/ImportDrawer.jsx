@@ -23,6 +23,7 @@ export default function ImportDrawer(props) {
     dumpImportData,
   } = props;
 
+  // #region generate example excel file
   const downloadUrl = useRef(null);
   function generateExcelFile(data) {
     // write data to excel
@@ -52,17 +53,20 @@ export default function ImportDrawer(props) {
   useEffectOnce(() => {
     generateExcelFile(dumpImportData);
   });
+  // #endregion
 
-  // const [data, setData] = useState([]); // rows data in excel
+  // #region working with excel section
   const propsMapped = useRef([]); // header mapped to table col props
   const file = useRef(null); // file excel
   const header = useRef([]); // headers in excel
+  const data = useRef([]); // rows data in excel
   const [colMapped, setColMapped] = useState([]); // header in excel mapped to table
   const [currentStep, setCurrentStep] = useState(0);
 
-  function getDataFromFile(fileExcel, headerExcel) {
+  function getDataFromFile(fileExcel, excelHeader, excelData) {
     file.current = fileExcel;
-    header.current = headerExcel;
+    header.current = excelHeader;
+    data.current = excelData[0];
     setCurrentStep(currentStep + 1);
   }
 
@@ -79,6 +83,7 @@ export default function ImportDrawer(props) {
       })
       .filter((item) => item.header);
   }
+  // #endregion
 
   // get any error cols to block next button
   const [hadErrorCol, setHadErrorCol] = useToggle(false);
@@ -189,8 +194,7 @@ export default function ImportDrawer(props) {
                     Only excel files (.xlsx, .xls) are allowed.
                   </span>
                   <span>
-                    You can download example Excel file by clicking
-                    the Download button below or click{' '}
+                    You can download example Excel file{' '}
                     <a
                       href={downloadUrl.current}
                       download="example.xlsx"
@@ -210,13 +214,14 @@ export default function ImportDrawer(props) {
               <UploadButton>Upload</UploadButton>
             </UploadFile>
           </div>
-        ) : currentStep === 1 ? (
+        ) : (
           <TableMapData
-            leftCol={header.current}
-            rightCol={importColumns}
+            excelHeader={header.current}
+            systemCol={importColumns}
+            previewCol={data.current}
             getColMapped={setColMapped}
           />
-        ) : null}
+        )}
       </div>
     </Drawer>
   );
