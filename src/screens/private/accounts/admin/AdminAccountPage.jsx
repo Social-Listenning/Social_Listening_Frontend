@@ -2,6 +2,7 @@ import { role } from '../../../../constants/profile/profile';
 import AdminTable from '../../../../components/shared/antd/Table/Table';
 import BooleanRow from '../../../../components/shared/element/BooleanRow';
 import { RoleChip } from '../../../../components/shared/element/Chip';
+import DateTimeFormat from '../../../../components/shared/element/DateTimeFormat';
 import AddEditAdminAccount from './AddEditAdminAccount';
 
 export default function AdminAccountManagement() {
@@ -65,16 +66,14 @@ export default function AdminAccountManagement() {
       title: 'Date Created',
       dataIndex: 'createdAt',
       render: (record) => {
-        const dateFormat = new Date(record).toLocaleDateString();
-        return <span>{dateFormat}</span>;
+        return <DateTimeFormat dateTime={record} />;
       },
     },
     {
       title: 'Date Modified',
       dataIndex: 'updatedAt',
       render: (record) => {
-        const dateFormat = new Date(record).toLocaleDateString();
-        return <span>{dateFormat}</span>;
+        return <DateTimeFormat dateTime={record} />;
       },
     },
   ];
