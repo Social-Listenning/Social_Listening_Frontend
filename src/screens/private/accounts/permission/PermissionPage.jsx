@@ -1,7 +1,7 @@
 import { role } from '../../../../constants/profile/profile';
 import AdminTable from '../../../../components/shared/antd/Table/Table';
-import Chip from '../../../../components/shared/element/Chip';
-import AddEditPermissions from './AddEditPermissions'
+import { RoleChip } from '../../../../components/shared/element/Chip';
+import AddEditPermissions from './AddEditPermissions';
 
 export default function PermissionManangement() {
   const columns = [
@@ -16,7 +16,7 @@ export default function PermissionManangement() {
         options: role,
       },
       render: (record) => {
-        return <Chip>{record}</Chip>;
+        return <RoleChip currentRole={record} />;
       },
       onCell: () => ({
         className: 'text-center',

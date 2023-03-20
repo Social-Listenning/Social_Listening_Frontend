@@ -1,7 +1,7 @@
 import { role } from '../../../../constants/profile/profile';
 import AdminTable from '../../../../components/shared/antd/Table/Table';
 import BooleanRow from '../../../../components/shared/element/BooleanRow';
-import Chip from '../../../../components/shared/element/Chip';
+import { RoleChip } from '../../../../components/shared/element/Chip';
 import AddEditAdminAccount from './AddEditAdminAccount';
 
 export default function AdminAccountManagement() {
@@ -43,7 +43,7 @@ export default function AdminAccountManagement() {
         options: role,
       },
       render: (record) => {
-        return <Chip>{record}</Chip>;
+        return <RoleChip currentRole={record} />;
       },
       onCell: () => ({
         className: 'text-center',

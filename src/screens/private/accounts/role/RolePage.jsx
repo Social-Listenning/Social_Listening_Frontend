@@ -1,6 +1,6 @@
 import { role } from '../../../../constants/profile/profile';
 import AdminTable from '../../../../components/shared/antd/Table/Table';
-import Chip from '../../../../components/shared/element/Chip';
+import { RoleChip } from '../../../../components/shared/element/Chip';
 
 export default function RolePage() {
   const columns = [
@@ -15,7 +15,7 @@ export default function RolePage() {
         options: role,
       },
       render: (record) => {
-        return <Chip>{record}</Chip>;
+        return <RoleChip currentRole={record} />;
       },
       onCell: () => ({
         className: 'text-center',

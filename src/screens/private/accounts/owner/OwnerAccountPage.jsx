@@ -1,7 +1,7 @@
 import { role } from '../../../../constants/profile/profile';
 import AdminTable from '../../../../components/shared/antd/Table/Table';
 import BooleanRow from '../../../../components/shared/element/BooleanRow';
-import Chip from '../../../../components/shared/element/Chip';
+import { RoleChip } from '../../../../components/shared/element/Chip';
 import AddEditOwnerAccount from './AddEditOwnerAccount';
 
 const roleData = role.slice(1);
@@ -39,7 +39,7 @@ export default function OwnerAccountManagement() {
         options: roleData,
       },
       render: (record) => {
-        return <Chip>{record}</Chip>;
+        return <RoleChip currentRole={record} />;
       },
       onCell: () => ({
         className: 'text-center',
@@ -47,7 +47,7 @@ export default function OwnerAccountManagement() {
     },
     {
       title: 'Full Name',
-      dataIndex: 'fullName', 
+      dataIndex: 'fullName',
     },
     {
       title: 'User Name',

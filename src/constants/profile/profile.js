@@ -4,8 +4,8 @@ export const gender = [
 ];
 
 export const role = [
-  { label: 'Admin', value: 'ADMIN' },
-  { label: 'Owner', value: 'OWNER' },
-  { label: 'Manager', value: 'MANAGER' },
+  { label: 'Admin', value: 'ADMIN', color: 'red' },
+  { label: 'Owner', value: 'OWNER', color: 'blue' },
+  { label: 'Manager', value: 'MANAGER', color: 'green' },
   { label: 'Supporter', value: 'SUPPORTER' },
 ];
