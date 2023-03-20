@@ -1,6 +1,7 @@
 import { Table } from 'antd';
 import { useState, useRef } from 'react';
 import { apiService } from '../../../../services/apiService';
+import { notifyService } from '../../../../services/notifyService';
 import { defaultAction } from '../../../../constants/table/action';
 import useEffectOnce from '../../../hooks/useEffectOnce';
 import useUpdateEffect from '../../../hooks/useUpdateEffect';
@@ -135,7 +136,7 @@ export default function AdminTable(props) {
             }
           });
       } catch (ex) {
-        console.log(ex)
+        console.log(ex);
       }
       toggleLoading(false);
     }
@@ -147,11 +148,17 @@ export default function AdminTable(props) {
     if (row && apiDeleteOne) {
       const key = row[keyProps]; // get value with object key
 
-      apiService.post(`${apiDeleteOne}/${key}`).then((resp) => {
-        if (resp?.result) {
-          refreshData();
-        }
-      });
+      try {
+        apiService.post(`${apiDeleteOne}/${key}`).then((resp) => {
+          if (resp?.result) {
+            refreshData();
+          }
+        });
+      } catch (ex) {
+        notifyService.showErrorMessage({
+          description: ex.message,
+        });
+      }
     }
   }
 

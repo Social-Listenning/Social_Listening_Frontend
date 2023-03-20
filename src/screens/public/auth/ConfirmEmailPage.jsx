@@ -18,18 +18,26 @@ export default function ConfirmEmail() {
 
   async function handleLogin() {
     toggleLoading(true);
-    await apiService.post('/auth/log-in', authModel).then((resp) => {
-      if (resp?.result) {
-        localStorage.setItem('token', resp.result?.access);
-        customHistory.push('/');
-        notifyService.showSucsessMessage({
-          description: 'Login successfully',
+    try {
+      await apiService
+        .post('/auth/log-in', authModel)
+        .then((resp) => {
+          if (resp?.result) {
+            localStorage.setItem('token', resp.result?.access);
+            customHistory.push('/');
+            notifyService.showSucsessMessage({
+              description: 'Login successfully',
+            });
+            // dont need to toggle loading
+            // because it will redirect user
+            return;
+          }
         });
-        // dont need to toggle loading
-        // because it will redirect user
-        return;
-      }
-    });
+    } catch (ex) {
+      notifyService.showErrorMessage({
+        description: ex.message,
+      });
+    }
     toggleLoading(false);
   }
 

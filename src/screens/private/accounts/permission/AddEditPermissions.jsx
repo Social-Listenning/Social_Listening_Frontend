@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { Form, Input } from 'antd';
 import { role } from '../../../../constants/profile/profile';
 import { apiService } from '../../../../services/apiService';
+import { notifyService } from '../../../../services/notifyService';
 import useEffectOnce from '../../../../components/hooks/useEffectOnce';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
 import ClassicSelect from '../../../../components/shared/antd/Select/Classic';
@@ -23,18 +24,24 @@ export default function AddEditPermissions(props) {
   // #region get all screens
   const [screens, setScreens] = useState([]);
   useEffectOnce(() => {
-    apiService.post('/permission/get-screens').then((resp) => {
-      if (resp?.result) {
-        setScreens(
-          resp.result.map((item) => {
-            return {
-              label: item.screen,
-              value: item.screen,
-            };
-          })
-        );
-      }
-    });
+    try {
+      apiService.post('/permission/get-screens').then((resp) => {
+        if (resp?.result) {
+          setScreens(
+            resp.result.map((item) => {
+              return {
+                label: item.screen,
+                value: item.screen,
+              };
+            })
+          );
+        }
+      });
+    } catch (ex) {
+      notifyService.showErrorMessage({
+        description: ex.message,
+      });
+    }
   });
   // #endregion
 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Select } from 'antd';
 import { apiService } from '../../../../services/apiService';
+import { notifyService } from '../../../../services/notifyService';
 import { Checker } from '../../../../utils/dataChecker';
 import { Converter } from '../../../../utils/dataConverter';
 import useEffectOnce from '../../../../components/hooks/useEffectOnce';
@@ -25,16 +26,22 @@ export default function ApiSupportSelect(props) {
   async function handleAPI(apiUrl) {
     toggleLoading(true); //start loading
 
-    await apiService.get(apiUrl).then((value) => {
-      if (!Checker.isEmptyObject(value?.data, true)) {
-        let propValue = value.data[dataKey];
-        if (!Checker.isEmptyObjectList(propValue, true)) {
-          setOptions(
-            Converter.convertListToLabelValueFormat(propValue)
-          );
+    try {
+      await apiService.get(apiUrl).then((value) => {
+        if (!Checker.isEmptyObject(value?.data, true)) {
+          let propValue = value.data[dataKey];
+          if (!Checker.isEmptyObjectList(propValue, true)) {
+            setOptions(
+              Converter.convertListToLabelValueFormat(propValue)
+            );
+          }
         }
-      }
-    });
+      });
+    } catch (ex) {
+      notifyService.showErrorMessage({
+        description: ex.message,
+      });
+    }
 
     toggleLoading(false); //finish loading
   }

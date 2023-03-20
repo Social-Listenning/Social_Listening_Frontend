@@ -42,7 +42,7 @@ export default function PrivateLayout(props) {
 
   const token = localStorage.getItem('token');
   const decodedToken = decodeToken(token);
-console.log(decodedToken)
+  console.log(decodedToken);
   // #region menu sidebar config with role
   const [availableMenu, setAvailableMenu] = useState(
     menuSidebar.map((x) => x)
@@ -69,7 +69,7 @@ console.log(decodedToken)
       // filter the menu sidebar
       setAvailableMenu(filterMenuSidebar(decodedToken.role));
       connect(); // connect socket
-    },
+    }
     // onDestroy function
     // () => {
     //   disconnect(); // disconnect socket
@@ -120,12 +120,18 @@ console.log(decodedToken)
       notifyService.showSucsessMessage({
         description: 'Logout successfully',
       });
-      
-      apiService.post('/auth/log-out').then((resp) => {
-        if (resp?.result) {
-          disconnect();
-        }
-      });
+
+      try {
+        apiService.post('/auth/log-out').then((resp) => {
+          if (resp?.result) {
+            disconnect();
+          }
+        });
+      } catch (ex) {
+        notifyService.showErrorMessage({
+          description: ex.message,
+        });
+      }
     }
     // profile option
     else if (menuUserHeader[e.key] === 'Profile') {
