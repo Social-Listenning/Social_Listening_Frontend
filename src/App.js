@@ -1,11 +1,15 @@
+import { QueryClient, QueryClientProvider } from 'react-query';
 import AppRoutes from './routes';
 import SocketProvider from './components/contexts/socket/SocketProvider';
 
+const queryClient = new QueryClient();
 function App() {
   return (
-    <SocketProvider>
-      <AppRoutes />
-    </SocketProvider>
+    <QueryClientProvider client={queryClient}>
+      <SocketProvider>
+        <AppRoutes />
+      </SocketProvider>
+    </QueryClientProvider>
   );
 }
 

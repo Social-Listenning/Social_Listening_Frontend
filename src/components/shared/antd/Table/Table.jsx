@@ -1,3 +1,4 @@
+import { cloneElement } from 'react';
 import { Table } from 'antd';
 import { useState, useRef } from 'react';
 import { apiService } from '../../../../services/apiService';
@@ -290,6 +291,7 @@ export default function AdminTable(props) {
         deleteMultiple={onMultipleDelete}
         refresh={setRefreshFS}
       />
+
       <LoadingWrapper size="large" loading={loading}>
         <Table
           size="small"
@@ -305,14 +307,13 @@ export default function AdminTable(props) {
           {...other}
         />
       </LoadingWrapper>
-      <AddEditWrapper
-        open={openAddEdit}
-        onClose={closeAddEdit}
-        record={selectedRecord.current}
-        actionType={actionType.current}
-      >
-        {addEditComponent}
-      </AddEditWrapper>
+
+      {cloneElement(addEditComponent, {
+        open: openAddEdit,
+        onClose: closeAddEdit,
+        data: selectedRecord.current,
+        action: actionType.current,
+      })}
     </>
   );
 }

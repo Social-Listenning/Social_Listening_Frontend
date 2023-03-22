@@ -1,10 +1,11 @@
 import { useState, useRef } from 'react';
-import { Layout, Menu } from 'antd';
+import { Badge, Layout, Menu, Tabs } from 'antd';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   DownOutlined,
   CheckCircleOutlined,
+  BellOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { decodeToken } from 'react-jwt';
@@ -64,10 +65,33 @@ export default function PrivateLayout(props) {
   }
   // #endregion
 
+  const [notiList, setNotiList] = useState({});
   useEffectOnce(
     () => {
       // filter the menu sidebar
       setAvailableMenu(filterMenuSidebar(decodedToken.role));
+
+      try {
+        apiService
+          .post('/notification', {
+            offset: 0,
+            size: 10,
+            pageNumber: 1,
+            totalElement: 10000,
+            orders: [],
+            filter: [],
+          })
+          .then((resp) => {
+            if (resp?.result) {
+              setNotiList(resp.result);
+            }
+          });
+      } catch (ex) {
+        notifyService.showErrorMessage({
+          description: ex.message,
+        });
+      }
+
       connect(); // connect socket
     }
     // onDestroy function
@@ -80,8 +104,9 @@ export default function PrivateLayout(props) {
   const [openChart, setOpenChart] = useToggle(false);
   const title = useRef(null);
   const resultChart = useRef(null);
-  function openChartResult() {
+  function openChartResult(notificationId) {
     setOpenChart(true);
+    socket.emit('clickNotification', notificationId);
   }
 
   useUpdateEffect(() => {
@@ -97,7 +122,10 @@ export default function PrivateLayout(props) {
             icon: <CheckCircleOutlined />,
             title: payload.title,
             description: (
-              <div className="pointer" onClick={openChartResult}>
+              <div
+                className="pointer"
+                onClick={openChartResult(payload.id?.toString())}
+              >
                 {payload.body}
               </div>
             ),
@@ -115,7 +143,6 @@ export default function PrivateLayout(props) {
   function handleMenuHeader(e) {
     // logout option
     if (menuUserHeader[e.key] === 'Logout') {
-      localStorage.removeItem('token');
       navigate('/login');
       notifyService.showSucsessMessage({
         description: 'Logout successfully',
@@ -132,6 +159,8 @@ export default function PrivateLayout(props) {
           description: ex.message,
         });
       }
+
+      localStorage.removeItem('token');
     }
     // profile option
     else if (menuUserHeader[e.key] === 'Profile') {
@@ -184,16 +213,55 @@ export default function PrivateLayout(props) {
             )}
           </ToolTipWrapper>
 
-          <ClassicDropdown
-            list={menuUserHeader}
-            handleItemClick={handleMenuHeader}
-          >
-            <div className="header-menu flex-center">
-              <BasicAvatar name={decodedToken?.userName} />
-              <span>{decodedToken?.userName}</span>
-              <DownOutlined />
-            </div>
-          </ClassicDropdown>
+          <div className="header-right-wrapper flex-center">
+            <ClassicDropdown
+              clickTrigger
+              list={notiList?.data?.map(item => item.title)}
+              dropdownRender={(menu) => {
+                return (
+                  <div className="notification-wrapper">
+                    <Title>Notifications</Title>
+                    <Tabs
+                      // centered
+                      items={[
+                        {
+                          key: 1,
+                          label: `All`,
+                          children: menu,
+                        },
+                        {
+                          key: 2,
+                          label: `Unread`,
+                          children: menu,
+                        },
+                      ]}
+                    />
+                  </div>
+                );
+              }}
+            >
+              <ToolTipWrapper tooltip="Notifications">
+                <Badge
+                  color="var(--primary-color)"
+                  count={notiList?.page?.totalElement}
+                  overflowCount={99}
+                >
+                  <BellOutlined />
+                </Badge>
+              </ToolTipWrapper>
+            </ClassicDropdown>
+
+            <ClassicDropdown
+              list={menuUserHeader}
+              handleItemClick={handleMenuHeader}
+            >
+              <div className="header-menu flex-center">
+                <BasicAvatar name={decodedToken?.userName} />
+                <span>{decodedToken?.userName}</span>
+                <DownOutlined />
+              </div>
+            </ClassicDropdown>
+          </div>
         </Header>
 
         <Content className="private-content">

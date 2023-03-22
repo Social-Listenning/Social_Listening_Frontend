@@ -1,20 +1,26 @@
 import { Form, Input } from 'antd';
 import { role } from '../../../../constants/profile/profile';
+import AddEditWrapper from '../../../../components/shared/antd/Table/Drawer/AddEditWrapper';
 import ClassicSelect from '../../../../components/shared/antd/Select/Classic';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
 
 export default function AddEditAdminAccount(props) {
-  const { data, action } = props;
-  console.log(data, action);
+  const { open, onClose, data, action } = props;
+
   const [addEditUserForm] = Form.useForm();
+console.log(data)
   return (
-    <div>
+    <AddEditWrapper
+      open={open}
+      onClose={onClose}
+      form={addEditUserForm}
+    >
       <Form
         form={addEditUserForm}
         name="add-edit-user-form"
         layout="vertical"
         autoComplete="off"
-        initialValues={{ role: 'admin' }}
+        initialValues={{ ...data, role: data?.role?.roleName }}
         // onFinish={handleSubmit}
       >
         <ToolTipWrapper
@@ -131,6 +137,6 @@ export default function AddEditAdminAccount(props) {
           </Form.Item>
         </ToolTipWrapper>
       </Form>
-    </div>
+    </AddEditWrapper>
   );
 }

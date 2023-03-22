@@ -4,20 +4,21 @@ import { role } from '../../../../constants/profile/profile';
 import { apiService } from '../../../../services/apiService';
 import { notifyService } from '../../../../services/notifyService';
 import useEffectOnce from '../../../../components/hooks/useEffectOnce';
+import AddEditWrapper from '../../../../components/shared/antd/Table/Drawer/AddEditWrapper';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
 import ClassicSelect from '../../../../components/shared/antd/Select/Classic';
 
 export default function AddEditPermissions(props) {
-  const { data, action, handleSubmit } = props;
-  console.log(data, action);
+  const { open, onClose, data, action } = props;
+
   const [addEditPermissionForm] = Form.useForm();
 
-  async function handleFinish(model) {
+  async function handleFinish(data) {
     // toggleLoading(true);
-    await apiService.post('/auth/log-in', model).then((resp) => {
-      if (resp?.result) {
-      }
-    });
+    setTimeout(() => {
+      
+      console.log(data);
+    }, 5000);
     // toggleLoading(false);
   }
 
@@ -74,7 +75,11 @@ export default function AddEditPermissions(props) {
   // #endregion
 
   return (
-    <div>
+    <AddEditWrapper
+      open={open}
+      onClose={onClose}
+      form={addEditPermissionForm}
+    >
       <Form
         form={addEditPermissionForm}
         name="add-edit-user-form"
@@ -135,6 +140,6 @@ export default function AddEditPermissions(props) {
           />
         </Form.Item>
       </Form>
-    </div>
+    </AddEditWrapper>
   );
 }

@@ -30,11 +30,6 @@ export default function AdminAccountManagement() {
       width: 100,
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      required: true,
-    },
-    {
       title: 'Role',
       dataIndex: 'role.roleName',
       required: true,
