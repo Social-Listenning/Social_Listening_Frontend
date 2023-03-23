@@ -1,10 +1,7 @@
 import {
   HomeOutlined,
-  SafetyOutlined,
-  CrownOutlined,
-  SmileOutlined,
+  UsergroupDeleteOutlined,
   SettingOutlined,
-  UserOutlined,
 } from '@ant-design/icons';
 
 // automatic add key = label => label must be unique
@@ -17,25 +14,33 @@ export const menuSidebar = [
   {
     key: 'account',
     label: 'Account',
-    icon: <SafetyOutlined />,
+    icon: <UsergroupDeleteOutlined />,
     children: [
       {
         key: 'account/admin',
         label: 'Admin',
-        icon: <CrownOutlined />,
-        permissions: 'ADMIN',
+        role: 'ADMIN',
+      },
+      {
+        key: 'account/role',
+        label: 'Role',
+        role: 'ADMIN',
+      },
+      {
+        key: 'account/permission',
+        label: 'Permission',
+        role: 'ADMIN',
       },
       {
         key: 'account/owner',
         label: 'Owner',
-        icon: <SmileOutlined />,
-        permissions: 'OWNER',
+        role: 'OWNER',
       },
     ],
   },
-  // {
-  //   key: 'setting',
-  //   label: 'Setting',
-  //   icon: <SettingOutlined />,
-  // },
+  {
+    key: 'setting',
+    label: 'Setting',
+    icon: <SettingOutlined />,
+  },
 ];

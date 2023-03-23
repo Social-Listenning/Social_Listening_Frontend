@@ -41,6 +41,7 @@ export default function PieChartResult(props) {
 
   return (
     <Modal
+      destroyOnClose
       open={open}
       title={title}
       footer={null}

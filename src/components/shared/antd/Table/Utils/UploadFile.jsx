@@ -13,13 +13,13 @@ export default function UploadFile(props) {
         const worksheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[worksheetName];
         const header = getHeaderRow(worksheet) ?? [];
-        getDataFromFile(file, header);
+        const sheetData = utils.sheet_to_json(worksheet); // get all data from excel
+        getDataFromFile(file, header, sheetData);
       } catch (ex) {
         notifyService.showWarningMessage({
           description: 'Only excel files (.xlsx, .xls) are allowed',
         });
       }
-      // const sheetData = utils.sheet_to_json(worksheet); // get all data from excel
     };
     reader.readAsBinaryString(file);
     return false;

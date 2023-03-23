@@ -8,6 +8,7 @@ import NewButton from '../../../element/Button/NewButton';
 import DeleteButton from '../../../element/Button/DeleteButton';
 import ImportButton from '../../../element/Button/ImportButton';
 import ExportButton from '../../../element/Button/ExportButton';
+import ElementWithPermission from '../../../element/ElementWithPermission';
 
 export default function TabelUtils(props) {
   const {
@@ -63,11 +64,13 @@ export default function TabelUtils(props) {
           }}
         />
         {apiImport && importColumns?.length > 0 && (
-          <ImportButton
-            onClick={() => {
-              setOpenImport(true);
-            }}
-          />
+          // <ElementWithPermission permission="import">
+            <ImportButton
+              onClick={() => {
+                setOpenImport(true);
+              }}
+            />
+          // </ElementWithPermission>
         )}
         <ExportButton onClick={() => {}} />
         {showDelete && (

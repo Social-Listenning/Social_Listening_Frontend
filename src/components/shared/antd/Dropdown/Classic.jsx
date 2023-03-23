@@ -8,6 +8,7 @@ export default function ClassicDropdown(props) {
     clickTrigger = false,
     noneOption = false,
     handleItemClick,
+    ...other
   } = props;
 
   let items =
@@ -38,6 +39,7 @@ export default function ClassicDropdown(props) {
         selectedKeys: selectedKeys,
       }}
       {...(clickTrigger && { trigger: ['click'] })}
+      {...other}
     >
       {props.children}
     </Dropdown>

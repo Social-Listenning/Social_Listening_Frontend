@@ -4,17 +4,14 @@ import SaveButton from '../../../element/Button/SaveButton';
 import CancelButton from '../../../element/Button/CancelButton';
 
 export default function AddEditWrapper(props) {
-  const {
-    open,
-    onClose,
-    actionType,
-    record,
-    handleConfirm,
-    ...other
-  } = props;
+  const { open, onClose, form, ...other } = props;
 
   function closeDrawer() {
     onClose();
+  }
+
+  async function handleConfirm() {
+    await form.submit();
   }
 
   return (
@@ -31,10 +28,7 @@ export default function AddEditWrapper(props) {
       }
       {...other}
     >
-      {React.cloneElement(props.children, {
-        data: record,
-        action: actionType,
-      })}
+      {props.children}
     </Drawer>
   );
 }

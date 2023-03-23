@@ -1,11 +1,12 @@
 export const gender = [
-  { label: 'Male', value: 'male' },
-  { label: 'Female', value: 'female' },
+  { label: 'Male', value: 'Male' },
+  { label: 'Female', value: 'Female' },
+  { label: 'Other', value: 'Other' },
 ];
 
 export const role = [
-  { label: 'Admin', value: 'ADMIN' },
-  { label: 'Owner', value: 'OWNER' },
-  { label: 'Manager', value: 'MANAGER' },
-  { label: 'Supporter', value: 'SUPPORTER' },
+  { label: 'Admin', value: 'ADMIN', color: 'red' },
+  { label: 'Owner', value: 'OWNER', color: 'blue' },
+  { label: 'Manager', value: 'MANAGER', color: 'green' },
+  { label: 'Supporter', value: 'SUPPORTER', color: 'purple' },
 ];

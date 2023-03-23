@@ -1,7 +1,8 @@
 import { role } from '../../../../constants/profile/profile';
 import AdminTable from '../../../../components/shared/antd/Table/Table';
 import BooleanRow from '../../../../components/shared/element/BooleanRow';
-import Chip from '../../../../components/shared/element/Chip';
+import { RoleChip } from '../../../../components/shared/element/Chip';
+import DateTimeFormat from '../../../../components/shared/element/DateTimeFormat';
 import AddEditOwnerAccount from './AddEditOwnerAccount';
 
 const roleData = role.slice(1);
@@ -27,7 +28,7 @@ export default function OwnerAccountManagement() {
       }),
       sort: false,
       resizeable: false,
-      width: 80,
+      width: 100,
     },
     {
       title: 'Role',
@@ -39,16 +40,23 @@ export default function OwnerAccountManagement() {
         options: roleData,
       },
       render: (record) => {
-        return <Chip>{record}</Chip>;
+        return <RoleChip currentRole={record} />;
       },
-    },
-    {
-      title: 'Full Name',
-      dataIndex: 'fullName',
+      onCell: () => ({
+        className: 'text-center',
+      }),
     },
     {
       title: 'User Name',
       dataIndex: 'userName',
+    },
+    {
+      title: 'Gender',
+      dataIndex: 'gender',
+    },
+    {
+      title: 'Full Name',
+      dataIndex: 'fullName',
     },
     {
       title: 'Phone',
@@ -57,10 +65,16 @@ export default function OwnerAccountManagement() {
     {
       title: 'Date Created',
       dataIndex: 'createdAt',
+      render: (record) => {
+        return <DateTimeFormat dateTime={record} />;
+      },
     },
     {
       title: 'Date Modified',
       dataIndex: 'updatedAt',
+      render: (record) => {
+        return <DateTimeFormat dateTime={record} />;
+      },
     },
   ];
 

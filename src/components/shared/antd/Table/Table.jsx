@@ -1,6 +1,8 @@
+import { cloneElement } from 'react';
 import { Table } from 'antd';
 import { useState, useRef } from 'react';
 import { apiService } from '../../../../services/apiService';
+import { notifyService } from '../../../../services/notifyService';
 import { defaultAction } from '../../../../constants/table/action';
 import useEffectOnce from '../../../hooks/useEffectOnce';
 import useUpdateEffect from '../../../hooks/useUpdateEffect';
@@ -23,7 +25,7 @@ export default function AdminTable(props) {
     apiDeleteOne,
     apiDeleteMultiple,
     apiImport,
-    addEditComponent,
+    addEditComponent = <></>,
     keyProps = columns[0]?.dataIndex, // for delete purpose
     scroll,
     ...other
@@ -101,38 +103,42 @@ export default function AdminTable(props) {
 
     if (apiGetData && resetData) {
       toggleLoading(true);
-      await apiService
-        .post(apiGetData, {
-          orders: sorter,
-          filter: filterType,
-          size: 25,
-          pageNumber: 1,
-          totalElement: 10000,
-        })
-        .then((resp) => {
-          if (resp?.result?.data) {
-            for (let prop of originPropsNested) {
-              resp.result.data.map((x) => {
-                let dataNested = prop
-                  .split('.')
-                  .reduce(
-                    (obj, propertyName) => obj[propertyName],
-                    x
-                  );
-                x[prop] = dataNested;
-                return x;
-              });
+      try {
+        await apiService
+          .post(apiGetData, {
+            orders: sorter,
+            filter: filterType,
+            size: 25,
+            pageNumber: 1,
+            totalElement: 10000,
+          })
+          .then((resp) => {
+            if (resp?.result?.data) {
+              for (let prop of originPropsNested) {
+                resp.result.data.map((x) => {
+                  let dataNested = prop
+                    .split('.')
+                    .reduce(
+                      (obj, propertyName) => obj[propertyName],
+                      x
+                    );
+                  x[prop] = dataNested;
+                  return x;
+                });
+              }
+              setData(
+                resp.result.data.map((x, index) => {
+                  return {
+                    ...x,
+                    key: index,
+                  };
+                })
+              );
             }
-            setData(
-              resp.result.data.map((x, index) => {
-                return {
-                  ...x,
-                  key: index,
-                };
-              })
-            );
-          }
-        });
+          });
+      } catch (ex) {
+        console.log(ex);
+      }
       toggleLoading(false);
     }
   }
@@ -143,11 +149,17 @@ export default function AdminTable(props) {
     if (row && apiDeleteOne) {
       const key = row[keyProps]; // get value with object key
 
-      apiService.post(`${apiDeleteOne}/${key}`, null).then((resp) => {
-        if (resp?.result) {
-          refreshData();
-        }
-      });
+      try {
+        apiService.post(`${apiDeleteOne}/${key}`).then((resp) => {
+          if (resp?.result) {
+            refreshData();
+          }
+        });
+      } catch (ex) {
+        notifyService.showErrorMessage({
+          description: ex.message,
+        });
+      }
     }
   }
 
@@ -162,6 +174,7 @@ export default function AdminTable(props) {
   const selectedRecord = useRef(null);
 
   function closeAddEdit() {
+    refreshData();
     toggleOpenAddEdit(false);
     actionType.current = null;
     selectedRecord.current = null;
@@ -176,6 +189,7 @@ export default function AdminTable(props) {
       dataIndex: 'action',
       key: 'action',
       width: 45,
+      maxWidth: 45,
       fixed: true,
       resizeable: false,
       render: (_, record) => (
@@ -278,6 +292,7 @@ export default function AdminTable(props) {
         deleteMultiple={onMultipleDelete}
         refresh={setRefreshFS}
       />
+
       <LoadingWrapper size="large" loading={loading}>
         <Table
           size="small"
@@ -293,14 +308,13 @@ export default function AdminTable(props) {
           {...other}
         />
       </LoadingWrapper>
-      <AddEditWrapper
-        open={openAddEdit}
-        onClose={closeAddEdit}
-        record={selectedRecord.current}
-        actionType={actionType.current}
-      >
-        {addEditComponent}
-      </AddEditWrapper>
+
+      {cloneElement(addEditComponent, {
+        open: openAddEdit,
+        onClose: closeAddEdit,
+        data: selectedRecord.current,
+        action: actionType.current,
+      })}
     </>
   );
 }

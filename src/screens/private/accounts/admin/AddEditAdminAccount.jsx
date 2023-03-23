@@ -1,21 +1,72 @@
 import { Form, Input } from 'antd';
-import { role } from '../../../../constants/profile/profile';
+import { useMutation, useQueryClient } from 'react-query';
+import { gender } from '../../../../constants/profile/profile';
+import { notifyService } from '../../../../services/notifyService';
+import { createAdmin } from './adminService';
+import useUpdateEffect from '../../../../components/hooks/useUpdateEffect';
+import AddEditWrapper from '../../../../components/shared/antd/Table/Drawer/AddEditWrapper';
 import ClassicSelect from '../../../../components/shared/antd/Select/Classic';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
 
 export default function AddEditAdminAccount(props) {
-  const { data, action } = props;
-  console.log(data, action);
+  const { open, onClose, data, action } = props;
+
+  const queryClient = useQueryClient();
+  const roleData = queryClient.getQueryData('allRole');
+  const useCreateAdmin = useMutation(createAdmin, {
+    onSuccess: (data) => {
+      if (data) {
+        notifyService.showSucsessMessage({
+          description: 'Create new user successfully',
+        });
+        onClose();
+      }
+    },
+  });
+
   const [addEditUserForm] = Form.useForm();
+
+  useUpdateEffect(() => {
+    addEditUserForm.setFieldsValue({
+      email: data?.email,
+      userName: data?.userName,
+      fullName: data?.fullName,
+      phoneNumber: data?.phoneNumber,
+      role: data?.role?.roleName ?? 'ADMIN',
+      gender: data?.gender ?? 'Other',
+    });
+  }, [action]);
+
+  async function handleSubmit(value) {
+    // #region format value
+    const formatValue = {
+      ...value,
+      roleId: roleData?.filter((r) => r.roleName === value.role)[0]
+        ?.id,
+    };
+    delete formatValue.role;
+    delete formatValue.confirmPassword;
+    // #endregion
+
+    if (action === 'Add') {
+      useCreateAdmin.mutate(formatValue);
+    } else if (action === 'Edit') {
+      console.log('b');
+    }
+  }
+
   return (
-    <div>
+    <AddEditWrapper
+      open={open}
+      onClose={onClose}
+      form={addEditUserForm}
+    >
       <Form
         form={addEditUserForm}
         name="add-edit-user-form"
         layout="vertical"
         autoComplete="off"
-        initialValues={{ role: 'admin' }}
-        // onFinish={handleSubmit}
+        onFinish={handleSubmit}
       >
         <ToolTipWrapper
           tooltip="Only email is allowed"
@@ -97,19 +148,43 @@ export default function AddEditAdminAccount(props) {
         </ToolTipWrapper>
 
         <ToolTipWrapper
-          tooltip="You can only create Admin accounts"
+          {...(action === 'Add' && {
+            tooltip: 'You can only create Admin accounts',
+          })}
           placement="left"
         >
           <Form.Item label="Role" name="role">
-            <ClassicSelect options={role} disabled />
+            <ClassicSelect disabled />
           </Form.Item>
         </ToolTipWrapper>
 
-        <Form.Item label="Full Name" name="fullName">
+        <Form.Item
+          label="User Name"
+          name="userName"
+          rules={[
+            {
+              required: true,
+              message: 'User name is required',
+            },
+          ]}
+        >
           <Input />
         </Form.Item>
 
-        <Form.Item label="User Name" name="userName">
+        <Form.Item label="Gender" name="gender">
+          <ClassicSelect options={gender} />
+        </Form.Item>
+
+        <Form.Item
+          label="Full Name"
+          name="fullName"
+          rules={[
+            {
+              required: true,
+              message: 'Full Name is required',
+            },
+          ]}
+        >
           <Input />
         </Form.Item>
 
@@ -131,6 +206,6 @@ export default function AddEditAdminAccount(props) {
           </Form.Item>
         </ToolTipWrapper>
       </Form>
-    </div>
+    </AddEditWrapper>
   );
 }

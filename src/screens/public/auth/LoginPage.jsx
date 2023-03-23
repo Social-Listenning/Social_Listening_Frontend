@@ -14,18 +14,24 @@ export default function LoginPage() {
 
   async function handleSubmit(model) {
     toggleLoading(true);
-    await apiService.post('/auth/log-in', model).then((resp) => {
-      if (resp?.result) {
-        localStorage.setItem('token', resp.result?.access);
-        customHistory.push('/');
-        notifyService.showSucsessMessage({
-          description: 'Login successfully',
-        });
-        // dont need to toggle loading
-        // because it will redirect user
-        return;
-      }
-    });
+    try {
+      await apiService.post('/auth/log-in', model).then((resp) => {
+        if (resp?.result) {
+          localStorage.setItem('token', resp.result?.access);
+          customHistory.push('/');
+          notifyService.showSucsessMessage({
+            description: 'Login successfully',
+          });
+          // dont need to toggle loading
+          // because it will redirect user
+          return;
+        }
+      });
+    } catch (ex) {
+      notifyService.showErrorMessage({
+        description: ex.message,
+      });
+    }
     toggleLoading(false);
   }
 

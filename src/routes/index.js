@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import { CustomBrowserRouter } from './CustomRouter';
 import PrivateRoute from './private/PrivateRoute';
 import PublicRoute from './public/PublicRoute';
+import PermissionRoute from './private/PermissionRoute';
 import LoadingFallback from '../components/shared/element/LoadingFallback';
 import ErrorBoundary from '../components/shared/element/ErrorBoundary';
 import {
@@ -18,18 +19,23 @@ export default function AppRoutes() {
         <Suspense fallback={<LoadingFallback />}>
           <Routes>
             {/* authenticated routes*/}
-            <Route path="/" element={<PrivateRoute />}>
+            <Route element={<PrivateRoute />}>
               {privateRoutes.map((route) => (
                 <Route
                   key={route.path}
-                  path={route.path}
-                  element={route.element}
-                />
+                  element={
+                    <PermissionRoute
+                      roleRequired={route.roleRequired}
+                    />
+                  }
+                >
+                  <Route path={route.path} element={route.element} />
+                </Route>
               ))}
             </Route>
 
             {/* public routes */}
-            <Route path="/" element={<PublicRoute />}>
+            <Route element={<PublicRoute />}>
               {publicRoutes.map((route) => (
                 <Route
                   key={route.path}

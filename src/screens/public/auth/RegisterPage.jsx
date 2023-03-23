@@ -14,19 +14,25 @@ export default function RegisterPage() {
 
   async function handleSubmit(model) {
     toggleLoading(true);
-    await apiService.post('/auth/register', model).then((resp) => {
-      if (resp?.result) {
-        navigate('/confirm-email', {
-          state: { email: model.email, password: model.password },
-        });
-        notifyService.showSucsessMessage({
-          description: 'Register successfully',
-        });
-        // dont need to toggle loading
-        // because it will redirect user
-        return;
-      }
-    });
+    try {
+      await apiService.post('/auth/register', model).then((resp) => {
+        if (resp?.result) {
+          navigate('/confirm-email', {
+            state: { email: model.email, password: model.password },
+          });
+          notifyService.showSucsessMessage({
+            description: 'Register successfully',
+          });
+          // dont need to toggle loading
+          // because it will redirect user
+          return;
+        }
+      });
+    } catch (ex) {
+      notifyService.showErrorMessage({
+        description: ex.message,
+      });
+    }
     toggleLoading(true);
   }
 

@@ -47,22 +47,22 @@ export default function TableHeader(props) {
     if (filter.filterType === 'Boolean') {
       inputHeader = (
         <BooleanSelect
+          multiple
           id={title}
           placeHolder={title}
-          value={value}
+          value={value || undefined}
           handleSelect={handleSelect}
-          // onBlur={formatFilter}
         />
       );
     } else if (filter.filterType === 'Dropdown') {
       inputHeader = (
         <ClassicSelect
+          multiple
           id={title}
           placeHolder={title}
-          value={value}
+          value={value || undefined}
           options={filter.options}
           handleSelect={handleSelect}
-          // onBlur={formatFilter}
         />
       );
     }
@@ -133,7 +133,7 @@ export default function TableHeader(props) {
   }
 
   function formatFilter() {
-    if (value !== null) {
+    if (value !== null && value !== '') {
       updateFilter((old) => {
         let index = old.findIndex((x) => x?.props === propsName);
         if (index >= 0) {
