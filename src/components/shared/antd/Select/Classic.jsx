@@ -3,7 +3,7 @@ import LoadingWrapper from '../LoadingWrapper';
 
 export default function ClassicSelect(props) {
   const {
-    options,
+    options = [],
     handleSelect,
     loading = false,
     filterLabel = false,

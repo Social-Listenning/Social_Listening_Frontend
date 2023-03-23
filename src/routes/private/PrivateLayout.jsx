@@ -140,7 +140,7 @@ export default function PrivateLayout(props) {
   }, [socket]);
   // #endregion
 
-  function handleMenuHeader(e) {
+  async function handleMenuHeader(e) {
     // logout option
     if (menuUserHeader[e.key] === 'Logout') {
       navigate('/login');
@@ -149,7 +149,7 @@ export default function PrivateLayout(props) {
       });
 
       try {
-        apiService.post('/auth/log-out').then((resp) => {
+        await apiService.post('/auth/log-out').then((resp) => {
           if (resp?.result) {
             disconnect();
           }
@@ -216,7 +216,7 @@ export default function PrivateLayout(props) {
           <div className="header-right-wrapper flex-center">
             <ClassicDropdown
               clickTrigger
-              list={notiList?.data?.map(item => item.title)}
+              list={notiList?.data?.map((item) => item.title)}
               dropdownRender={(menu) => {
                 return (
                   <div className="notification-wrapper">

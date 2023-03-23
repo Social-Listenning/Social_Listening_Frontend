@@ -1,5 +1,7 @@
 import { Form, Input } from 'antd';
 import { role } from '../../../../constants/profile/profile';
+import { apiService } from '../../../../services/apiService';
+import useUpdateEffect from '../../../../components/hooks/useUpdateEffect';
 import AddEditWrapper from '../../../../components/shared/antd/Table/Drawer/AddEditWrapper';
 import ClassicSelect from '../../../../components/shared/antd/Select/Classic';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
@@ -8,8 +10,23 @@ export default function AddEditOwnerAccount(props) {
   const { open, onClose, data, action } = props;
 
   const [addEditUserForm] = Form.useForm();
-  function handleSubmit(value) {
-    console.log(value);
+
+  useUpdateEffect(() => {
+    addEditUserForm.setFieldsValue({
+      email: data?.email,
+      userName: data?.userName,
+      fullName: data?.fullName,
+      phoneNumber: data?.phoneNumber,
+      role: data?.role?.roleName,
+    });
+  }, [action]);
+
+  async function handleSubmit(value) {
+    if (action === 'Add') {
+      console.log('a');
+    } else if (action === 'Edit') {
+      console.log('b');
+    }
   }
 
   return (
@@ -23,7 +40,6 @@ export default function AddEditOwnerAccount(props) {
         name="add-edit-user-form"
         layout="vertical"
         autoComplete="off"
-        initialValues={{ ...data, role: data?.role?.roleName }}
         onFinish={handleSubmit}
       >
         <ToolTipWrapper

@@ -33,10 +33,11 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     console.log(error);
-    if (error.response.status === 401) {
+    debugger
+    if (error.response?.status === 401) {
       notifyService.showErrorMessage({ description: 'Unauthorized' });
       customHistory.push('/login');
-    } else if (error.response.status === 403) {
+    } else if (error.response?.status === 403) {
       notifyService.showErrorMessage({
         description: 'Forbidden Resource',
       });
@@ -47,7 +48,7 @@ axiosInstance.interceptors.response.use(
     //   customHistory.push("/error");
     // }
     else {
-      if (error.response.data.message) {
+      if (error.response?.data?.message) {
         notifyService.showErrorMessage({
           description: error.response.data.message,
         });

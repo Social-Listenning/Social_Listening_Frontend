@@ -47,12 +47,16 @@ export default function OwnerAccountManagement() {
       }),
     },
     {
-      title: 'Full Name',
-      dataIndex: 'fullName',
-    },
-    {
       title: 'User Name',
       dataIndex: 'userName',
+    },
+    {
+      title: 'Gender',
+      dataIndex: 'gender',
+    },
+    {
+      title: 'Full Name',
+      dataIndex: 'fullName',
     },
     {
       title: 'Phone',
