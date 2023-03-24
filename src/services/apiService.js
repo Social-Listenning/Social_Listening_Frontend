@@ -33,7 +33,6 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     console.log(error);
-    debugger
     if (error.response?.status === 401) {
       notifyService.showErrorMessage({ description: 'Unauthorized' });
       customHistory.push('/login');

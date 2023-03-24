@@ -7,11 +7,11 @@ import { defaultAction } from '../../../../constants/table/action';
 import useEffectOnce from '../../../hooks/useEffectOnce';
 import useUpdateEffect from '../../../hooks/useUpdateEffect';
 import useToggle from '../../../hooks/useToggle';
+import ElementWithPermission from '../../element/ElementWithPermission';
 import TableHeader from './Header/TableHeader';
 import ResizeableTitle from './Header/ResizeableTitle';
 import TabelUtils from './Utils/TabelUtils';
 import TableAction from './Utils/TableAction';
-import AddEditWrapper from './Drawer/AddEditWrapper';
 import LoadingWrapper from '../LoadingWrapper';
 import './table.scss';
 
@@ -25,9 +25,11 @@ export default function AdminTable(props) {
     apiDeleteOne,
     apiDeleteMultiple,
     apiImport,
+    apiExport,
     addEditComponent = <></>,
     keyProps = columns[0]?.dataIndex, // for delete purpose
     scroll,
+    permission = {},
     ...other
   } = props;
 
@@ -278,19 +280,21 @@ export default function AdminTable(props) {
   // #endregion
 
   return (
-    <>
+    <ElementWithPermission permission={permission.table}>
       <TabelUtils
         originColumn={columns}
         columnList={columnUtil.current}
         importColumns={importColumns}
         dumpImportData={dumpImportData}
         apiImport={apiImport}
+        apiExport={apiExport}
         updateColumn={handleDisplayColumns}
         selectAction={selectAction}
         openAddEdit={toggleOpenAddEdit}
         showDelete={selectedRowKeys?.length > 0}
         deleteMultiple={onMultipleDelete}
         refresh={setRefreshFS}
+        permission={permission}
       />
 
       <LoadingWrapper size="large" loading={loading}>
@@ -315,6 +319,6 @@ export default function AdminTable(props) {
         data: selectedRecord.current,
         action: actionType.current,
       })}
-    </>
+    </ElementWithPermission>
   );
 }

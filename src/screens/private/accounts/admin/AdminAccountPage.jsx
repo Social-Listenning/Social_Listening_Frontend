@@ -77,12 +77,21 @@ export default function AdminAccountManagement() {
     },
   ];
 
+  const permission = {
+    table: 'table-user',
+    new: 'create-user',
+    // import: 'import-user',
+    export: 'export-user'
+  }
+
   return (
     <AdminTable
       apiGetData="/user"
+      apiExport="/user/export"
       columns={columns}
       addEditComponent={<AddEditAdminAccount />}
       scroll={{ x: 2000 }}
+      permission={permission}
     />
   );
 }

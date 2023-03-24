@@ -2,7 +2,7 @@ import { Form, Input } from 'antd';
 import { useMutation, useQueryClient } from 'react-query';
 import { gender } from '../../../../constants/profile/profile';
 import { notifyService } from '../../../../services/notifyService';
-import { createAdmin } from './adminService';
+import { createAccountAdmin } from '../accountService';
 import useUpdateEffect from '../../../../components/hooks/useUpdateEffect';
 import AddEditWrapper from '../../../../components/shared/antd/Table/Drawer/AddEditWrapper';
 import ClassicSelect from '../../../../components/shared/antd/Select/Classic';
@@ -13,7 +13,7 @@ export default function AddEditAdminAccount(props) {
 
   const queryClient = useQueryClient();
   const roleData = queryClient.getQueryData('allRole');
-  const useCreateAdmin = useMutation(createAdmin, {
+  const useCreateAccountAdmin = useMutation(createAccountAdmin, {
     onSuccess: (data) => {
       if (data) {
         notifyService.showSucsessMessage({
@@ -49,7 +49,7 @@ export default function AddEditAdminAccount(props) {
     // #endregion
 
     if (action === 'Add') {
-      useCreateAdmin.mutate(formatValue);
+      useCreateAccountAdmin.mutate(formatValue);
     } else if (action === 'Edit') {
       console.log('b');
     }

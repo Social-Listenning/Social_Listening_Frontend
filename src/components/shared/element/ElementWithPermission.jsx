@@ -8,9 +8,9 @@ export default function ElementWithPermission(props) {
     const decodedToken = decodeToken(token);
     const permissionList = decodedToken.permissions;
 
-    if (!permissionList.includes(permissionRequired)) {
-      return;
+    if (permissionList.includes(permissionRequired)) {
+      return <>{props.children}</>;
     }
   }
-  return <>{props.children}</>;
+  return;
 }
