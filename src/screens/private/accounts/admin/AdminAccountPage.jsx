@@ -4,6 +4,7 @@ import BooleanRow from '../../../../components/shared/element/BooleanRow';
 import { RoleChip } from '../../../../components/shared/element/Chip';
 import DateTimeFormat from '../../../../components/shared/element/DateTimeFormat';
 import AddEditAdminAccount from './AddEditAdminAccount';
+import environment from '../../../../constants/environment/environment.dev';
 
 export default function AdminAccountManagement() {
   const columns = [
@@ -80,14 +81,14 @@ export default function AdminAccountManagement() {
   const permission = {
     table: 'table-user',
     new: 'create-user',
-    // import: 'import-user',
-    export: 'export-user'
+    import: 'import-user-admin',
+    export: 'export-user',
   }
 
   return (
     <AdminTable
-      apiGetData="/user"
-      apiExport="/user/export"
+      apiGetData={environment.user}
+      apiExport={`${environment.user}/export`}
       columns={columns}
       addEditComponent={<AddEditAdminAccount />}
       scroll={{ x: 2000 }}

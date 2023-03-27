@@ -17,3 +17,34 @@ export const updateAccountAdmin = async (userModel) => {
   );
   return resp?.result;
 };
+
+export const getScreens = async () => {
+  const resp = await apiService.post(
+    `${environment.permission}/get-screens`
+  );
+  return resp?.result;
+};
+
+export const getPermissionByScreens = async (screen) => {
+  const resp = await apiService.post(
+    `${environment.permission}/find-permission`,
+    screen
+  );
+  return resp?.result;
+};
+
+export const assignPermission = async (data) => {
+  const resp = await apiService.post(
+    `${environment.permission}/assign`,
+    data
+  );
+  return resp?.result;
+};
+
+export const removePermission = async (data) => {
+  const resp = await apiService.post(
+    `${environment.permission}/remove`,
+    data
+  );
+  return resp?.result;
+};

@@ -6,7 +6,8 @@ export const getAllRole = async () => {
   const resp = await apiService.get(environment.role);
   return resp?.result;
 };
-export const useGetAllRole = () => {
-  return useQuery('allRole', getAllRole);
-};
 
+export const getAllNotification = async (page) => {
+  const resp = await apiService.post(environment.notification, page);
+  return resp?.result;
+};

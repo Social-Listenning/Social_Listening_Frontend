@@ -121,6 +121,13 @@ export default function OwnerAccountManagement() {
     },
   ];
 
+  const permission = {
+    table: 'import-user',
+    new: 'create-user',
+    import: 'import-user',
+    export: 'export-user',
+  }
+
   return (
     <AdminTable
       columns={columns}
@@ -132,6 +139,7 @@ export default function OwnerAccountManagement() {
       keyProps="id"
       addEditComponent={<AddEditOwnerAccount />}
       scroll={{ x: 2000 }}
+      permission={permission}
     />
   );
 }

@@ -25,7 +25,7 @@ export default function TabelUtils(props) {
     openAddEdit,
     showDelete,
     deleteMultiple,
-    refresh,
+    refreshTable,
     permission,
   } = props;
 
@@ -149,7 +149,7 @@ export default function TabelUtils(props) {
           tooltip="Click to refresh table"
           className="table-utils-icon"
           icon={<ReloadOutlined className="pointer" />}
-          onClick={refresh}
+          onClick={refreshTable}
         />
       </div>
       <ImportDrawer

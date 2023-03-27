@@ -1,6 +1,6 @@
 import { Form, Input } from 'antd';
 import { useMutation, useQueryClient } from 'react-query';
-import { gender } from '../../../../constants/profile/profile';
+import { gender } from '../../../../constants/environment/environment.dev';
 import { notifyService } from '../../../../services/notifyService';
 import { createAccountAdmin } from '../accountService';
 import useUpdateEffect from '../../../../components/hooks/useUpdateEffect';
@@ -11,11 +11,12 @@ import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
 export default function AddEditAdminAccount(props) {
   const { open, onClose, data, action } = props;
 
+  const [addEditUserForm] = Form.useForm();
   const queryClient = useQueryClient();
   const roleData = queryClient.getQueryData('allRole');
   const useCreateAccountAdmin = useMutation(createAccountAdmin, {
-    onSuccess: (data) => {
-      if (data) {
+    onSuccess: (resp) => {
+      if (resp) {
         notifyService.showSucsessMessage({
           description: 'Create new user successfully',
         });
@@ -23,8 +24,6 @@ export default function AddEditAdminAccount(props) {
       }
     },
   });
-
-  const [addEditUserForm] = Form.useForm();
 
   useUpdateEffect(() => {
     addEditUserForm.setFieldsValue({
@@ -60,6 +59,7 @@ export default function AddEditAdminAccount(props) {
       open={open}
       onClose={onClose}
       form={addEditUserForm}
+      loading={useCreateAccountAdmin.isLoading}
     >
       <Form
         form={addEditUserForm}

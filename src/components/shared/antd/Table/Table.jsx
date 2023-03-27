@@ -30,6 +30,7 @@ export default function AdminTable(props) {
     keyProps = columns[0]?.dataIndex, // for delete purpose
     scroll,
     permission = {},
+    handleActionClick,
     ...other
   } = props;
 
@@ -80,7 +81,10 @@ export default function AdminTable(props) {
     .map((x) => x.dataIndex);
 
   useEffectOnce(() => {
-    refreshData();
+    // only call API when had table
+    if (document.getElementById('admin-table')) {
+      refreshData();
+    }
   });
 
   useUpdateEffect(() => {
@@ -186,32 +190,37 @@ export default function AdminTable(props) {
     actionType.current = action;
   }
 
-  const actionCol = [
-    {
-      dataIndex: 'action',
-      key: 'action',
-      width: 45,
-      maxWidth: 45,
-      fixed: true,
-      resizeable: false,
-      render: (_, record) => (
-        <TableAction
-          actionList={actionList}
-          selectedRecord={record}
-          selectAction={selectAction}
-          openAddEdit={toggleOpenAddEdit}
-          onClickDelete={onClickDelete}
-        />
-      ),
-      onCell: (record, _) => {
-        return {
-          onClick: () => {
-            selectedRecord.current = record;
-          },
-        };
+  let actionCol = [];
+  if (actionList?.length > 0) {
+    actionCol = [
+      {
+        dataIndex: 'action',
+        key: 'action',
+        width: 45,
+        maxWidth: 45,
+        fixed: true,
+        resizeable: false,
+        render: (_, record) => (
+          <TableAction
+            actionList={actionList}
+            selectedRecord={record}
+            selectAction={selectAction}
+            openAddEdit={toggleOpenAddEdit}
+            onClickDelete={onClickDelete}
+            handleActionClick={handleActionClick}
+            refreshTable={setRefreshFS}
+          />
+        ),
+        onCell: (record, _) => {
+          return {
+            onClick: () => {
+              selectedRecord.current = record;
+            },
+          };
+        },
       },
-    },
-  ];
+    ];
+  }
 
   const formatHeaderCols = formatHeaders(columnUtil.current);
 
@@ -293,12 +302,13 @@ export default function AdminTable(props) {
         openAddEdit={toggleOpenAddEdit}
         showDelete={selectedRowKeys?.length > 0}
         deleteMultiple={onMultipleDelete}
-        refresh={setRefreshFS}
+        refreshTable={setRefreshFS}
         permission={permission}
       />
 
       <LoadingWrapper size="large" loading={loading}>
         <Table
+          id="admin-table"
           size="small"
           columns={resizeColumns}
           dataSource={data}

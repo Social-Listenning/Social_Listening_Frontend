@@ -10,7 +10,7 @@ import {
   publicRoutes,
   privateRoutes,
   errorRoutes,
-} from '../constants/routes';
+} from './AppRouting';
 
 export default function AppRoutes() {
   return (
