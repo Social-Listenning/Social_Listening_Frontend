@@ -23,14 +23,14 @@ export default function AppRoutes() {
               {privateRoutes.map((route) => (
                 <Route
                   key={route.path}
+                  path={route.path}
                   element={
                     <PermissionRoute
                       roleRequired={route.roleRequired}
+                      element={route.element}
                     />
                   }
-                >
-                  <Route path={route.path} element={route.element} />
-                </Route>
+                />
               ))}
             </Route>
 

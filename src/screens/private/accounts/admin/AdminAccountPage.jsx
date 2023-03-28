@@ -6,7 +6,7 @@ import DateTimeFormat from '../../../../components/shared/element/DateTimeFormat
 import AddEditAdminAccount from './AddEditAdminAccount';
 import environment from '../../../../constants/environment/environment.dev';
 
-export default function AdminAccountManagement() {
+export default function AdminAccountManagement({ defaultFilter = [] }) {
   const columns = [
     {
       title: 'Email',
@@ -93,6 +93,7 @@ export default function AdminAccountManagement() {
       addEditComponent={<AddEditAdminAccount />}
       scroll={{ x: 2000 }}
       permission={permission}
+      defaultFilter={defaultFilter}
     />
   );
 }

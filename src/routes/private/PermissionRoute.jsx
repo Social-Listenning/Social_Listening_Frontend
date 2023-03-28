@@ -1,9 +1,10 @@
-import { Outlet, Navigate } from 'react-router-dom';
+import { cloneElement } from 'react';
+import { Navigate } from 'react-router-dom';
 import { useQueryClient, useMutation } from 'react-query';
 import { getAllRole } from './privateService';
 import useEffectOnce from '../../components/hooks/useEffectOnce';
 
-export default function PermissionRoute({ roleRequired }) {
+export default function PermissionRoute({ roleRequired, element }) {
   const queryClient = useQueryClient();
   const userData = queryClient.getQueryData('userData');
 
@@ -29,5 +30,7 @@ export default function PermissionRoute({ roleRequired }) {
     }
   }
 
-  return <Outlet />;
+  const roleData = queryClient.getQueryData('allRole');
+
+  return cloneElement(element, { roleData: roleData });
 }

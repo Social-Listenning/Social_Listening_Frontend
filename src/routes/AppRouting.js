@@ -31,6 +31,9 @@ const PermissionManagement = lazy(() =>
 const RoleManagement = lazy(() =>
   import('../screens/private/accounts/role/RolePage')
 );
+const SocialNetworkManagement = lazy(() =>
+  import('../screens/private/social-network/SocialNetworkPage')
+);
 // #endregion
 
 // #region error routes
@@ -68,6 +71,11 @@ export const privateRoutes = [
     path: 'account/owner',
     element: <OwnerAccountManagement />,
     roleRequired: 'OWNER',
+  },
+  {
+    path: 'social-network',
+    element: <SocialNetworkManagement />,
+    // roleRequired: 'OWNER',
   },
 ];
 

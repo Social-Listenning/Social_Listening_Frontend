@@ -7,7 +7,7 @@ import { useMutation } from 'react-query';
 import { removePermission } from '../accountService';
 import { notifyService } from '../../../../services/notifyService';
 
-export default function PermissionManangement() {
+export default function PermissionManangement({ defaultFilter = [] }) {
   const columns = [
     {
       title: 'Role',
@@ -54,7 +54,6 @@ export default function PermissionManangement() {
       }
     },
   });
-  
   function handleActionClick(action, data) {
     if (action === 'Remove') {
       useRemovePermission.mutate({
@@ -63,7 +62,7 @@ export default function PermissionManangement() {
       });
       return true;
     }
-    
+
     return false;
   }
 
@@ -75,6 +74,7 @@ export default function PermissionManangement() {
       permission={permission}
       actionList={[{ icon: <MinusOutlined />, action: 'Remove' }]}
       handleActionClick={handleActionClick}
+      defaultFilter={defaultFilter}
     />
   );
 }

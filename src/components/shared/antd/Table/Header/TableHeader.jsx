@@ -22,9 +22,10 @@ export default function TableHeader(props) {
     updateSorter,
     updateFilter,
     refreshFilterSorter,
+    defaultFilter = null,
   } = props;
 
-  let [value, setValue] = useState(null);
+  let [value, setValue] = useState(defaultFilter);
   let listFilter = FilterType.Default;
   let inputHeader = (
     <FloatInput

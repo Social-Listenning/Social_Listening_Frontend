@@ -1,0 +1,19 @@
+.role-page-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(32vw, 1fr));
+  gap: 3rem;
+  height: 100% !important;
+
+  .ant-card {
+    .ant-card-head {
+      .ant-card-head-title {
+        font-size: 2rem;
+      }
+    }
+
+    .ant-card-body {
+      cursor: pointer;
+      font-size: var(--app-font-size);
+    }
+  }
+}

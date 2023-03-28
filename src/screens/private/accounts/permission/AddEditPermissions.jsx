@@ -84,7 +84,6 @@ export default function AddEditPermissions(props) {
     if (action === 'Add') {
       delete value.screen;
       useAssignPermission.mutate(value);
-    } else if (action === 'Edit') {
     }
   }
 
