@@ -2,40 +2,43 @@ import { lazy } from 'react';
 
 // #region public routes
 const LoginPage = lazy(() =>
-  import('../../screens/public/auth/LoginPage')
+  import('../screens/public/auth/LoginPage')
 );
 const RegisterPage = lazy(() =>
-  import('../../screens/public/auth/RegisterPage')
+  import('../screens/public/auth/RegisterPage')
 );
 const ConfirmEmailPage = lazy(() =>
-  import('../../screens/public/auth/ConfirmEmailPage')
+  import('../screens/public/auth/ConfirmEmailPage')
 );
 // #endregion
 
 // #region private routes
 const HomePage = lazy(() =>
-  import('../../screens/private/home/HomePage')
+  import('../screens/private/home/HomePage')
 );
 const ProfilePage = lazy(() =>
-  import('../../screens/private/profile/ProfilePage')
+  import('../screens/private/profile/ProfilePage')
 );
 const AdminAccountManagement = lazy(() =>
-  import('../../screens/private/accounts/admin/AdminAccountPage')
+  import('../screens/private/accounts/admin/AdminAccountPage')
 );
 const OwnerAccountManagement = lazy(() =>
-  import('../../screens/private/accounts/owner/OwnerAccountPage')
+  import('../screens/private/accounts/owner/OwnerAccountPage')
 );
 const PermissionManagement = lazy(() =>
-  import('../../screens/private/accounts/permission/PermissionPage')
+  import('../screens/private/accounts/permission/PermissionPage')
 );
 const RoleManagement = lazy(() =>
-  import('../../screens/private/accounts/role/RolePage')
+  import('../screens/private/accounts/role/RolePage')
+);
+const SocialNetworkManagement = lazy(() =>
+  import('../screens/private/social-network/SocialNetworkPage')
 );
 // #endregion
 
 // #region error routes
 const ErrorPages = lazy(() =>
-  import('../../components/shared/antd/ErrorPage/ErrorPage')
+  import('../components/shared/antd/ErrorPage/ErrorPage')
 );
 // #endregion
 
@@ -68,6 +71,11 @@ export const privateRoutes = [
     path: 'account/owner',
     element: <OwnerAccountManagement />,
     roleRequired: 'OWNER',
+  },
+  {
+    path: 'social-network',
+    element: <SocialNetworkManagement />,
+    // roleRequired: 'OWNER',
   },
 ];
 

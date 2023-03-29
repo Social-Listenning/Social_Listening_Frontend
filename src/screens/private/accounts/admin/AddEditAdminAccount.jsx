@@ -1,8 +1,8 @@
 import { Form, Input } from 'antd';
 import { useMutation, useQueryClient } from 'react-query';
-import { gender } from '../../../../constants/profile/profile';
+import { gender } from '../../../../constants/environment/environment.dev';
 import { notifyService } from '../../../../services/notifyService';
-import { createAdmin } from './adminService';
+import { createAccountAdmin } from '../accountService';
 import useUpdateEffect from '../../../../components/hooks/useUpdateEffect';
 import AddEditWrapper from '../../../../components/shared/antd/Table/Drawer/AddEditWrapper';
 import ClassicSelect from '../../../../components/shared/antd/Select/Classic';
@@ -11,11 +11,12 @@ import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
 export default function AddEditAdminAccount(props) {
   const { open, onClose, data, action } = props;
 
+  const [addEditUserForm] = Form.useForm();
   const queryClient = useQueryClient();
   const roleData = queryClient.getQueryData('allRole');
-  const useCreateAdmin = useMutation(createAdmin, {
-    onSuccess: (data) => {
-      if (data) {
+  const useCreateAccountAdmin = useMutation(createAccountAdmin, {
+    onSuccess: (resp) => {
+      if (resp) {
         notifyService.showSucsessMessage({
           description: 'Create new user successfully',
         });
@@ -23,8 +24,6 @@ export default function AddEditAdminAccount(props) {
       }
     },
   });
-
-  const [addEditUserForm] = Form.useForm();
 
   useUpdateEffect(() => {
     addEditUserForm.setFieldsValue({
@@ -49,7 +48,7 @@ export default function AddEditAdminAccount(props) {
     // #endregion
 
     if (action === 'Add') {
-      useCreateAdmin.mutate(formatValue);
+      useCreateAccountAdmin.mutate(formatValue);
     } else if (action === 'Edit') {
       console.log('b');
     }
@@ -60,6 +59,7 @@ export default function AddEditAdminAccount(props) {
       open={open}
       onClose={onClose}
       form={addEditUserForm}
+      loading={useCreateAccountAdmin.isLoading}
     >
       <Form
         form={addEditUserForm}

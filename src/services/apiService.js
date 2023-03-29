@@ -3,7 +3,11 @@ import { notifyService } from '../services/notifyService';
 import { customHistory } from '../routes/CustomRouter';
 import environment from '../constants/environment/environment.dev';
 
-const axiosInstance = axios.create({ baseURL: environment.baseUrl });
+const axiosInstance = axios.create({
+  baseURL: environment.baseUrl,
+  timeout: 20000, // response timeout
+  // signal: AbortSignal.timeout(10000), // connection timeout
+});
 
 axiosInstance.interceptors.request.use(
   (config) => {
@@ -33,7 +37,6 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     console.log(error);
-    debugger
     if (error.response?.status === 401) {
       notifyService.showErrorMessage({ description: 'Unauthorized' });
       customHistory.push('/login');

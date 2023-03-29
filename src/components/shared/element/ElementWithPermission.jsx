@@ -1,16 +1,16 @@
-import React from 'react';
-import { decodeToken } from 'react-jwt';
+import { useQueryClient } from 'react-query';
 
 export default function ElementWithPermission(props) {
+  const queryClient = useQueryClient();
   const permissionRequired = props.permission;
-  if (permissionRequired) {
-    const token = localStorage.getItem('token');
-    const decodedToken = decodeToken(token);
-    const permissionList = decodedToken.permissions;
 
-    if (!permissionList.includes(permissionRequired)) {
-      return;
+  if (permissionRequired) {
+    const userData = queryClient.getQueryData('userData');
+    const permissionList = userData?.permissions;
+
+    if (permissionList?.includes(permissionRequired)) {
+      return <>{props.children}</>;
     }
   }
-  return <>{props.children}</>;
+  return;
 }

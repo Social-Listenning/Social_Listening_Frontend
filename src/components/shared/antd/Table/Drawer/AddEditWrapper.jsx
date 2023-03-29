@@ -4,10 +4,11 @@ import SaveButton from '../../../element/Button/SaveButton';
 import CancelButton from '../../../element/Button/CancelButton';
 
 export default function AddEditWrapper(props) {
-  const { open, onClose, form, ...other } = props;
+  const { open, onClose, form, loading = false, ...other } = props;
 
   function closeDrawer() {
     onClose();
+    form.resetFields();
   }
 
   async function handleConfirm() {
@@ -23,7 +24,7 @@ export default function AddEditWrapper(props) {
       extra={
         <Space>
           <CancelButton onClick={closeDrawer} />
-          <SaveButton onClick={handleConfirm} />
+          <SaveButton loading={loading} onClick={handleConfirm} />
         </Space>
       }
       {...other}

@@ -7,11 +7,11 @@ import { defaultAction } from '../../../../constants/table/action';
 import useEffectOnce from '../../../hooks/useEffectOnce';
 import useUpdateEffect from '../../../hooks/useUpdateEffect';
 import useToggle from '../../../hooks/useToggle';
+import ElementWithPermission from '../../element/ElementWithPermission';
 import TableHeader from './Header/TableHeader';
 import ResizeableTitle from './Header/ResizeableTitle';
 import TabelUtils from './Utils/TabelUtils';
 import TableAction from './Utils/TableAction';
-import AddEditWrapper from './Drawer/AddEditWrapper';
 import LoadingWrapper from '../LoadingWrapper';
 import './table.scss';
 
@@ -25,9 +25,13 @@ export default function AdminTable(props) {
     apiDeleteOne,
     apiDeleteMultiple,
     apiImport,
+    apiExport,
     addEditComponent = <></>,
     keyProps = columns[0]?.dataIndex, // for delete purpose
     scroll,
+    permission = {},
+    handleActionClick,
+    defaultFilter = [],
     ...other
   } = props;
 
@@ -68,7 +72,7 @@ export default function AdminTable(props) {
 
   // #region handle filter, sorter, refresh data
   const [data, setData] = useState([]);
-  const [filterType, setFilterType] = useState([]);
+  const [filterType, setFilterType] = useState(defaultFilter);
   const [sorter, setSorter] = useState([]);
   const [loading, toggleLoading] = useToggle(false); // loading state
   const tableContent = document.querySelector('.ant-table-content'); // table selector (for javascript purpose)
@@ -78,7 +82,10 @@ export default function AdminTable(props) {
     .map((x) => x.dataIndex);
 
   useEffectOnce(() => {
-    refreshData();
+    // only call API when had table
+    if (document.getElementById('admin-table')) {
+      refreshData();
+    }
   });
 
   useUpdateEffect(() => {
@@ -184,32 +191,37 @@ export default function AdminTable(props) {
     actionType.current = action;
   }
 
-  const actionCol = [
-    {
-      dataIndex: 'action',
-      key: 'action',
-      width: 45,
-      maxWidth: 45,
-      fixed: true,
-      resizeable: false,
-      render: (_, record) => (
-        <TableAction
-          actionList={actionList}
-          selectedRecord={record}
-          selectAction={selectAction}
-          openAddEdit={toggleOpenAddEdit}
-          onClickDelete={onClickDelete}
-        />
-      ),
-      onCell: (record, _) => {
-        return {
-          onClick: () => {
-            selectedRecord.current = record;
-          },
-        };
+  let actionCol = [];
+  if (actionList?.length > 0) {
+    actionCol = [
+      {
+        dataIndex: 'action',
+        key: 'action',
+        width: 45,
+        maxWidth: 45,
+        fixed: true,
+        resizeable: false,
+        render: (_, record) => (
+          <TableAction
+            actionList={actionList}
+            selectedRecord={record}
+            selectAction={selectAction}
+            openAddEdit={toggleOpenAddEdit}
+            onClickDelete={onClickDelete}
+            handleActionClick={handleActionClick}
+            refreshTable={setRefreshFS}
+          />
+        ),
+        onCell: (record, _) => {
+          return {
+            onClick: () => {
+              selectedRecord.current = record;
+            },
+          };
+        },
       },
-    },
-  ];
+    ];
+  }
 
   const formatHeaderCols = formatHeaders(columnUtil.current);
 
@@ -231,6 +243,7 @@ export default function AdminTable(props) {
               updateSorter={setSorter}
               updateFilter={setFilterType}
               refreshFilterSorter={refreshFS}
+              defaultFilter={defaultFilter.filter(item => item.props === col.dataIndex)}
             />
           ),
         };
@@ -278,23 +291,26 @@ export default function AdminTable(props) {
   // #endregion
 
   return (
-    <>
+    <ElementWithPermission permission={permission.table}>
       <TabelUtils
         originColumn={columns}
         columnList={columnUtil.current}
         importColumns={importColumns}
         dumpImportData={dumpImportData}
         apiImport={apiImport}
+        apiExport={apiExport}
         updateColumn={handleDisplayColumns}
         selectAction={selectAction}
         openAddEdit={toggleOpenAddEdit}
         showDelete={selectedRowKeys?.length > 0}
         deleteMultiple={onMultipleDelete}
-        refresh={setRefreshFS}
+        refreshTable={setRefreshFS}
+        permission={permission}
       />
 
       <LoadingWrapper size="large" loading={loading}>
         <Table
+          id="admin-table"
           size="small"
           columns={resizeColumns}
           dataSource={data}
@@ -315,6 +331,6 @@ export default function AdminTable(props) {
         data: selectedRecord.current,
         action: actionType.current,
       })}
-    </>
+    </ElementWithPermission>
   );
 }

@@ -22,14 +22,14 @@ const SocketProvider = ({ children }) => {
       sk.auth = { token };
       sk.connect();
       setSocket(sk);
-      console.log('Connect to socket');
+      console.log('Socket connected');
     }
   };
 
   const disconnect = () => {
     if (socket) {
       socket.close();
-      console.log('Disconnect to socket');
+      console.log('Socket disconnected');
     }
   };
 

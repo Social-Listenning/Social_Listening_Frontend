@@ -2,6 +2,7 @@ import {
   HomeOutlined,
   UsergroupDeleteOutlined,
   SettingOutlined,
+  GlobalOutlined,
 } from '@ant-design/icons';
 
 // automatic add key = label => label must be unique
@@ -37,6 +38,11 @@ export const menuSidebar = [
         role: 'OWNER',
       },
     ],
+  },
+  {
+    key: 'social-network',
+    label: 'Social Network',
+    icon: <GlobalOutlined />,
   },
   {
     key: 'setting',

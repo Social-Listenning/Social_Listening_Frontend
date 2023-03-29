@@ -1,48 +1,43 @@
 import { useState, useRef } from 'react';
-import { Form, Input } from 'antd';
-import { role } from '../../../../constants/profile/profile';
-import { apiService } from '../../../../services/apiService';
+import { Form } from 'antd';
+import { useMutation, useQueryClient } from 'react-query';
 import { notifyService } from '../../../../services/notifyService';
+import {
+  assignPermission,
+  getPermissionByScreens,
+  getScreens,
+} from '../accountService';
 import useEffectOnce from '../../../../components/hooks/useEffectOnce';
 import AddEditWrapper from '../../../../components/shared/antd/Table/Drawer/AddEditWrapper';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
 import ClassicSelect from '../../../../components/shared/antd/Select/Classic';
+import Hint from '../../../../components/shared/element/Hint';
 
 export default function AddEditPermissions(props) {
   const { open, onClose, data, action } = props;
 
   const [addEditPermissionForm] = Form.useForm();
-
-  async function handleFinish(data) {
-    // toggleLoading(true);
-    setTimeout(() => {
-      
-      console.log(data);
-    }, 5000);
-    // toggleLoading(false);
-  }
+  const queryClient = useQueryClient();
+  const roleData = queryClient.getQueryData('allRole');
 
   // #region get all screens
   const [screens, setScreens] = useState([]);
+  const useGetScreens = useMutation(getScreens, {
+    onSuccess: (resp) => {
+      if (resp) {
+        setScreens(
+          resp?.map((item) => {
+            return {
+              label: item.screen,
+              value: item.screen,
+            };
+          })
+        );
+      }
+    },
+  });
   useEffectOnce(() => {
-    try {
-      apiService.post('/permission/get-screens').then((resp) => {
-        if (resp?.result) {
-          setScreens(
-            resp.result.map((item) => {
-              return {
-                label: item.screen,
-                value: item.screen,
-              };
-            })
-          );
-        }
-      });
-    } catch (ex) {
-      notifyService.showErrorMessage({
-        description: ex.message,
-      });
-    }
+    useGetScreens.mutate();
   });
   // #endregion
 
@@ -52,27 +47,45 @@ export default function AddEditPermissions(props) {
     screenSelected.current = e;
   }
   const [permissionList, setPermissionList] = useState([]);
-  async function getPermissionsByScreen() {
+  const useGetPermission = useMutation(getPermissionByScreens, {
+    onSuccess: (resp) => {
+      if (resp) {
+        setPermissionList(
+          resp?.map((item) => {
+            return {
+              label: item.displayName,
+              value: item.id,
+            };
+          })
+        );
+      }
+    },
+  });
+  function getPermissionsByScreen() {
     if (screenSelected.current?.length > 0) {
-      await apiService
-        .post('/permission/find-permission', {
-          screen: screenSelected.current,
-        })
-        .then((resp) => {
-          if (resp?.result) {
-            setPermissionList(
-              resp.result.map((item) => {
-                return {
-                  label: item.displayName,
-                  value: item.id,
-                };
-              })
-            );
-          }
-        });
+      useGetPermission.mutate({
+        screen: screenSelected.current,
+      });
     }
   }
   // #endregion
+
+  const useAssignPermission = useMutation(assignPermission, {
+    onSuccess: (resp) => {
+      if (resp) {
+        notifyService.showSucsessMessage({
+          description: 'Assign permissions successfully',
+        });
+        onClose();
+      }
+    },
+  });
+  async function handleFinish(value) {
+    if (action === 'Add') {
+      delete value.screen;
+      useAssignPermission.mutate(value);
+    }
+  }
 
   return (
     <AddEditWrapper
@@ -80,6 +93,8 @@ export default function AddEditPermissions(props) {
       onClose={onClose}
       form={addEditPermissionForm}
     >
+      <Hint message="You have to choose screens to get permissions" />
+      <br />
       <Form
         form={addEditPermissionForm}
         name="add-edit-user-form"
@@ -89,7 +104,7 @@ export default function AddEditPermissions(props) {
       >
         <Form.Item
           label="Role"
-          name="role"
+          name="roleId"
           rules={[
             {
               required: true,
@@ -99,7 +114,9 @@ export default function AddEditPermissions(props) {
         >
           <ClassicSelect
             placeholder="Select role..."
-            options={role}
+            options={roleData?.map((item) => {
+              return { label: item.roleName, value: item.id };
+            })}
           />
         </Form.Item>
 
@@ -122,23 +139,29 @@ export default function AddEditPermissions(props) {
           />
         </Form.Item>
 
-        <Form.Item
-          label="Permissions"
-          name="permission"
-          rules={[
-            {
-              required: true,
-              message: 'Permission(s) is required',
-            },
-          ]}
+        <ToolTipWrapper
+          tooltip="You have to choose screens to get permissions"
+          placement="left"
         >
-          <ClassicSelect
-            multiple
-            filterLabel
-            placeholder="Select permissions..."
-            options={permissionList}
-          />
-        </Form.Item>
+          <Form.Item
+            label="Permissions"
+            name="listPermission"
+            rules={[
+              {
+                required: true,
+                message: 'Permission(s) is required',
+              },
+            ]}
+          >
+            <ClassicSelect
+              multiple
+              filterLabel
+              placeholder="Select permissions..."
+              options={permissionList}
+              loading={useGetPermission.isLoading}
+            />
+          </Form.Item>
+        </ToolTipWrapper>
       </Form>
     </AddEditWrapper>
   );

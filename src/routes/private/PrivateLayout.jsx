@@ -8,7 +8,7 @@ import {
   BellOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { decodeToken } from 'react-jwt';
+import { useMutation, useQueryClient } from 'react-query';
 import { Getter } from '../../utils/dataGetter';
 import { Converter } from '../../utils/dataConverter';
 import { apiService } from '../../services/apiService';
@@ -16,6 +16,7 @@ import { notifyService } from '../../services/notifyService';
 import { menuSidebar } from '../../constants/menu/sidebar';
 import { menuUserHeader } from '../../constants/menu/header';
 import { useSocket } from '../../components/contexts/socket/SocketProvider';
+import { getAllNotification } from './privateService';
 import useEffectOnce from '../../components/hooks/useEffectOnce';
 import useUpdateEffect from '../../components/hooks/useUpdateEffect';
 import useToggle from '../../components/hooks/useToggle';
@@ -28,23 +29,21 @@ import '../route.scss';
 
 const { Header, Content, Sider } = Layout;
 export default function PrivateLayout(props) {
-  const [collapsed, setCollapsed] = useToggle(false);
   const navigate = useNavigate();
-  const { socket, connect, disconnect } = useSocket();
+  const queryClient = useQueryClient();
+  const [collapsed, setCollapsed] = useToggle(false);
+  const { socket, disconnect } = useSocket();
+  const userData = queryClient.getQueryData("userData");
 
+  // #region menu sidebar setup
   const path = Getter.getPathName(); // also the key of the menu sidebar
   const listPath = path?.split('/');
   const currentPath = listPath[listPath?.length - 1];
-
   const openKey = Getter.getOpenKeyForMenu(
     menuSidebar,
     Converter.convertStringToTitleCase(currentPath)
   );
 
-  const token = localStorage.getItem('token');
-  const decodedToken = decodeToken(token);
-  console.log(decodedToken);
-  // #region menu sidebar config with role
   const [availableMenu, setAvailableMenu] = useState(
     menuSidebar.map((x) => x)
   );
@@ -65,39 +64,27 @@ export default function PrivateLayout(props) {
   }
   // #endregion
 
-  const [notiList, setNotiList] = useState({});
+  const [notiList, setNotiList] = useState([]);
+  const useGetAllNotification = useMutation(getAllNotification, {
+    onSuccess: (resp) => {
+      setNotiList(resp?.data);
+    },
+  });
   useEffectOnce(
     () => {
       // filter the menu sidebar
-      setAvailableMenu(filterMenuSidebar(decodedToken.role));
+      setAvailableMenu(filterMenuSidebar(userData.role));
 
-      try {
-        apiService
-          .post('/notification', {
-            offset: 0,
-            size: 10,
-            pageNumber: 1,
-            totalElement: 10000,
-            orders: [],
-            filter: [],
-          })
-          .then((resp) => {
-            if (resp?.result) {
-              setNotiList(resp.result);
-            }
-          });
-      } catch (ex) {
-        notifyService.showErrorMessage({
-          description: ex.message,
-        });
-      }
-
-      connect(); // connect socket
+      // get notification
+      useGetAllNotification.mutate({
+        offset: 0,
+        size: 10,
+        pageNumber: 1,
+        totalElement: 10000,
+        orders: [],
+        filter: [],
+      });
     }
-    // onDestroy function
-    // () => {
-    //   disconnect(); // disconnect socket
-    // }
   );
 
   // #region chart notification
@@ -256,8 +243,8 @@ export default function PrivateLayout(props) {
               handleItemClick={handleMenuHeader}
             >
               <div className="header-menu flex-center">
-                <BasicAvatar name={decodedToken?.userName} />
-                <span>{decodedToken?.userName}</span>
+                <BasicAvatar name={userData?.userName} />
+                <span>{userData?.userName}</span>
                 <DownOutlined />
               </div>
             </ClassicDropdown>
