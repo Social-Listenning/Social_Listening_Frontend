@@ -146,6 +146,7 @@ export default function TabelUtils(props) {
           />
         </WithCheckbox>
         <IconButton
+          id="refresh-table"
           tooltip="Click to refresh table"
           className="table-utils-icon"
           icon={<ReloadOutlined className="pointer" />}

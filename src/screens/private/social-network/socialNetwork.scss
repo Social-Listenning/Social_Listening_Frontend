@@ -1,0 +1,23 @@
+.social-network {
+  height: 80%;
+
+  .not-connected {
+    width: 46rem;
+    flex-direction: column;
+    gap: 2rem;
+
+    .ant-alert-message {
+      font-size: 2rem;
+    }
+
+    button.ant-btn {
+      font-size: 2rem;
+      width: 32rem;
+      height: 4.4rem;
+
+      .anticon {
+        font-size: 2.4rem;
+      }
+    }
+  }
+}

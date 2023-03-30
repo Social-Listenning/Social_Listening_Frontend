@@ -1,52 +1,27 @@
-import { useEffect } from 'react';
+import { apiService } from '../../../services/apiService';
+import useEffectOnce from '../../../components/hooks/useEffectOnce';
+import NotConnected from './NotConnected';
 
 export default function SocialNetworkPage() {
-  useEffect(() => {
-    window.fbAsyncInit = function () {
-      window.FB.init({
-        // This is App ID
-        appId: '594535438672562',
-        cookie: true,
-        xfbml: true,
-        version: 'v14.0',
+  useEffectOnce(() => {
+    apiService
+      .post('/socialNetwork/connect', {
+        socialType: 'Facebook',
+        name: 'KaiNe',
+        extendData: JSON.stringify({ id: 123456789 }),
+      })
+      .then((resp) => {
+        console.log(resp);
       });
 
-      window.FB.AppEvents.logPageView();
-
-      window.FB.getLoginStatus(function (response) {
-        console.log(response);
-      });
-    };
-
-    (function (d, s, id) {
-      var js,
-        fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) {
-        return;
-      }
-      js = d.createElement(s);
-      js.id = id;
-      js.src = 'https://connect.facebook.net/en_US/sdk.js';
-      fjs.parentNode.insertBefore(js, fjs);
-    })(document, 'script', 'facebook-jssdk');
+    apiService.get('/socialGroup').then((resp) => {
+      console.log(resp);
+    });
   });
 
-  const onLoginClick = () => {
-    window.FB.login(
-      function (response) {
-        console.log(response);
-      },
-      {
-        config_id: '2550922511728404', // configuration ID goes here
-      }
-    );
-  };
-
   return (
-    <div className="app">
-      <div>
-        <button onClick={onLoginClick}>Login with Facebook</button>
-      </div>
+    <div className="flex-center social-network">
+      <NotConnected />
     </div>
   );
 }

@@ -3,10 +3,10 @@ import AdminTable from '../../../../components/shared/antd/Table/Table';
 import BooleanRow from '../../../../components/shared/element/BooleanRow';
 import { RoleChip } from '../../../../components/shared/element/Chip';
 import DateTimeFormat from '../../../../components/shared/element/DateTimeFormat';
-import AddEditOwnerAccount from './AddEditOwnerAccount';
+import AddEditAdminAccount from './AddEditUser';
+import environment from '../../../../constants/environment/environment.dev';
 
-const roleData = role.slice(1);
-export default function OwnerAccountManagement() {
+export default function AdminAccountManagement({ defaultFilter = [] }) {
   const columns = [
     {
       title: 'Email',
@@ -37,7 +37,7 @@ export default function OwnerAccountManagement() {
       sort: false,
       filter: {
         filterType: 'Dropdown',
-        options: roleData,
+        options: role,
       },
       render: (record) => {
         return <RoleChip currentRole={record} />;
@@ -78,68 +78,22 @@ export default function OwnerAccountManagement() {
     },
   ];
 
-  const importColumns = [
-    {
-      title: 'Email',
-      dataIndex: 'email',
-      required: true,
-    },
-    {
-      title: 'Password',
-      dataIndex: 'password',
-      required: true,
-    },
-    {
-      title: 'Role',
-      dataIndex: 'roleName',
-      required: true,
-    },
-    {
-      title: 'Full Name',
-      dataIndex: 'fullName',
-    },
-    {
-      title: 'User Name',
-      dataIndex: 'userName',
-    },
-    {
-      title: 'Phone',
-      dataIndex: 'phoneNumber',
-    },
-  ];
-
-  const dumpImportData = [
-    {
-      email: 'user1@gmail.com',
-      password: 'secret-password',
-      roleName: 'MANAGER',
-    },
-    {
-      email: 'user2@gmail.com',
-      password: 'secret-password',
-      roleName: 'SUPPORTER',
-    },
-  ];
-
   const permission = {
-    table: 'import-user',
+    table: 'table-user',
     new: 'create-user',
-    import: 'import-user',
+    import: 'import-user-admin',
     export: 'export-user',
   }
 
   return (
     <AdminTable
+      apiGetData={environment.user}
+      apiExport={`${environment.user}/export`}
       columns={columns}
-      apiGetData="/user/all"
-      importColumns={importColumns}
-      dumpImportData={dumpImportData}
-      apiImport="/user/import"
-      apiDeleteOne="/user/remove"
-      keyProps="id"
-      addEditComponent={<AddEditOwnerAccount />}
+      addEditComponent={<AddEditAdminAccount />}
       scroll={{ x: 2000 }}
       permission={permission}
+      defaultFilter={defaultFilter}
     />
   );
 }

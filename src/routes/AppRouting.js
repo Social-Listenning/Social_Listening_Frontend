@@ -19,11 +19,8 @@ const HomePage = lazy(() =>
 const ProfilePage = lazy(() =>
   import('../screens/private/profile/ProfilePage')
 );
-const AdminAccountManagement = lazy(() =>
-  import('../screens/private/accounts/admin/AdminAccountPage')
-);
-const OwnerAccountManagement = lazy(() =>
-  import('../screens/private/accounts/owner/OwnerAccountPage')
+const UserManagement = lazy(() =>
+  import('../screens/private/accounts/user/UserPage')
 );
 const PermissionManagement = lazy(() =>
   import('../screens/private/accounts/permission/PermissionPage')
@@ -53,24 +50,19 @@ export const privateRoutes = [
   { path: 'home', element: <HomePage /> },
   { path: 'profile', element: <ProfilePage /> },
   {
-    path: 'account/admin',
-    element: <AdminAccountManagement />,
-    roleRequired: 'ADMIN',
+    path: 'account/user',
+    element: <UserManagement />,
+    permissionRequired: 'table-user',
   },
   {
     path: 'account/permission',
     element: <PermissionManagement />,
-    roleRequired: 'ADMIN',
+    permissionRequired: 'table-permission',
   },
   {
     path: 'account/role',
     element: <RoleManagement />,
-    roleRequired: 'ADMIN',
-  },
-  {
-    path: 'account/owner',
-    element: <OwnerAccountManagement />,
-    roleRequired: 'OWNER',
+    permissionRequired: 'get-role',
   },
   {
     path: 'social-network',

@@ -1,5 +1,5 @@
 import { Modal } from 'antd';
-import AdminAccountPage from '../admin/AdminAccountPage';
+import AdminAccountPage from '../user/UserPage';
 import PermissionPage from '../permission/PermissionPage';
 
 export default function ModalDetail(props) {

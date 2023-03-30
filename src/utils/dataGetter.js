@@ -67,7 +67,20 @@ function downloadFile(buffer, fileName, type) {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
-  URL.revokeObjectURL(url)
+  URL.revokeObjectURL(url);
+}
+
+function generateId(length = 4) {
+  var result = '';
+  var characters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(
+      Math.floor(Math.random() * charactersLength)
+    );
+  }
+  return result;
 }
 
 export const Getter = {
@@ -77,4 +90,5 @@ export const Getter = {
   getOpenKeyForMenu,
   getCurrentActivatedItemInMenu,
   downloadFile,
+  generateId,
 };

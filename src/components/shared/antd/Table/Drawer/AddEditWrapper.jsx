@@ -6,24 +6,19 @@ import CancelButton from '../../../element/Button/CancelButton';
 export default function AddEditWrapper(props) {
   const { open, onClose, form, loading = false, ...other } = props;
 
-  function closeDrawer() {
-    onClose();
-    form.resetFields();
-  }
-
-  async function handleConfirm() {
-    await form.submit();
+  function handleConfirm() {
+    form.submit();
   }
 
   return (
     <Drawer
-      maskClosable={false}
       destroyOnClose
-      onClose={closeDrawer}
+      maskClosable={false}
+      onClose={onClose}
       open={open}
       extra={
         <Space>
-          <CancelButton onClick={closeDrawer} />
+          <CancelButton onClick={onClose} />
           <SaveButton loading={loading} onClick={handleConfirm} />
         </Space>
       }

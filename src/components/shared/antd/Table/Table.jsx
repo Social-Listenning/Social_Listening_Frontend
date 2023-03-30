@@ -181,8 +181,8 @@ export default function AdminTable(props) {
   const selectedRecord = useRef(null);
 
   function closeAddEdit() {
-    refreshData();
     toggleOpenAddEdit(false);
+    document.getElementById("refresh-table").click();
     actionType.current = null;
     selectedRecord.current = null;
   }

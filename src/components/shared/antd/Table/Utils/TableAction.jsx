@@ -44,7 +44,7 @@ export default function TableAction(props) {
           selectedRecord
         );
         if (reset) {
-          refreshTable(true);
+          document.getElementById("refresh-table").click();
         }
       }
     }
