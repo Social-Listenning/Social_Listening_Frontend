@@ -1,27 +1,30 @@
-import { apiService } from '../../../services/apiService';
-import useEffectOnce from '../../../components/hooks/useEffectOnce';
-import NotConnected from './NotConnected';
+import { useQueryClient } from 'react-query';
+import { useGetSocialGroups } from './socialNetworkService';
+import PageCard from './PageCard';
+import AddNewPage from './add-new/AddNewPage';
 
 export default function SocialNetworkPage() {
-  useEffectOnce(() => {
-    apiService
-      .post('/socialNetwork/connect', {
-        socialType: 'Facebook',
-        name: 'KaiNe',
-        extendData: JSON.stringify({ id: 123456789 }),
-      })
-      .then((resp) => {
-        console.log(resp);
-      });
-
-    apiService.get('/socialGroup').then((resp) => {
-      console.log(resp);
-    });
-  });
+  useGetSocialGroups();
+  const queryClient = useQueryClient();
+  const listSocial = queryClient
+    .getQueryData('socialGroups')
+    ?.filter((item) => item.isActive);
 
   return (
-    <div className="flex-center social-network">
-      <NotConnected />
+    <div className="social-network">
+      <AddNewPage />
+      {listSocial?.map((item, index) => {
+        const name = item?.SocialNetwork?.name;
+        const type = item?.SocialNetwork?.socialType;
+        let id = null;
+        if (item?.SocialNetwork?.extendData) {
+          id = JSON.parse(item?.SocialNetwork?.extendData)?.id;
+        }
+
+        return (
+          <PageCard key={index} name={name} id={id} type={type} />
+        );
+      })}
     </div>
   );
 }

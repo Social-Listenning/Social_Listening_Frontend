@@ -1,22 +1,62 @@
 .social-network {
-  height: 80%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(26rem, 1fr));
+  gap: 2rem;
 
-  .not-connected {
-    width: 46rem;
-    flex-direction: column;
-    gap: 2rem;
+  .page-card {
+    --card-size: 24rem;
+    cursor: pointer;
+    min-width: var(--card-size);
+    min-height: var(--card-size);
 
-    .ant-alert-message {
-      font-size: 2rem;
+    &:hover {
+      transition: all ease 0.3s;
+      box-shadow: 0px 2px 92px 0px rgb(0 0 0 / 25%);
+      transform: translate(0, -3px);
     }
 
-    button.ant-btn {
-      font-size: 2rem;
-      width: 32rem;
-      height: 4.4rem;
+    .wall-container {
+      width: 100%;
+    }
+  }
 
-      .anticon {
-        font-size: 2.4rem;
+  .add-new {
+    background-color: var(--primary-color);
+
+    .overlay {
+      min-height: var(--card-size);
+
+      .connect-section {
+        flex-direction: column;
+        color: #fff;
+        gap: 1.6rem;
+
+        .anticon {
+          font-size: 8rem;
+        }
+        span {
+          font-size: var(--app-font-size);
+        }
+      }
+    }
+  }
+}
+
+.social-page-popup {
+
+  .social-page-container {
+    margin-top: 2rem;
+
+    .social-page-wrapper {
+      justify-content: space-between;
+
+      .left-section {
+        gap: 1.2rem;
+
+        .social-page-name {
+          font-size: var(--app-font-size);
+        }
       }
     }
   }

@@ -67,7 +67,7 @@ export const privateRoutes = [
   {
     path: 'social-network',
     element: <SocialNetworkManagement />,
-    // roleRequired: 'OWNER',
+    permissionRequired: 'connect-social-network',
   },
 ];
 

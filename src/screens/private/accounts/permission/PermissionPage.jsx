@@ -7,7 +7,9 @@ import { useMutation } from 'react-query';
 import { removePermission } from '../accountService';
 import { notifyService } from '../../../../services/notifyService';
 
-export default function PermissionManangement({ defaultFilter = [] }) {
+export default function PermissionManangement({
+  defaultFilter = [],
+}) {
   const columns = [
     {
       title: 'Role',
@@ -72,7 +74,7 @@ export default function PermissionManangement({ defaultFilter = [] }) {
       apiGetData="/permission"
       addEditComponent={<AddEditPermissions />}
       permission={permission}
-      actionList={[{ icon: <MinusOutlined />, action: 'Remove' }]}
+      actionList={[{ icon: <MinusOutlined />, label: 'Remove' }]}
       handleActionClick={handleActionClick}
       defaultFilter={defaultFilter}
     />

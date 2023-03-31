@@ -13,15 +13,11 @@ export default function ModalDetail(props) {
     },
   ];
 
-  function onClose() {
-    close();
-  }
-
   return (
     <Modal
       open={open}
       width={1200}
-      onCancel={onClose}
+      onCancel={close}
       footer={null}
       destroyOnClose
     >

@@ -8,7 +8,7 @@ const queryClient = new QueryClient({
     queries: {
       // refetchOnWindowFocus: true,
       // retry: 3,
-      staleTime: 2592000000, // 30 days
+      // staleTime: 2592000000, // 30 days
       keepUnusedData: true, // set to true to keep stale data when the window is not focused
     },
   },

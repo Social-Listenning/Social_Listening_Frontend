@@ -209,7 +209,6 @@ export default function AdminTable(props) {
             openAddEdit={toggleOpenAddEdit}
             onClickDelete={onClickDelete}
             handleActionClick={handleActionClick}
-            refreshTable={setRefreshFS}
           />
         ),
         onCell: (record, _) => {
