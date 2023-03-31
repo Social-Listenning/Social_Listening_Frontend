@@ -6,9 +6,9 @@ import SocketProvider from './components/contexts/socket/SocketProvider';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // refetchOnWindowFocus: false,
+      // refetchOnWindowFocus: true,
       // retry: 3,
-      staleTime: 2592000000, // 30 days
+      // staleTime: 2592000000, // 30 days
       keepUnusedData: true, // set to true to keep stale data when the window is not focused
     },
   },

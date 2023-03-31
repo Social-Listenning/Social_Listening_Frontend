@@ -1,11 +1,12 @@
 import { useRef } from 'react';
 import { Card, Divider } from 'antd';
+import { useGetAllRole } from '../../../../routes/private/privateService';
 import useToggle from '../../../../components/hooks/useToggle';
 import ModalDetail from './ModalDetail';
 import './rolePage.scss';
 
-export default function RolePage(props) {
-  const roleData = props?.roleData
+export default function RolePage() {
+  const { data } = useGetAllRole();
   const [openModal, toggleOpenModal] = useToggle(false);
   const type = useRef(null);
   const role = useRef(null);
@@ -18,11 +19,11 @@ export default function RolePage(props) {
 
   return (
     <div className="role-page-wrapper">
-      {roleData?.map((item, index) => (
+      {data?.map((item, index) => (
         <Card key={index} title={item?.roleName}>
           <div
             onClick={() => {
-              type.current = "User";
+              type.current = 'User';
               role.current = item?.roleName;
               toggleOpenModal(true);
             }}
@@ -32,7 +33,7 @@ export default function RolePage(props) {
           <Divider />
           <div
             onClick={() => {
-              type.current = "Permission";
+              type.current = 'Permission';
               role.current = item?.roleName;
               toggleOpenModal(true);
             }}

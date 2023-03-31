@@ -18,24 +18,19 @@ export const menuSidebar = [
     icon: <UsergroupDeleteOutlined />,
     children: [
       {
-        key: 'account/admin',
-        label: 'Admin',
-        role: 'ADMIN',
+        key: 'account/user',
+        label: 'User',
+        permission: 'table-user',
       },
       {
         key: 'account/role',
         label: 'Role',
-        role: 'ADMIN',
+        permission: 'get-role',
       },
       {
         key: 'account/permission',
         label: 'Permission',
-        role: 'ADMIN',
-      },
-      {
-        key: 'account/owner',
-        label: 'Owner',
-        role: 'OWNER',
+        permission: 'table-permission',
       },
     ],
   },

@@ -1,5 +1,5 @@
 import { Modal } from 'antd';
-import AdminAccountPage from '../admin/AdminAccountPage';
+import AdminAccountPage from '../user/UserPage';
 import PermissionPage from '../permission/PermissionPage';
 
 export default function ModalDetail(props) {
@@ -13,15 +13,11 @@ export default function ModalDetail(props) {
     },
   ];
 
-  function onClose() {
-    close();
-  }
-
   return (
     <Modal
       open={open}
       width={1200}
-      onCancel={onClose}
+      onCancel={close}
       footer={null}
       destroyOnClose
     >

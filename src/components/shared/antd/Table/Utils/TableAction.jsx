@@ -13,19 +13,7 @@ export default function TableAction(props) {
     openAddEdit,
     onClickDelete,
     handleActionClick,
-    refreshTable,
   } = props;
-
-  const formatActionList = actionList?.map((element) => {
-    return (
-      <>
-        {element?.icon}
-        <span style={{ marginLeft: element?.icon ? '0.6rem' : '0' }}>
-          {element?.action}
-        </span>
-      </>
-    );
-  });
 
   function handleAction(e) {
     selectAction(actionList[e.key]?.action);
@@ -44,7 +32,7 @@ export default function TableAction(props) {
           selectedRecord
         );
         if (reset) {
-          refreshTable(true);
+          document.getElementById("refresh-table").click();
         }
       }
     }
@@ -55,8 +43,9 @@ export default function TableAction(props) {
       <div className="flex-center">
         <ClassicDropdown
           clickTrigger
-          list={formatActionList}
+          list={actionList}
           handleItemClick={handleAction}
+          hasIcon
         >
           <IconButton
             icon={<MoreOutlined className="table-action-icon" />}

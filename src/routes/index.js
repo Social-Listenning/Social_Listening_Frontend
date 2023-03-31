@@ -26,7 +26,7 @@ export default function AppRoutes() {
                   path={route.path}
                   element={
                     <PermissionRoute
-                      roleRequired={route.roleRequired}
+                      permissionRequired={route.permissionRequired}
                       element={route.element}
                     />
                   }

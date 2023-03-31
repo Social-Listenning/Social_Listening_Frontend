@@ -76,7 +76,7 @@ export default function AddEditPermissions(props) {
         notifyService.showSucsessMessage({
           description: 'Assign permissions successfully',
         });
-        onClose();
+        closeDrawer();
       }
     },
   });
@@ -87,10 +87,15 @@ export default function AddEditPermissions(props) {
     }
   }
 
+  function closeDrawer() {
+    onClose();
+    addEditPermissionForm.resetFields();
+  }
+
   return (
     <AddEditWrapper
       open={open}
-      onClose={onClose}
+      onClose={closeDrawer}
       form={addEditPermissionForm}
     >
       <Hint message="You have to choose screens to get permissions" />

@@ -8,11 +8,28 @@ export default function ClassicDropdown(props) {
     clickTrigger = false,
     noneOption = false,
     handleItemClick,
+    hasIcon,
     ...other
   } = props;
 
+  let listWithIcon = list;
+  if (hasIcon) {
+    listWithIcon = list?.map((element) => {
+      return (
+        <>
+          {element?.icon}
+          <span
+            style={{ marginLeft: element?.icon ? '0.6rem' : '0' }}
+          >
+            {element?.label}
+          </span>
+        </>
+      );
+    });
+  }
+
   let items =
-    list?.map((item, index) => {
+    listWithIcon?.map((item, index) => {
       return {
         label: item,
         key: index,

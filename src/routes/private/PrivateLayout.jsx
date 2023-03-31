@@ -47,11 +47,11 @@ export default function PrivateLayout(props) {
   const [availableMenu, setAvailableMenu] = useState(
     menuSidebar.map((x) => x)
   );
-  function filterMenuSidebar(role) {
+  function filterMenuSidebar(permission) {
     const filtered = menuSidebar.map((item) => {
       if (item.children && item.children.length > 0) {
         const filteredChildren = item.children.filter(
-          (child) => !child.role || child.role === role
+          (child) => !child.permission || permission.includes(child.permission)
         );
         return { ...item, children: filteredChildren };
       } else {
@@ -59,7 +59,7 @@ export default function PrivateLayout(props) {
       }
     });
     return filtered.filter(
-      (item) => !item.role || item.role === role
+      (item) => !item.permission || permission.includes(item.permission)
     );
   }
   // #endregion
@@ -73,7 +73,7 @@ export default function PrivateLayout(props) {
   useEffectOnce(
     () => {
       // filter the menu sidebar
-      setAvailableMenu(filterMenuSidebar(userData.role));
+      setAvailableMenu(filterMenuSidebar(userData.permissions));
 
       // get notification
       useGetAllNotification.mutate({

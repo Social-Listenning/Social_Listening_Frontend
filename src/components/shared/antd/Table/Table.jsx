@@ -181,8 +181,8 @@ export default function AdminTable(props) {
   const selectedRecord = useRef(null);
 
   function closeAddEdit() {
-    refreshData();
     toggleOpenAddEdit(false);
+    document.getElementById("refresh-table").click();
     actionType.current = null;
     selectedRecord.current = null;
   }
@@ -209,7 +209,6 @@ export default function AdminTable(props) {
             openAddEdit={toggleOpenAddEdit}
             onClickDelete={onClickDelete}
             handleActionClick={handleActionClick}
-            refreshTable={setRefreshFS}
           />
         ),
         onCell: (record, _) => {

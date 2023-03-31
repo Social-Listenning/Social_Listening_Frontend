@@ -1,4 +1,3 @@
-import { useQuery } from 'react-query';
 import { apiService } from '../../../services/apiService';
 import environment from '../../../constants/environment/environment.dev';
 

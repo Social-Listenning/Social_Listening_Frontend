@@ -1,52 +1,30 @@
-import { useEffect } from 'react';
+import { useQueryClient } from 'react-query';
+import { useGetSocialGroups } from './socialNetworkService';
+import PageCard from './PageCard';
+import AddNewPage from './add-new/AddNewPage';
 
 export default function SocialNetworkPage() {
-  useEffect(() => {
-    window.fbAsyncInit = function () {
-      window.FB.init({
-        // This is App ID
-        appId: '594535438672562',
-        cookie: true,
-        xfbml: true,
-        version: 'v14.0',
-      });
-
-      window.FB.AppEvents.logPageView();
-
-      window.FB.getLoginStatus(function (response) {
-        console.log(response);
-      });
-    };
-
-    (function (d, s, id) {
-      var js,
-        fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) {
-        return;
-      }
-      js = d.createElement(s);
-      js.id = id;
-      js.src = 'https://connect.facebook.net/en_US/sdk.js';
-      fjs.parentNode.insertBefore(js, fjs);
-    })(document, 'script', 'facebook-jssdk');
-  });
-
-  const onLoginClick = () => {
-    window.FB.login(
-      function (response) {
-        console.log(response);
-      },
-      {
-        config_id: '2550922511728404', // configuration ID goes here
-      }
-    );
-  };
+  useGetSocialGroups();
+  const queryClient = useQueryClient();
+  const listSocial = queryClient
+    .getQueryData('socialGroups')
+    ?.filter((item) => item.isActive);
 
   return (
-    <div className="app">
-      <div>
-        <button onClick={onLoginClick}>Login with Facebook</button>
-      </div>
+    <div className="social-network">
+      <AddNewPage />
+      {listSocial?.map((item, index) => {
+        const name = item?.SocialNetwork?.name;
+        const type = item?.SocialNetwork?.socialType;
+        let id = null;
+        if (item?.SocialNetwork?.extendData) {
+          id = JSON.parse(item?.SocialNetwork?.extendData)?.id;
+        }
+
+        return (
+          <PageCard key={index} name={name} id={id} type={type} />
+        );
+      })}
     </div>
   );
 }
