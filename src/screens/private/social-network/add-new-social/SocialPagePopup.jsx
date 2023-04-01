@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { Button, Card, Modal } from 'antd';
 import { useMutation } from 'react-query';
 import { notifyService } from '../../../../services/notifyService';
-import { connectPageToSystem } from '../socialNetworkService';
+import { connectPageToSystem, useGetSocialGroups } from '../socialNetworkService';
 import Title from '../../../../components/shared/element/Title';
 import BasicAvatar from '../../../../components/shared/antd/BasicAvatar';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
@@ -15,12 +15,17 @@ export default function SocialPagePopup(props) {
     listPage = [],
     listPageConnected = [],
   } = props;
-  const listConnected = useRef(listPageConnected);
+  const listConnected = useRef([]);
   const currentConnected = useRef(null);
+  const getAllSocialConnected = useRef(false);
+  listConnected.current = listPageConnected;
+
+  useGetSocialGroups(getAllSocialConnected.current);
 
   const useConnectPageToSystem = useMutation(connectPageToSystem, {
     onSuccess: (resp) => {
       if (resp) {
+        getAllSocialConnected.current = true;
         listConnected.current?.push(currentConnected.current);
 
         notifyService.showSucsessMessage({
@@ -41,13 +46,14 @@ export default function SocialPagePopup(props) {
       <Title>Your pages</Title>
       {listPage?.map((item, index) => (
         <ToolTipWrapper
+          key={index}
           tooltip={
             listConnected.current?.includes(item?.id) &&
             'This page is already connected'
           }
-          placement="left"
+          // placement="left"
         >
-          <Card key={index} className="social-page-container">
+          <Card className="social-page-container">
             <div className="flex-center social-page-wrapper">
               <div className="flex-center left-section">
                 <BasicAvatar
@@ -66,7 +72,7 @@ export default function SocialPagePopup(props) {
                     useConnectPageToSystem.mutate({
                       socialType: type,
                       name: item?.name,
-                      extendData: JSON.stringify({ id: item?.id }),
+                      extendData: JSON.stringify(item),
                     });
                   }}
                 >

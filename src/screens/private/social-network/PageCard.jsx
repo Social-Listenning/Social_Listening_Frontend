@@ -1,6 +1,6 @@
 import {
-  EditOutlined,
-  EllipsisOutlined,
+  PauseOutlined,
+  PoweroffOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
 import { Card } from 'antd';
@@ -11,17 +11,17 @@ import './socialNetwork.scss';
 const { Meta } = Card;
 
 export default function PageCard(props) {
-  const { id, wallpaper, avt, name, type } = props;
+  const { pageData, type } = props;
   return (
     <Card
       className="page-card"
       cover={
         <>
-          {wallpaper ? (
+          {pageData?.wallpaperUrl ? (
             <img
               className="wall-container"
               alt="wallpaper"
-              src={wallpaper}
+              src={pageData?.wallpaperUrl}
             />
           ) : (
             <div>
@@ -31,14 +31,14 @@ export default function PageCard(props) {
         </>
       }
       actions={[
-        <SettingOutlined key="setting" />,
-        <EditOutlined key="edit" />,
-        <EllipsisOutlined key="ellipsis" />,
+        <PauseOutlined />,
+        <PoweroffOutlined />,
+        <SettingOutlined />,
       ]}
     >
       <Meta
-        avatar={<BasicAvatar src={avt} name={name} />}
-        title={name}
+        avatar={<BasicAvatar size={44} src={pageData?.pictureUrl} name={pageData?.name} />}
+        title={pageData?.name}
         description={`Social type: ${type}`}
       />
     </Card>

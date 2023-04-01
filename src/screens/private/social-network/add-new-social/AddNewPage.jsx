@@ -13,6 +13,7 @@ const socialList = [
 ];
 
 export default function AddNewPage(props) {
+  const { listPageConnected } = props;
   const socialAuth = useRef(null);
   const socialType = useRef(null);
   const [open, toggleOpen] = useToggle(false);
@@ -31,9 +32,9 @@ export default function AddNewPage(props) {
 
       window.FB.AppEvents.logPageView();
 
-      // window.FB.getLoginStatus(function (response) {
-      //   socialAuth.current = response;
-      // });
+      window.FB.getLoginStatus(function (response) {
+        socialAuth.current = response;
+      });
     };
 
     (function (d, s, id) {
@@ -51,12 +52,13 @@ export default function AddNewPage(props) {
 
   const useGetPageToken = useMutation(connectFacebook, {
     onSuccess: (resp) => {
-      listPage.current = resp?.data?.map(item => {
+      listPage.current = resp?.data?.map((item) => {
         return {
           id: item.id,
           name: item.name,
-          pictureUrl: item.picture?.data?.url
-        }
+          pictureUrl: item.picture?.data?.url,
+          wallpaperUrl: item.cover?.source,
+        };
       });
       toggleOpen(true);
     },
@@ -68,6 +70,7 @@ export default function AddNewPage(props) {
     // } else {
     window.FB.login(
       function (response) {
+        console.log(response);
         socialAuth.current = response;
         if (response?.status === 'connected') {
           const userId = response?.authResponse?.userID;
@@ -79,11 +82,12 @@ export default function AddNewPage(props) {
               userToken: userToken,
             });
           }
-        } else {
-          notifyService.showErrorMessage({
-            description: "Can't connect to your facebook account",
-          });
         }
+        // else {
+        //   notifyService.showErrorMessage({
+        //     description: "Can't connect to your facebook account",
+        //   });
+        // }
       },
       {
         config_id: '3405322813086507', // configuration ID goes here
@@ -95,7 +99,7 @@ export default function AddNewPage(props) {
 
   function handleItemClick(e) {
     if (socialList[e.key]?.label === 'Connect Fanpage') {
-      socialType.current = "Facebook";
+      socialType.current = 'Facebook';
       onFacebookLogin();
     }
   }
@@ -125,6 +129,7 @@ export default function AddNewPage(props) {
         }}
         type={socialType.current}
         listPage={listPage.current}
+        listPageConnected={listPageConnected}
       />
     </>
   );
