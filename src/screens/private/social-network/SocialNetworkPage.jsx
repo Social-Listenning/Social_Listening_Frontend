@@ -1,28 +1,35 @@
-import { useQueryClient } from 'react-query';
+import { useRef } from 'react';
 import { useGetSocialGroups } from './socialNetworkService';
+import useEffectOnce from '../../../components/hooks/useEffectOnce';
 import PageCard from './PageCard';
-import AddNewPage from './add-new/AddNewPage';
+import AddNewPage from './add-new-social/AddNewPage';
 
 export default function SocialNetworkPage() {
-  useGetSocialGroups();
-  const queryClient = useQueryClient();
-  const listSocial = queryClient
-    .getQueryData('socialGroups')
-    ?.filter((item) => item.isActive);
+  const firstRender = useRef(true);
+  const { data } = useGetSocialGroups(firstRender.current);
+  const listPageConnected = data?.map((item) => {
+    let extendData = null;
+    if (item?.SocialNetwork?.extendData) {
+      extendData = JSON.parse(item?.SocialNetwork?.extendData);
+    }
+    return extendData?.id;
+  });
+
+  useEffectOnce(() => {
+    firstRender.current = false;
+  });
 
   return (
     <div className="social-network">
-      <AddNewPage />
-      {listSocial?.map((item, index) => {
-        const name = item?.SocialNetwork?.name;
+      <AddNewPage listPageConnected={listPageConnected}/>
+      {data?.map((item, index) => {
         const type = item?.SocialNetwork?.socialType;
-        let id = null;
+        let extendData = null;
         if (item?.SocialNetwork?.extendData) {
-          id = JSON.parse(item?.SocialNetwork?.extendData)?.id;
+          extendData = JSON.parse(item?.SocialNetwork?.extendData);
         }
-
         return (
-          <PageCard key={index} name={name} id={id} type={type} />
+          <PageCard key={index} pageData={extendData} type={type} />
         );
       })}
     </div>

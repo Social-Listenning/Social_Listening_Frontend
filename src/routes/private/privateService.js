@@ -10,7 +10,7 @@ export const getDecodedToken = () => {
 export const useGetDecodedToken = () => {
   return useQuery('userData', getDecodedToken, {
     // staleTime: Infinity,
-    keepPreviousData: true,
+    // keepPreviousData: true,
   });
 };
 
@@ -23,7 +23,7 @@ export const useGetAllRole = (enabled = true) => {
   return useQuery('allRole', getAllRole, {
     // staleTime: Infinity,
     enabled: enabled,
-    keepPreviousData: true,
+    // keepPreviousData: true,
   });
 };
 

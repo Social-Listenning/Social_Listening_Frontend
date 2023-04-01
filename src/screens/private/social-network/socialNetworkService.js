@@ -3,12 +3,16 @@ import { apiService } from '../../../services/apiService';
 import environment from '../../../constants/environment/environment.dev';
 
 export const getSocialGroups = async () => {
-  const resp = await apiService.get(`${environment.socialGroup}/social-tab`);
+  const resp = await apiService.get(
+    `${environment.socialGroup}/social-tab`
+  );
   return resp?.result;
 };
 
-export const useGetSocialGroups = async () => {
-  return useQuery('socialGroups', getSocialGroups);
+export const useGetSocialGroups = (enabled = true) => {
+  return useQuery('socialGroups', getSocialGroups, {
+    enabled: enabled,
+  });
 };
 
 export const connectPageToSystem = async (data) => {
@@ -21,7 +25,7 @@ export const connectPageToSystem = async (data) => {
 
 export const connectFacebook = async (data) => {
   const resp = await apiService.get(
-    `${environment.facebookGraph}/${data?.userId}/accounts?access_token=${data?.userToken}&fields=picture,name`
+    `${environment.facebookGraph}/${data?.userId}/accounts?access_token=${data?.userToken}&fields=picture,name,cover`
   );
   return resp;
 };
