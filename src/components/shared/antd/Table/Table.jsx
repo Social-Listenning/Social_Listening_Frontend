@@ -4,6 +4,8 @@ import { useState, useRef } from 'react';
 import { apiService } from '../../../../services/apiService';
 import { notifyService } from '../../../../services/notifyService';
 import { defaultAction } from '../../../../constants/table/action';
+import { useGetDecodedToken } from '../../../../routes/private/privateService';
+import { Checker } from '../../../../utils/dataChecker';
 import useEffectOnce from '../../../hooks/useEffectOnce';
 import useUpdateEffect from '../../../hooks/useUpdateEffect';
 import useToggle from '../../../hooks/useToggle';
@@ -13,6 +15,7 @@ import ResizeableTitle from './Header/ResizeableTitle';
 import TabelUtils from './Utils/TabelUtils';
 import TableAction from './Utils/TableAction';
 import LoadingWrapper from '../LoadingWrapper';
+import TableToolbar from './Utils/TableToolbar';
 import './table.scss';
 
 export default function AdminTable(props) {
@@ -32,6 +35,7 @@ export default function AdminTable(props) {
     permission = {},
     handleActionClick,
     defaultFilter = [],
+    customToolbar,
     ...other
   } = props;
 
@@ -71,7 +75,7 @@ export default function AdminTable(props) {
   // #endregion
 
   // #region handle filter, sorter, refresh data
-  const [data, setData] = useState([]);
+  const [dataSource, setDataSource] = useState([]);
   const [filterType, setFilterType] = useState(defaultFilter);
   const [sorter, setSorter] = useState([]);
   const [loading, toggleLoading] = useToggle(false); // loading state
@@ -133,7 +137,7 @@ export default function AdminTable(props) {
                   return x;
                 });
               }
-              setData(
+              setDataSource(
                 resp.result.data.map((x, index) => {
                   return {
                     ...x,
@@ -182,7 +186,7 @@ export default function AdminTable(props) {
 
   function closeAddEdit() {
     toggleOpenAddEdit(false);
-    document.getElementById("refresh-table").click();
+    document.getElementById('refresh-table').click();
     actionType.current = null;
     selectedRecord.current = null;
   }
@@ -191,8 +195,23 @@ export default function AdminTable(props) {
     actionType.current = action;
   }
 
+  // #region format action column with permission
+  const { data } = useGetDecodedToken();
+  let formatActionList = actionList;
   let actionCol = [];
-  if (actionList?.length > 0) {
+  if (Checker.isEqualArrays(actionList, defaultAction)) {
+    if (!data?.permissions.includes(permission?.edit)) {
+      formatActionList = formatActionList?.filter(
+        (item) => item?.label !== 'Edit'
+      );
+    }
+    if (!data?.permissions.includes(permission?.delete)) {
+      formatActionList = formatActionList?.filter(
+        (item) => item?.label !== 'Delete'
+      );
+    }
+  }
+  if (formatActionList?.length > 0) {
     actionCol = [
       {
         dataIndex: 'action',
@@ -203,10 +222,12 @@ export default function AdminTable(props) {
         resizeable: false,
         render: (_, record) => (
           <TableAction
-            actionList={actionList}
+            actionList={formatActionList}
             selectedRecord={record}
             selectAction={selectAction}
-            openAddEdit={toggleOpenAddEdit}
+            openAddEdit={() => {
+              toggleOpenAddEdit(true);
+            }}
             onClickDelete={onClickDelete}
             handleActionClick={handleActionClick}
           />
@@ -221,6 +242,7 @@ export default function AdminTable(props) {
       },
     ];
   }
+  // #endregion
 
   const formatHeaderCols = formatHeaders(columnUtil.current);
 
@@ -242,7 +264,9 @@ export default function AdminTable(props) {
               updateSorter={setSorter}
               updateFilter={setFilterType}
               refreshFilterSorter={refreshFS}
-              defaultFilter={defaultFilter.filter(item => item.props === col.dataIndex)}
+              defaultFilter={defaultFilter.filter(
+                (item) => item.props === col.dataIndex
+              )}
             />
           ),
         };
@@ -291,20 +315,26 @@ export default function AdminTable(props) {
 
   return (
     <ElementWithPermission permission={permission.table}>
+      <TableToolbar
+        permission={permission}
+        selectAction={selectAction}
+        openAddEdit={() => {
+          toggleOpenAddEdit(true);
+        }}
+        apiImport={apiImport}
+        importColumns={importColumns}
+        dumpImportData={dumpImportData}
+        apiExport={apiExport}
+        showDelete={selectedRowKeys?.length > 0}
+        deleteMultiple={onMultipleDelete}
+        customToolbar={customToolbar}
+      />
+
       <TabelUtils
         originColumn={columns}
         columnList={columnUtil.current}
-        importColumns={importColumns}
-        dumpImportData={dumpImportData}
-        apiImport={apiImport}
-        apiExport={apiExport}
         updateColumn={handleDisplayColumns}
-        selectAction={selectAction}
-        openAddEdit={toggleOpenAddEdit}
-        showDelete={selectedRowKeys?.length > 0}
-        deleteMultiple={onMultipleDelete}
         refreshTable={setRefreshFS}
-        permission={permission}
       />
 
       <LoadingWrapper size="large" loading={loading}>
@@ -312,7 +342,7 @@ export default function AdminTable(props) {
           id="admin-table"
           size="small"
           columns={resizeColumns}
-          dataSource={data}
+          dataSource={dataSource}
           rowSelection={rowSelection}
           scroll={scroll}
           components={{
@@ -327,7 +357,7 @@ export default function AdminTable(props) {
       {cloneElement(addEditComponent, {
         open: openAddEdit,
         onClose: closeAddEdit,
-        data: selectedRecord.current,
+        selectedData: selectedRecord.current,
         action: actionType.current,
       })}
     </ElementWithPermission>

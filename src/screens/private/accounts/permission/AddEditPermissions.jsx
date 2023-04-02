@@ -1,12 +1,13 @@
 import { useState, useRef } from 'react';
 import { Form } from 'antd';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation } from 'react-query';
 import { notifyService } from '../../../../services/notifyService';
 import {
   assignPermission,
   getPermissionByScreens,
   getScreens,
 } from '../accountService';
+import { useGetAllRole } from '../../../../routes/private/privateService';
 import useEffectOnce from '../../../../components/hooks/useEffectOnce';
 import AddEditWrapper from '../../../../components/shared/antd/Table/Drawer/AddEditWrapper';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
@@ -14,11 +15,10 @@ import ClassicSelect from '../../../../components/shared/antd/Select/Classic';
 import Hint from '../../../../components/shared/element/Hint';
 
 export default function AddEditPermissions(props) {
-  const { open, onClose, data, action } = props;
+  const { open, onClose, selectedData, action } = props;
 
   const [addEditPermissionForm] = Form.useForm();
-  const queryClient = useQueryClient();
-  const roleData = queryClient.getQueryData('allRole');
+  const { data } = useGetAllRole();
 
   // #region get all screens
   const [screens, setScreens] = useState([]);
@@ -119,7 +119,7 @@ export default function AddEditPermissions(props) {
         >
           <ClassicSelect
             placeholder="Select role..."
-            options={roleData?.map((item) => {
+            options={data?.map((item) => {
               return { label: item.roleName, value: item.id };
             })}
           />

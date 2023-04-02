@@ -17,7 +17,7 @@ import ImportButton from '../../../element/Button/ImportButton';
 export default function ImportDrawer(props) {
   const {
     open,
-    toggleOpen,
+    close,
     apiImport,
     importColumns,
     dumpImportData,
@@ -119,7 +119,7 @@ export default function ImportDrawer(props) {
   }
 
   function closeDrawer() {
-    toggleOpen(false);
+    close();
     file.current = null;
     header.current = [];
     if (currentStep !== 0) {

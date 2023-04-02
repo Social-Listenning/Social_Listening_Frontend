@@ -1,12 +1,21 @@
-import { role } from '../../../../constants/profile/profile';
+import { useGetDecodedToken } from '../../../../routes/private/privateService';
+import { role } from '../../../../constants/environment/environment.dev';
+import { RoleChip } from '../../../../components/shared/element/Chip';
+import environment from '../../../../constants/environment/environment.dev';
 import AdminTable from '../../../../components/shared/antd/Table/Table';
 import BooleanRow from '../../../../components/shared/element/BooleanRow';
-import { RoleChip } from '../../../../components/shared/element/Chip';
 import DateTimeFormat from '../../../../components/shared/element/DateTimeFormat';
 import AddEditAdminAccount from './AddEditUser';
-import environment from '../../../../constants/environment/environment.dev';
 
-export default function AdminAccountManagement({ defaultFilter = [] }) {
+export default function UserManagement(props) {
+  const { defaultFilter = [] } = props;
+  const { data } = useGetDecodedToken();
+
+  let apiGetData = environment.user;
+  if (data?.role === 'OWNER') {
+    apiGetData += '/all';
+  }
+
   const columns = [
     {
       title: 'Email',
@@ -81,14 +90,18 @@ export default function AdminAccountManagement({ defaultFilter = [] }) {
   const permission = {
     table: 'table-user',
     new: 'create-user',
-    import: 'import-user-admin',
+    import: 'import-user',
     export: 'export-user',
-  }
+    edit: 'update-user',
+    delete: 'remove-user',
+  };
 
   return (
     <AdminTable
-      apiGetData={environment.user}
+      apiGetData={apiGetData}
       apiExport={`${environment.user}/export`}
+      apiDeleteOne={`${environment.user}/remove`}
+      keyProps="id"
       columns={columns}
       addEditComponent={<AddEditAdminAccount />}
       scroll={{ x: 2000 }}

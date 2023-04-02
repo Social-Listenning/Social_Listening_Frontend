@@ -1,5 +1,5 @@
 import { Tag } from 'antd';
-import { role } from '../../../constants/profile/profile';
+import { role } from '../../../constants/environment/environment.dev';
 
 export default function Chip(props) {
   return <Tag color={props.color}>{props.children}</Tag>;

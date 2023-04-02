@@ -1,15 +1,15 @@
-import { MinusOutlined } from '@ant-design/icons';
-import { role } from '../../../../constants/profile/profile';
-import AdminTable from '../../../../components/shared/antd/Table/Table';
-import { RoleChip } from '../../../../components/shared/element/Chip';
-import AddEditPermissions from './AddEditPermissions';
 import { useMutation } from 'react-query';
+import { MinusOutlined } from '@ant-design/icons';
 import { removePermission } from '../accountService';
 import { notifyService } from '../../../../services/notifyService';
+import { role } from '../../../../constants/environment/environment.dev';
+import { RoleChip } from '../../../../components/shared/element/Chip';
+import AdminTable from '../../../../components/shared/antd/Table/Table';
+import AddEditPermissions from './AddEditPermissions';
 
-export default function PermissionManangement({
-  defaultFilter = [],
-}) {
+export default function PermissionManangement(props) {
+  const { defaultFilter = [] } = props;
+
   const columns = [
     {
       title: 'Role',

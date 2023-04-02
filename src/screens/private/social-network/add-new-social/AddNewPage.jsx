@@ -26,8 +26,9 @@ export default function AddNewPage(props) {
         // This is App ID
         appId: '594535438672562',
         cookie: true,
+        status: true,
         xfbml: true,
-        version: 'v14.0',
+        version: 'v16.0',
       });
 
       window.FB.AppEvents.logPageView();
@@ -52,6 +53,7 @@ export default function AddNewPage(props) {
 
   const useGetPageToken = useMutation(connectFacebook, {
     onSuccess: (resp) => {
+      toggleOpen(true);
       listPage.current = resp?.data?.map((item) => {
         return {
           id: item.id,
@@ -60,7 +62,6 @@ export default function AddNewPage(props) {
           wallpaperUrl: item.cover?.source,
         };
       });
-      toggleOpen(true);
     },
   });
 

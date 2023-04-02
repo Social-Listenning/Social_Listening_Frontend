@@ -16,19 +16,19 @@ export default function TableAction(props) {
   } = props;
 
   function handleAction(e) {
-    selectAction(actionList[e.key]?.action);
+    selectAction(actionList[e.key]?.label);
 
     if (Checker.isEqualArrays(actionList, defaultAction)) {
-      if (actionList[e.key]?.action === 'Edit') {
-        openAddEdit(true);
-      } else if (actionList[e.key]?.action === 'Delete') {
+      if (actionList[e.key]?.label === 'Edit') {
+        openAddEdit();
+      } else if (actionList[e.key]?.label === 'Delete') {
         onClickDelete(selectedRecord);
       }
     } else {
       if (!Checker.isNullOrEmpty(handleActionClick)) {
         let reset = false;
         reset = handleActionClick(
-          actionList[e.key]?.action,
+          actionList[e.key]?.label,
           selectedRecord
         );
         if (reset) {

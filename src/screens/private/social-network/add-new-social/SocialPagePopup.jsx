@@ -2,7 +2,10 @@ import { useRef } from 'react';
 import { Button, Card, Modal } from 'antd';
 import { useMutation } from 'react-query';
 import { notifyService } from '../../../../services/notifyService';
-import { connectPageToSystem, useGetSocialGroups } from '../socialNetworkService';
+import {
+  connectPageToSystem,
+  useGetSocialGroups,
+} from '../socialNetworkService';
 import Title from '../../../../components/shared/element/Title';
 import BasicAvatar from '../../../../components/shared/antd/BasicAvatar';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
@@ -21,13 +24,13 @@ export default function SocialPagePopup(props) {
   listConnected.current = listPageConnected;
 
   useGetSocialGroups(getAllSocialConnected.current);
+  getAllSocialConnected.current = false;
 
   const useConnectPageToSystem = useMutation(connectPageToSystem, {
     onSuccess: (resp) => {
       if (resp) {
         getAllSocialConnected.current = true;
         listConnected.current?.push(currentConnected.current);
-
         notifyService.showSucsessMessage({
           description: 'Connect successfully',
         });
@@ -40,6 +43,7 @@ export default function SocialPagePopup(props) {
       open={open}
       onCancel={close}
       footer={null}
+      maskClosable={false}
       className="social-page-popup"
       destroyOnClose
     >

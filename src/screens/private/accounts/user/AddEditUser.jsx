@@ -9,7 +9,7 @@ import ClassicSelect from '../../../../components/shared/antd/Select/Classic';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
 
 export default function AddEditAdminAccount(props) {
-  const { open, onClose, data, action } = props;
+  const { open, onClose, selectedData, action } = props;
 
   const [addEditUserForm] = Form.useForm();
   const queryClient = useQueryClient();
@@ -27,12 +27,12 @@ export default function AddEditAdminAccount(props) {
 
   useUpdateEffect(() => {
     addEditUserForm.setFieldsValue({
-      email: data?.email,
-      userName: data?.userName,
-      fullName: data?.fullName,
-      phoneNumber: data?.phoneNumber,
-      role: data?.role?.roleName ?? 'ADMIN',
-      gender: data?.gender ?? 'Other',
+      email: selectedData?.email,
+      userName: selectedData?.userName,
+      fullName: selectedData?.fullName,
+      phoneNumber: selectedData?.phoneNumber,
+      role: selectedData?.role?.roleName ?? 'ADMIN',
+      gender: selectedData?.gender ?? 'Other',
     });
   }, [action]);
 

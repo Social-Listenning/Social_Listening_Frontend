@@ -25,7 +25,7 @@ export const connectPageToSystem = async (data) => {
 
 export const connectFacebook = async (data) => {
   const resp = await apiService.get(
-    `${environment.facebookGraph}/${data?.userId}/accounts?access_token=${data?.userToken}&fields=picture,name,cover`
+    `${environment.facebookGraph}/${data?.userId}/accounts?access_token=${data?.userToken}&fields=access_token,picture,name,cover`
   );
   return resp;
 };
