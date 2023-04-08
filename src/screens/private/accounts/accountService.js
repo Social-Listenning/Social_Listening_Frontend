@@ -9,10 +9,10 @@ export const createAccountAdmin = async (userModel) => {
   return resp?.result;
 };
 
-export const updateAccountAdmin = async (userModel) => {
+export const assignUser = async (data) => {
   const resp = await apiService.post(
-    `${environment.user}/create/admin`,
-    userModel
+    `${environment.user}/assign`,
+    data
   );
   return resp?.result;
 };

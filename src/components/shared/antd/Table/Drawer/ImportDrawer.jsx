@@ -75,9 +75,9 @@ export default function ImportDrawer(props) {
     propsMapped.current = colMapped
       .map((item) => {
         return {
-          header: item.leftCol,
+          header: item.systemCol,
           props: importColumns.filter(
-            (col) => col?.title === item?.rightCol
+            (col) => col?.title === item?.excelHeader
           )[0]?.dataIndex,
         };
       })

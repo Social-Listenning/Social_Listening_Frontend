@@ -21,7 +21,7 @@ export default function TableToolbar(props) {
     deleteMultiple,
     customToolbar,
   } = props;
-  
+
   const [openImport, setOpenImport] = useToggle(false);
 
   return (
@@ -66,11 +66,13 @@ export default function TableToolbar(props) {
         </ElementWithPermission>
 
         {showDelete && (
-          <DeleteButton
-            onClick={() => {
-              deleteMultiple();
-            }}
-          />
+          <ElementWithPermission permission={permission.delete}>
+            <DeleteButton
+              onClick={() => {
+                deleteMultiple();
+              }}
+            />
+          </ElementWithPermission>
         )}
 
         {customToolbar}

@@ -1,13 +1,17 @@
 import { useRef, useState } from 'react';
 import { Table } from 'antd';
-import { ArrowRightOutlined, DownOutlined } from '@ant-design/icons';
+import { DownOutlined } from '@ant-design/icons';
 import useEffectOnce from '../../../../hooks/useEffectOnce';
-import useUpdateEffect from '../../../../hooks/useUpdateEffect';
 import ClassicDropdown from '../../Dropdown/Classic';
 import ToolTipWrapper from '../../ToolTipWrapper';
 
 export default function TableMapData(props) {
-  const { excelHeader = [], systemCol = [], previewCol = [], getColMapped } = props;
+  const {
+    excelHeader = [],
+    systemCol = [],
+    previewCol = [],
+    getColMapped,
+  } = props;
 
   const cellIndex = useRef(null);
   const [dataSource, setDataSource] = useState([]);
@@ -61,6 +65,24 @@ export default function TableMapData(props) {
                 dataSource[cellIndex.current].excelHeader =
                   excelHeader.filter((x) => x !== text)[e.key];
 
+                let previewColData =
+                  previewCol[
+                    dataSource[cellIndex.current].excelHeader
+                  ];
+                if (
+                  checkDateColumn(
+                    dataSource[cellIndex.current]?.systemCol
+                  ) &&
+                  checkDateColumn(
+                    dataSource[cellIndex.current]?.excelHeader
+                  )
+                ) {
+                  previewColData =
+                    formatDateTimeExcel(previewColData);
+                }
+                dataSource[cellIndex.current].previewCol =
+                  previewColData?.toString();
+
                 setDataSource([...dataSource]);
                 getColMapped([...dataSource]);
               }}
@@ -86,8 +108,29 @@ export default function TableMapData(props) {
       title: 'Preview',
       dataIndex: 'previewCol',
       key: 'previewCol',
+      render: (text, _) => {
+        return <>{text}</>;
+      },
     },
   ];
+
+  // check date col
+  function checkDateColumn(item) {
+    const lowerCase = item?.toLowerCase();
+    if (
+      lowerCase?.includes('date') ||
+      lowerCase?.includes('created') ||
+      lowerCase?.includes('updated')
+    ) {
+      return true;
+    }
+    return false;
+  }
+  // change date time format in excel
+  function formatDateTimeExcel(date) {
+    const reformatDate = (date - (25567 + 1)) * 86400 * 1000;
+    return new Date(reformatDate).toLocaleString();
+  }
 
   // #region map data from excel to table
   // lower case and remove all the space to compare
@@ -119,10 +162,9 @@ export default function TableMapData(props) {
           key: i,
           excelHeader: excelHeaderData,
           systemCol: systemCol[i]?.title,
-          previewCol: previewCol[excelHeaderData]
+          previewCol: previewCol[excelHeaderData]?.toString(),
         });
       }
-      console.log(dumpData)
       setDataSource(dumpData);
       getColMapped(dumpData);
     }
@@ -131,10 +173,6 @@ export default function TableMapData(props) {
   useEffectOnce(() => {
     getDataSource();
   });
-
-  useUpdateEffect(() => {
-    getDataSource();
-  }, [excelHeader]);
   // #endregion
 
   return (

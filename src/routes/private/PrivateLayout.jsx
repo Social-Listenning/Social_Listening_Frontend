@@ -67,7 +67,7 @@ export default function PrivateLayout(props) {
   const [notiList, setNotiList] = useState([]);
   const useGetAllNotification = useMutation(getAllNotification, {
     onSuccess: (resp) => {
-      setNotiList(resp?.data);
+      setNotiList(resp);
     },
   });
   useEffectOnce(

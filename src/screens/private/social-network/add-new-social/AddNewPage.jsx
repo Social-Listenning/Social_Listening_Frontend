@@ -58,6 +58,7 @@ export default function AddNewPage(props) {
         return {
           id: item.id,
           name: item.name,
+          accessToken: item.access_token,
           pictureUrl: item.picture?.data?.url,
           wallpaperUrl: item.cover?.source,
         };
@@ -131,6 +132,11 @@ export default function AddNewPage(props) {
         type={socialType.current}
         listPage={listPage.current}
         listPageConnected={listPageConnected}
+        onRefreshClick={() => {
+          if (socialType.current === 'Facebook') {
+            onFacebookLogin();
+          }
+        }}
       />
     </>
   );

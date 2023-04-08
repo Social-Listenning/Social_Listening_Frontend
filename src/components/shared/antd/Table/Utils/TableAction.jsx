@@ -1,9 +1,7 @@
-import { MoreOutlined } from '@ant-design/icons';
 import { Checker } from '../../../../../utils/dataChecker';
 import { defaultAction } from '../../../../../constants/table/action';
 import ClassicDropdown from '../../Dropdown/Classic';
-import IconButton from '../../../element/Button/IconButton';
-import ToolTipWrapper from '../../ToolTipWrapper';
+import IconMoreButton from '../../../element/Button/IconMoreButton';
 
 export default function TableAction(props) {
   const {
@@ -32,26 +30,22 @@ export default function TableAction(props) {
           selectedRecord
         );
         if (reset) {
-          document.getElementById("refresh-table").click();
+          document.getElementById('refresh-table').click();
         }
       }
     }
   }
 
   return (
-    <ToolTipWrapper tooltip="Click to open actions">
-      <div className="flex-center">
-        <ClassicDropdown
-          clickTrigger
-          list={actionList}
-          handleItemClick={handleAction}
-          hasIcon
-        >
-          <IconButton
-            icon={<MoreOutlined className="table-action-icon" />}
-          />
-        </ClassicDropdown>
-      </div>
-    </ToolTipWrapper>
+    <div className="flex-center">
+      <ClassicDropdown
+        clickTrigger
+        list={actionList}
+        handleItemClick={handleAction}
+        hasIcon
+      >
+        <IconMoreButton className="table-action-icon" />
+      </ClassicDropdown>
+    </div>
   );
 }

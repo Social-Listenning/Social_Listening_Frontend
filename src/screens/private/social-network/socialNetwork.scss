@@ -20,6 +20,17 @@
     .wall-container {
       width: 100%;
     }
+
+    .empty-wall {
+      height: 16.7rem;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .ant-card-actions {
+      .anticon {
+        font-size: 1.8rem;
+      }
+    }
   }
 
   .add-new {
@@ -45,7 +56,6 @@
 }
 
 .social-page-popup {
-
   .social-page-container {
     margin-top: 2rem;
 
@@ -57,6 +67,175 @@
 
         .social-page-name {
           font-size: var(--app-font-size);
+        }
+      }
+    }
+  }
+
+  .social-popup-footer {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .ant-alert-message {
+      .social-footer-hint {
+        display: flex;
+        flex-direction: column;
+        font-size: 1.8rem;
+        gap: 1.2rem;
+      }
+    }
+  }
+}
+
+.social-tab {
+  .ant-tabs-nav {
+    height: 3.6rem;
+    .ant-tabs-nav-list {
+      .ant-tabs-tab {
+        font-size: 1.8rem;
+      }
+      .ant-tabs-tab + .ant-tabs-tab {
+        margin-left: 6rem;
+      }
+    }
+  }
+
+  .message-container {
+    align-items: start;
+
+    .message-table {
+      width: 50%;
+      border-right: 1px solid var(--gray-layout-color);
+    }
+
+    .message-detail {
+      width: 50%;
+      font-size: var(--app-font-size);
+      padding: 0 var(--padding-layout);
+
+      .message-date {
+        font-size: calc(var(--app-font-size) - 0.4rem);
+      }
+
+      .post-section {
+        flex-direction: column;
+        align-items: start;
+        border-bottom: 1px solid var(--gray-layout-color);
+        padding-bottom: var(--padding-layout);
+
+        .post-header {
+          width: 100%;
+          justify-content: space-between;
+
+          .post-info {
+            gap: var(--padding-layout);
+
+            .post-user-date {
+              flex-direction: column;
+              align-items: start;
+            }
+          }
+
+          .post-util {
+            .anticon {
+              scale: 1.2;
+            }
+          }
+        }
+
+        .post-detail {
+          --line: 3;
+          text-align: justify;
+        }
+      }
+
+      .message-section {
+        border-bottom: 1px solid var(--gray-layout-color);
+        padding: var(--padding-layout) 0;
+
+        .message-container {
+          // height: 39rem;
+          overflow-y: scroll;
+
+          .page-respond {
+            flex-direction: row-reverse;
+            padding-right: 0.4rem;
+          }
+
+          .message-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: var(--padding-layout);
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+
+            .message-chip-container {
+              width: 70%;
+              padding: 0.8rem;
+              margin: 0;
+              border-radius: 1.8rem;
+              white-space: unset;
+              font-size: var(--app-font-size);
+
+              .message-chip-user {
+                justify-content: start;
+                gap: 0.8rem;
+                margin-bottom: 0.4rem;
+              }
+
+              .message-chip {
+                --line: 3;
+              }
+            }
+          }
+        }
+      }
+
+      .respond-section {
+        padding-top: var(--padding-layout);
+
+        .recommend-response-container {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+
+          .recommend-response-chip {
+            padding: 0.8rem;
+            white-space: unset;
+            margin-bottom: var(--padding-layout);
+
+            .recommend-response {
+              --line: 2;
+              font-size: var(--app-font-size);
+            }
+          }
+
+          .recommend-close-icon {
+            position: absolute;
+            right: 0px;
+            bottom: 27.4rem;
+            min-width: 2.4rem;
+            width: 2.4rem;
+            height: 2.4rem;
+            font-size: 1.2rem;
+            padding: 0;
+          }
+        }
+
+        .respose-input-container {
+          gap: 0.8rem;
+
+          textarea {
+            font-size: var(--app-font-size);
+          }
+
+          .respond-icon {
+            scale: 1.3;
+          }
         }
       }
     }

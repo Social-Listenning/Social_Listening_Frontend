@@ -96,8 +96,10 @@
   }
 }
 
-.ant-table-body {
-  .anticon.table-action-icon {
-    transform: scale(1.5);
+.ant-table-tbody {
+  .table-action-icon {
+    .anticon {
+      transform: scale(1.3);
+    }
   }
 }

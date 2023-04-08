@@ -8,10 +8,7 @@ export const getDecodedToken = () => {
 };
 
 export const useGetDecodedToken = () => {
-  return useQuery('userData', getDecodedToken, {
-    // staleTime: Infinity,
-    // keepPreviousData: true,
-  });
+  return useQuery('userData', getDecodedToken);
 };
 
 export const getAllRole = async () => {
@@ -21,9 +18,7 @@ export const getAllRole = async () => {
 
 export const useGetAllRole = (enabled = true) => {
   return useQuery('allRole', getAllRole, {
-    // staleTime: Infinity,
     enabled: enabled,
-    // keepPreviousData: true,
   });
 };
 

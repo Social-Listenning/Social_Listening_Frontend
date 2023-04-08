@@ -28,8 +28,11 @@ const PermissionManagement = lazy(() =>
 const RoleManagement = lazy(() =>
   import('../screens/private/accounts/role/RolePage')
 );
-const SocialNetworkManagement = lazy(() =>
+const SocialNetworkPage = lazy(() =>
   import('../screens/private/social-network/SocialNetworkPage')
+);
+const SocialManagement = lazy(() =>
+  import('../screens/private/social-network/social-management/SocialManagePage')
 );
 // #endregion
 
@@ -66,8 +69,12 @@ export const privateRoutes = [
   },
   {
     path: 'social-network',
-    element: <SocialNetworkManagement />,
+    element: <SocialNetworkPage />,
     permissionRequired: 'connect-social-network',
+  },
+  {
+    path: 'social-network/:id',
+    element: <SocialManagement />
   },
 ];
 

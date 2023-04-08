@@ -5,7 +5,6 @@ import { apiService } from '../../../../services/apiService';
 import { notifyService } from '../../../../services/notifyService';
 import { defaultAction } from '../../../../constants/table/action';
 import { useGetDecodedToken } from '../../../../routes/private/privateService';
-import { Checker } from '../../../../utils/dataChecker';
 import useEffectOnce from '../../../hooks/useEffectOnce';
 import useUpdateEffect from '../../../hooks/useUpdateEffect';
 import useToggle from '../../../hooks/useToggle';
@@ -21,6 +20,7 @@ import './table.scss';
 export default function AdminTable(props) {
   const {
     columns = [],
+    tableData = [],
     importColumns = columns,
     dumpImportData = [],
     actionList = defaultAction,
@@ -36,6 +36,7 @@ export default function AdminTable(props) {
     handleActionClick,
     defaultFilter = [],
     customToolbar,
+    disableSelect = false,
     ...other
   } = props;
 
@@ -75,7 +76,7 @@ export default function AdminTable(props) {
   // #endregion
 
   // #region handle filter, sorter, refresh data
-  const [dataSource, setDataSource] = useState([]);
+  const [dataSource, setDataSource] = useState(tableData);
   const [filterType, setFilterType] = useState(defaultFilter);
   const [sorter, setSorter] = useState([]);
   const [loading, toggleLoading] = useToggle(false); // loading state
@@ -197,14 +198,21 @@ export default function AdminTable(props) {
 
   // #region format action column with permission
   const { data } = useGetDecodedToken();
-  let formatActionList = actionList;
   let actionCol = [];
-  if (Checker.isEqualArrays(actionList, defaultAction)) {
+  let formatActionList = actionList;
+  const isContainDefaultAction = defaultAction.every((d) => {
+    return actionList.some(
+      (a) => a.label === d.label && a.icon === d.icon
+    );
+  });
+  if (isContainDefaultAction) {
+    // edit permission
     if (!data?.permissions.includes(permission?.edit)) {
       formatActionList = formatActionList?.filter(
         (item) => item?.label !== 'Edit'
       );
     }
+    // delete permission
     if (!data?.permissions.includes(permission?.delete)) {
       formatActionList = formatActionList?.filter(
         (item) => item?.label !== 'Delete'
@@ -343,13 +351,13 @@ export default function AdminTable(props) {
           size="small"
           columns={resizeColumns}
           dataSource={dataSource}
-          rowSelection={rowSelection}
           scroll={scroll}
           components={{
             header: {
               cell: ResizeableTitle,
             },
           }}
+          {...(!disableSelect && { rowSelection: rowSelection })}
           {...other}
         />
       </LoadingWrapper>
