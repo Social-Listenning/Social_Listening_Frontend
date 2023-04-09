@@ -37,6 +37,7 @@ export default function AdminTable(props) {
     defaultFilter = [],
     customToolbar,
     disableSelect = false,
+    getSelectedRows,
     ...other
   } = props;
 
@@ -101,6 +102,7 @@ export default function AdminTable(props) {
   async function refreshData(resetData = true) {
     // remove the select
     if (selectedRowKeys?.length > 0) {
+      getSelectedRows([]);
       setSelectedRowKeys([]);
     }
 
@@ -315,7 +317,13 @@ export default function AdminTable(props) {
   const rowSelection = {
     selectedRowKeys,
     onChange: (newSelectedRowKeys) => {
-      // console.log(newSelectedRowKeys);
+      if (getSelectedRows) {
+        getSelectedRows(
+          newSelectedRowKeys?.map((row) => {
+            return { ...dataSource[row] };
+          })
+        );
+      }
       setSelectedRowKeys(newSelectedRowKeys);
     },
   };
@@ -362,12 +370,13 @@ export default function AdminTable(props) {
         />
       </LoadingWrapper>
 
-      {cloneElement(addEditComponent, {
-        open: openAddEdit,
-        onClose: closeAddEdit,
-        selectedData: selectedRecord.current,
-        action: actionType.current,
-      })}
+      {openAddEdit &&
+        cloneElement(addEditComponent, {
+          open: openAddEdit,
+          onClose: closeAddEdit,
+          selectedData: selectedRecord.current,
+          action: actionType.current,
+        })}
     </ElementWithPermission>
   );
 }

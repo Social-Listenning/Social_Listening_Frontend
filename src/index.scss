@@ -52,8 +52,7 @@ a {
   text-align: center;
 }
 
-.full-width,
-.ant-spin-nested-loading {
+.full-width {
   width: 100%;
 }
 
@@ -88,7 +87,12 @@ a {
 }
 // #endregion
 
-// #region config antd
+// #region config antd,
+.ant-spin-nested-loading {
+  width: 100%;
+  height: 100%;
+}
+
 .ant-layout {
   .ant-layout-header {
     font-size: 1.6rem;

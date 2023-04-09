@@ -36,3 +36,14 @@ export const disconnectFacebook = async (data) => {
   );
   return resp;
 };
+
+export const getMessageDetail = async (messageId) => {
+  const resp = await apiService.get(`${environment.socialMessage}/${messageId}`)
+  return resp?.result;
+};
+
+export const useGetMessageDetail = (messageId, enabled = true) => {
+  return useQuery('messageDetail', () => getMessageDetail(messageId), {
+    enabled: enabled,
+  });
+};

@@ -1,9 +1,9 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useQueryClient } from 'react-query';
 import { useGetSocialGroups } from '../../../../screens/private/social-network/socialNetworkService';
 import { role } from '../../../../constants/environment/environment.dev';
 import { RoleChip } from '../../../../components/shared/element/Chip';
-import useEffectOnce from '../../../../components/hooks/useEffectOnce';
+import useToggle from '../../../../components/hooks/useToggle';
 import environment from '../../../../constants/environment/environment.dev';
 import AdminTable from '../../../../components/shared/antd/Table/Table';
 import BooleanRow from '../../../../components/shared/element/BooleanRow';
@@ -12,14 +12,28 @@ import AssignButton from '../../../../components/shared/element/Button/AssignBut
 import ElementWithPermission from '../../../../components/shared/element/ElementWithPermission';
 import AddEditAdminAccount from './AddEditUser';
 import { defaultAction } from '../../../../constants/table/action';
+import AssignUserModal from './AssignUserModal';
+import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
 
 export default function UserManagement(props) {
   const { defaultFilter = [] } = props;
-  const firstRender = useRef(true);
+
   const queryClient = useQueryClient();
   const userData = queryClient.getQueryData('userData');
+
+  const firstRender = useRef(true);
   const { data } = useGetSocialGroups(firstRender.current);
   firstRender.current = false;
+
+  const [selectedRows, setSelectedRows] = useState([]);
+  function getSelectedRows(rows) {
+    setSelectedRows(rows);
+  }
+
+  const [openAssign, toggleOpenAssign] = useToggle(false);
+  function handleAssignUser() {
+    toggleOpenAssign(true);
+  }
 
   let apiGetData = environment.user;
   if (userData?.role === 'OWNER') {
@@ -167,28 +181,49 @@ export default function UserManagement(props) {
     <>
       {userData?.role === 'OWNER' && (
         <ElementWithPermission permission="assign-user">
-          <AssignButton />
+          <ToolTipWrapper tooltip="Select users/rows first to assign">
+            <div>
+              <AssignButton
+                onClick={handleAssignUser}
+                disabled={!selectedRows?.length}
+              />
+            </div>
+          </ToolTipWrapper>
         </ElementWithPermission>
       )}
     </>
   );
 
   return (
-    <AdminTable
-      apiGetData={apiGetData}
-      apiImport={`${environment.user}/import`}
-      apiExport={`${environment.user}/export`}
-      apiDeleteOne={`${environment.user}/remove`}
-      keyProps="id"
-      columns={columns}
-      importColumns={importColumns}
-      dumpImportData={dumpImportData}
-      addEditComponent={<AddEditAdminAccount />}
-      permission={permission}
-      defaultFilter={defaultFilter}
-      customToolbar={customToolbar}
-      actionList={[...defaultAction]}
-      scroll={{ x: 2000 }}
-    />
+    <>
+      <AdminTable
+        apiGetData={apiGetData}
+        apiImport={`${environment.user}/import`}
+        apiExport={`${environment.user}/export`}
+        apiDeleteOne={`${environment.user}/remove`}
+        keyProps="id"
+        columns={columns}
+        importColumns={importColumns}
+        dumpImportData={dumpImportData}
+        addEditComponent={<AddEditAdminAccount />}
+        permission={permission}
+        defaultFilter={defaultFilter}
+        customToolbar={customToolbar}
+        actionList={[...defaultAction]}
+        getSelectedRows={getSelectedRows}
+        scroll={{ x: 2000 }}
+      />
+
+      {openAssign && (
+        <AssignUserModal
+          open={openAssign}
+          close={() => {
+            toggleOpenAssign(false);
+          }}
+          userList={selectedRows}
+          socialList={data}
+        />
+      )}
+    </>
   );
 }

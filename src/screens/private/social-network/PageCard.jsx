@@ -33,7 +33,10 @@ export default function PageCard(props) {
   return (
     <Card
       onClick={() => {
-        customHistory.push(`/social-network/${socialNetworkId}`);
+        customHistory.push(
+          `/social-network/${socialNetworkId}`,
+          pageData
+        );
       }}
       className="page-card"
       cover={

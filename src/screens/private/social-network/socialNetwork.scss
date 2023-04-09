@@ -107,13 +107,25 @@
 
     .message-table {
       width: 50%;
+      padding: 0 var(--padding-layout);
       border-right: 1px solid var(--gray-layout-color);
     }
 
     .message-detail {
       width: 50%;
+      height: 40rem;
       font-size: var(--app-font-size);
       padding: 0 var(--padding-layout);
+
+      .message-type-loader {
+        .anticon {
+          scale: 4;
+        }
+      }
+
+      .message-detail-hint {
+        font-size: calc(var(--app-font-size) + 0.2rem);
+      }
 
       .message-date {
         font-size: calc(var(--app-font-size) - 0.4rem);
@@ -131,6 +143,17 @@
 
           .post-info {
             gap: var(--padding-layout);
+
+            .post-avt-holder {
+              position: relative;
+
+              .post-avt-status {
+                position: absolute;
+                bottom: -0.6rem;
+                right: 0;
+                z-index: 1;
+              }
+            }
 
             .post-user-date {
               flex-direction: column;
@@ -217,7 +240,7 @@
           .recommend-close-icon {
             position: absolute;
             right: 0px;
-            bottom: 27.4rem;
+            bottom: 28rem;
             min-width: 2.4rem;
             width: 2.4rem;
             height: 2.4rem;

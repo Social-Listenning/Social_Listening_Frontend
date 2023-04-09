@@ -1,12 +1,22 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import DateTimeFormat from '../../../../../components/shared/element/DateTimeFormat';
 import AdminTable from '../../../../../components/shared/antd/Table/Table';
-import PostType from './message-type/MessageTypeContainer';
+import MessageTypeContainer from './message-type/MessageTypeContainer';
 import environment from '../../../../../constants/environment/environment.dev';
+import Hint from '../../../../../components/shared/element/Hint';
+import { useGetMessageDetail } from '../../socialNetworkService';
+import LoadingWrapper from '../../../../../components/shared/antd/LoadingWrapper';
 
 export default function MessageManagePage(props) {
-  const { pageId } = props;
-  const messageDetail = useRef(null);
+  const { pageId, socialPage } = props;
+
+  const [msgSelected, setMsgSelected] = useState(null);
+  const getDetail = useRef(false);
+  const { data, isFetching } = useGetMessageDetail(
+    msgSelected?.id,
+    getDetail.current
+  );
+  getDetail.current = false;
 
   const columns = [
     {
@@ -15,12 +25,17 @@ export default function MessageManagePage(props) {
       onCell: (record, _) => {
         return {
           onClick: () => {
-            messageDetail.current = record;
+            setMsgSelected(record);
+            getDetail.current = true;
           },
         };
       },
       render: (record) => {
-        return <b className="pointer">{record}</b>;
+        return (
+          <div className="pointer">
+            <b>{record}</b>
+          </div>
+        );
       },
     },
     {
@@ -34,7 +49,7 @@ export default function MessageManagePage(props) {
       width: 100,
     },
     {
-      title: 'Date Commented',
+      title: 'Date Sent',
       dataIndex: 'createdAt',
       width: 200,
       render: (record) => {
@@ -170,6 +185,7 @@ export default function MessageManagePage(props) {
   ]?.map((item, index) => {
     return {
       key: index,
+      id: index + 1,
       ...item,
     };
   });
@@ -182,15 +198,37 @@ export default function MessageManagePage(props) {
     <div className="message-container flex-center">
       <div className="message-table">
         <AdminTable
-          apiGetData={`${environment.socialMessage}/${pageId}`}
+          // apiGetData={`${environment.socialMessage}/${pageId}`}
           columns={columns}
           permission={permission}
-          tableData={dataSource}
           disableSelect
+          tableData={dataSource}
         />
       </div>
       <div className="message-detail">
-        <PostType />
+        {msgSelected ? (
+          <LoadingWrapper
+            loading={isFetching}
+            className="message-type-loader"
+          >
+            <MessageTypeContainer
+              messageDetail={data}
+              type={msgSelected?.type}
+              socialPage={socialPage}
+            />
+          </LoadingWrapper>
+        ) : (
+          <div className="full-height flex-center">
+            <Hint
+              message={
+                <span className="message-detail-hint flex-center">
+                  You can select the message from the table to view
+                  full details
+                </span>
+              }
+            />
+          </div>
+        )}
       </div>
     </div>
   );

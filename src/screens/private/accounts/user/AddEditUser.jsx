@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from 'react-query';
 import { gender } from '../../../../constants/environment/environment.dev';
 import { notifyService } from '../../../../services/notifyService';
 import { createAccountAdmin } from '../accountService';
-import useUpdateEffect from '../../../../components/hooks/useUpdateEffect';
+import useEffectOnce from '../../../../components/hooks/useEffectOnce';
 import AddEditWrapper from '../../../../components/shared/antd/Table/Drawer/AddEditWrapper';
 import ClassicSelect from '../../../../components/shared/antd/Select/Classic';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
@@ -20,12 +20,12 @@ export default function AddEditAdminAccount(props) {
         notifyService.showSucsessMessage({
           description: 'Create new user successfully',
         });
-        closeDrawer()
+        closeDrawer();
       }
     },
   });
 
-  useUpdateEffect(() => {
+  useEffectOnce(() => {
     addEditUserForm.setFieldsValue({
       email: selectedData?.email,
       userName: selectedData?.userName,
@@ -34,7 +34,7 @@ export default function AddEditAdminAccount(props) {
       role: selectedData?.role?.roleName ?? 'ADMIN',
       gender: selectedData?.gender ?? 'Other',
     });
-  }, [action]);
+  });
 
   async function handleSubmit(value) {
     // #region format value

@@ -216,11 +216,11 @@ export default function PrivateLayout(props) {
                           label: `All`,
                           children: menu,
                         },
-                        {
-                          key: 2,
-                          label: `Unread`,
-                          children: menu,
-                        },
+                        // {
+                        //   key: 2,
+                        //   label: `Unread`,
+                        //   children: menu,
+                        // },
                       ]}
                     />
                   </div>

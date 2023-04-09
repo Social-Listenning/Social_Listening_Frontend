@@ -1,7 +1,7 @@
 import { Button } from 'antd';
 import { UsergroupAddOutlined } from '@ant-design/icons';
 
-export default function CancelButton(props) {
+export default function AssignButton(props) {
   return (
     <Button type="primary" icon={<UsergroupAddOutlined />} {...props}>
       Assign User

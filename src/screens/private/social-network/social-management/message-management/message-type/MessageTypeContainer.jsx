@@ -10,7 +10,8 @@ import ClassicDropdown from '../../../../../../components/shared/antd/Dropdown/C
 import PostHeader from './PostHeader';
 import ChatHeader from './ChatHeader';
 
-export default function PostType(props) {
+export default function MessageTypeContainer(props) {
+  const { messageDetail, type, socialPage } = props;
   const messageContainer = useRef(null);
   const [showRecommend, toggleShowRecommend] = useToggle(false);
 
@@ -22,91 +23,62 @@ export default function PostType(props) {
   }, [showRecommend]);
 
   let messageContainerHeight = ['24rem', '39rem'];
-
-  const mockData = {
-    post: {
-      id: 'c20fea98-5276-4b92-8116-5bf744b21a27',
-      postId: 'DucKhongNgu',
-      message: 'Testing Post',
-      permalinkUrl: 'https://www.facebook.com',
-      createdAt: '2023-04-03T00:00:00.000Z',
-    },
-    message: [
-      {
-        id: 'bd8b0ff5-c7ff-43db-9e3f-762760d58c4b',
-        message: 'Test message',
-        createdAt: '2023-04-03T00:00:00.000Z',
-        type: 'Comment',
-        messageId: 'commentId',
-      },
-      {
-        id: '70d63338-361a-4c10-a42b-19f50af7db9c',
-        message: 'Test message',
-        createdAt: '2023-04-03T00:00:00.000Z',
-        type: 'Comment',
-        messageId: 'replyId',
-      },
-      {
-        id: '70d63338-361a-4c10-a42b-19f50af7db9c',
-        message: 'Test message',
-        createdAt: '2023-04-03T00:00:00.000Z',
-        type: 'Bot',
-        messageId: 'replyId',
-      },
-      {
-        id: '70d63338-361a-4c10-a42b-19f50af7db9c',
-        message: 'Test message',
-        createdAt: '2023-04-03T00:00:00.000Z',
-        type: 'Comment',
-        messageId: 'replyId',
-      },
-    ],
-  };
+  if (type === 'chat') {
+    messageContainerHeight = ['31rem', '46rem'];
+  }
 
   return (
     <>
-      {/* <PostHeader /> */}
-      <ChatHeader />
+      {type === 'comment' ? (
+        <PostHeader
+          pageData={socialPage}
+          postData={messageDetail?.post}
+        />
+      ) : type === 'chat' ? (
+        <ChatHeader userData={messageDetail?.user} />
+      ) : (
+        <>{/* bot type */}</>
+      )}
       <div className="message-section">
         <div
           ref={messageContainer}
           className="message-container"
-          style={{ height: showRecommend ? '31rem' : '46rem' }}
+          style={{
+            height: showRecommend
+              ? messageContainerHeight[0]
+              : messageContainerHeight[1],
+          }}
         >
-          {Array(12)
-            .fill()
-            .map((_, index) => (
-              <div
-                key={index}
-                className={`${
-                  index % 2 !== 0 ? 'page-respond ' : ''
-                }message-item`}
+          {messageDetail?.message?.map((item) => (
+            <div
+              key={item?.id}
+              className={`${
+                item?.type === 'Bot' ? 'page-respond ' : ''
+              }message-item`}
+            >
+              <BasicAvatar />
+              <Tag
+                color={item?.type === 'Bot' && 'var(--primary-color)'}
+                className="message-chip-container"
               >
-                <BasicAvatar />
-                <Tag
-                  color={index % 2 !== 0 && 'var(--primary-color)'}
-                  className="message-chip-container"
-                >
-                  <div className="message-chip-user flex-center">
-                    <b>Thắng BCN</b>
-                    <span className="message-date">2023/04/07</span>
-                  </div>
-                  <span className="message-chip limit-line">
-                    velit aliquet sagittis id consectetur purus ut
-                    faucibus pulvinar elementum integer enim neque
-                    volutpat ac tincidunt vitae semper quis lectus
-                    nulla at volutpat diam ut venenatis tellus in
-                    metus vulputate eu scelerisque felis imperdiet
+                <div className="message-chip-user flex-center">
+                  {/* <b>Thắng BCN</b> */}
+                  <span className="message-date">
+                    {item?.createdAt}
                   </span>
-                </Tag>
-                <ClassicDropdown
-                  clickTrigger
-                  list={['Edit', 'Reply', 'Delete']}
-                >
-                  <IconMoreButton />
-                </ClassicDropdown>
-              </div>
-            ))}
+                </div>
+                <span className="message-chip limit-line">
+                  {item?.message}
+                </span>
+              </Tag>
+              <ClassicDropdown
+                clickTrigger
+                list={['Edit', 'Reply', 'Delete']}
+              >
+                <IconMoreButton />
+              </ClassicDropdown>
+            </div>
+          ))}
         </div>
       </div>
       <div className="respond-section">

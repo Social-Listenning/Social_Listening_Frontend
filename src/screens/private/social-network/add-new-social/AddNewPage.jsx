@@ -124,20 +124,22 @@ export default function AddNewPage(props) {
         </div>
       </Card>
 
-      <SocialPagePopup
-        open={open}
-        close={() => {
-          toggleOpen(false);
-        }}
-        type={socialType.current}
-        listPage={listPage.current}
-        listPageConnected={listPageConnected}
-        onRefreshClick={() => {
-          if (socialType.current === 'Facebook') {
-            onFacebookLogin();
-          }
-        }}
-      />
+      {open && (
+        <SocialPagePopup
+          open={open}
+          close={() => {
+            toggleOpen(false);
+          }}
+          type={socialType.current}
+          listPage={listPage.current}
+          listPageConnected={listPageConnected}
+          onRefreshClick={() => {
+            if (socialType.current === 'Facebook') {
+              onFacebookLogin();
+            }
+          }}
+        />
+      )}
     </>
   );
 }
