@@ -48,6 +48,16 @@ export const disconnectFacebook = async (data) => {
   );
   return resp;
 };
+
+export const replyFbMessage = async (cmtId, accessToken, message) => {
+  const resp = await apiService.post(
+    `${environment.facebookGraph}/${cmtId}/comments?access_token=${accessToken}`,
+    {
+      message: message,
+    }
+  );
+  return resp;
+};
 // #endregion
 
 export const getMessageDetail = async (messageId) => {
@@ -84,6 +94,14 @@ export const updateSocialSetting = async (data) => {
   const resp = await apiService.put(
     `${environment.socialTabSetting}/${data?.id}/update`,
     data?.data
+  );
+  return resp?.result;
+};
+
+export const saveMessageToSystem = async (data) => {
+  const resp = await apiService.post(
+    `${environment.socialMessage}/save`,
+    data
   );
   return resp?.result;
 };

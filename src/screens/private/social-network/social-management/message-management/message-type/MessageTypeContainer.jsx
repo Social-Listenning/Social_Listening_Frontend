@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { Tag, Input } from 'antd';
 import { SendOutlined, CloseOutlined } from '@ant-design/icons';
+import { useMutation } from 'react-query';
 import useToggle from '../../../../../../components/hooks/useToggle';
 import useUpdateEffect from '../../../../../../components/hooks/useUpdateEffect';
 import BasicAvatar from '../../../../../../components/shared/antd/BasicAvatar';
@@ -9,10 +10,16 @@ import IconMoreButton from '../../../../../../components/shared/element/Button/I
 import ClassicDropdown from '../../../../../../components/shared/antd/Dropdown/Classic';
 import PostHeader from './PostHeader';
 import ChatHeader from './ChatHeader';
+import {
+  replyFbMessage,
+  saveMessageToSystem,
+} from '../../../socialNetworkService';
+import { notifyService } from '../../../../../../services/notifyService';
 
 export default function MessageTypeContainer(props) {
   const { messageDetail, type, socialPage } = props;
   const messageContainer = useRef(null);
+  const messageReplied = useRef(null);
   const [showRecommend, toggleShowRecommend] = useToggle(false);
 
   useUpdateEffect(() => {
@@ -26,6 +33,25 @@ export default function MessageTypeContainer(props) {
   if (type === 'chat') {
     messageContainerHeight = ['31rem', '46rem'];
   }
+
+  const useReplyFbMessage = useMutation(replyFbMessage, {
+    onSuccess: (resp) => {
+      console.log(resp);
+      if (resp) {
+        useSaveMessageToSystem.mutate();
+      }
+    },
+  });
+
+  const useSaveMessageToSystem = useMutation(saveMessageToSystem, {
+    onSuccess: (resp) => {
+      if (resp) {
+        notifyService.showSucsessMessage({
+          description: 'Reply successfully',
+        });
+      }
+    },
+  });
 
   return (
     <>
@@ -49,36 +75,44 @@ export default function MessageTypeContainer(props) {
               : messageContainerHeight[1],
           }}
         >
-          {messageDetail?.message?.map((item) => (
-            <div
-              key={item?.id}
-              className={`${
-                item?.type === 'Bot' ? 'page-respond ' : ''
-              }message-item`}
-            >
-              <BasicAvatar />
-              <Tag
-                color={item?.type === 'Bot' && 'var(--primary-color)'}
-                className="message-chip-container"
+          {messageDetail?.message?.map((item) => {
+            const dateSent = new Date(
+              item?.createdAt
+            )?.toLocaleString();
+            return (
+              <div
+                key={item?.id}
+                className={`${
+                  item?.type === 'Bot' ? 'page-respond ' : ''
+                }message-item`}
               >
-                <div className="message-chip-user flex-center">
-                  {/* <b>Thắng BCN</b> */}
-                  <span className="message-date">
-                    {item?.createdAt}
+                <BasicAvatar />
+                <Tag
+                  color={
+                    item?.type === 'Bot' && 'var(--primary-color)'
+                  }
+                  className="message-chip-container"
+                >
+                  <div className="message-chip-user flex-center">
+                    {/* <b>Thắng BCN</b> */}
+                    <span className="message-date">{dateSent}</span>
+                  </div>
+                  <span className="message-chip limit-line">
+                    {item?.message}
                   </span>
-                </div>
-                <span className="message-chip limit-line">
-                  {item?.message}
-                </span>
-              </Tag>
-              <ClassicDropdown
-                clickTrigger
-                list={['Edit', 'Reply', 'Delete']}
-              >
-                <IconMoreButton />
-              </ClassicDropdown>
-            </div>
-          ))}
+                </Tag>
+                <ClassicDropdown
+                  clickTrigger
+                  list={['Reply', 'Delete']}
+                  handleItemClick={(e) => {
+                    console.log(e)
+                  }}
+                >
+                  <IconMoreButton />
+                </ClassicDropdown>
+              </div>
+            );
+          })}
         </div>
       </div>
       <div className="respond-section">
@@ -109,18 +143,22 @@ export default function MessageTypeContainer(props) {
         )}
         <div className="respose-input-container flex-center">
           <Input.TextArea
+            id="respond-input"
             allowClear
             autoSize={{ minRows: 5, maxRows: 5 }}
             onFocus={() => {
               toggleShowRecommend(true);
             }}
-            onBlur={() => {
-              // toggleShowRecommend(false);
-            }}
           />
           <IconButton
             icon={<SendOutlined className="respond-icon" />}
             type="link"
+            onClick={() => {
+              useReplyFbMessage.mutate({
+                message:
+                  document.getElementById('respond-input')?.value,
+              });
+            }}
           />
         </div>
       </div>
