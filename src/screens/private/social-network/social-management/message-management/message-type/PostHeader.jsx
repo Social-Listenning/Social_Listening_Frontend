@@ -3,6 +3,7 @@ import IconMoreButton from '../../../../../../components/shared/element/Button/I
 import ClassicDropdown from '../../../../../../components/shared/antd/Dropdown/Classic';
 
 export default function PostHeader({ pageData, postData }) {
+  const dateSent = new Date(postData?.createdAt)?.toLocaleString();
   return (
     <div className="post-section flex-center">
       <div className="post-header flex-center">
@@ -15,7 +16,7 @@ export default function PostHeader({ pageData, postData }) {
           <div className="post-user-date flex-center">
             <b className="post-user">{pageData?.name}</b>
             <span className="message-date">
-              {postData?.createdAt}
+              {dateSent}
             </span>
           </div>
         </div>
