@@ -61,135 +61,6 @@ export default function MessageManagePage(props) {
     },
   ];
 
-  const dataSource = [
-    {
-      message: 'Hello',
-      sender: 'Qbu',
-      type: 'comment',
-      createdAt: '2023-03-14T19:03:49.480Z',
-    },
-    {
-      message: 'Wazzup',
-      sender: 'Thang',
-      type: 'comment',
-      createdAt: '2023-03-16T10:20:20.052Z',
-    },
-    {
-      message: 'Where am i',
-      sender: 'Duy',
-      type: 'comment',
-      createdAt: '2023-03-16T10:20:20.052Z',
-    },
-    {
-      message: 'Help',
-      sender: 'Duy',
-      type: 'chat',
-      createdAt: '2023-03-16T10:20:20.052Z',
-    },
-    {
-      message: 'Help',
-      sender: 'Duy',
-      type: 'chat',
-      createdAt: '2023-03-16T10:20:20.052Z',
-    },
-    {
-      message: 'Help',
-      sender: 'Duy',
-      type: 'chat',
-      createdAt: '2023-03-16T10:20:20.052Z',
-    },
-    {
-      message: 'Help',
-      sender: 'Duy',
-      type: 'chat',
-      createdAt: '2023-03-16T10:20:20.052Z',
-    },
-    {
-      message: 'Help',
-      sender: 'Duy',
-      type: 'chat',
-      createdAt: '2023-03-16T10:20:20.052Z',
-    },
-    {
-      message: 'Help',
-      sender: 'Duy',
-      type: 'chat',
-      createdAt: '2023-03-16T10:20:20.052Z',
-    },
-    {
-      message: 'Help',
-      sender: 'Duy',
-      type: 'chat',
-      createdAt: '2023-03-16T10:20:20.052Z',
-    },
-    {
-      message: 'Help',
-      sender: 'Duy',
-      type: 'chat',
-      createdAt: '2023-03-16T10:20:20.052Z',
-    },
-    {
-      message: 'Help',
-      sender: 'Duy',
-      type: 'chat',
-      createdAt: '2023-03-16T10:20:20.052Z',
-    },
-    {
-      message: 'Help',
-      sender: 'Duy',
-      type: 'chat',
-      createdAt: '2023-03-16T10:20:20.052Z',
-    },
-    {
-      message: 'Help',
-      sender: 'Duy',
-      type: 'chat',
-      createdAt: '2023-03-16T10:20:20.052Z',
-    },
-    {
-      message: 'Help',
-      sender: 'Duy',
-      type: 'chat',
-      createdAt: '2023-03-16T10:20:20.052Z',
-    },
-    {
-      message: 'Help',
-      sender: 'Duy',
-      type: 'chat',
-      createdAt: '2023-03-16T10:20:20.052Z',
-    },
-    {
-      message: 'Help',
-      sender: 'Duy',
-      type: 'chat',
-      createdAt: '2023-03-16T10:20:20.052Z',
-    },
-    {
-      message: 'Help',
-      sender: 'Duy',
-      type: 'chat',
-      createdAt: '2023-03-16T10:20:20.052Z',
-    },
-    {
-      message: 'Help',
-      sender: 'Duy',
-      type: 'chat',
-      createdAt: '2023-03-16T10:20:20.052Z',
-    },
-    {
-      message: 'Help',
-      sender: 'Duy',
-      type: 'chat',
-      createdAt: '2023-03-16T10:20:20.052Z',
-    },
-  ]?.map((item, index) => {
-    return {
-      key: index,
-      id: index + 1,
-      ...item,
-    };
-  });
-
   const permission = {
     table: 'table-user',
   };
@@ -198,11 +69,10 @@ export default function MessageManagePage(props) {
     <div className="message-container flex-center">
       <div className="message-table">
         <AdminTable
-          // apiGetData={`${environment.socialMessage}/${pageId}`}
+          apiGetData={`${environment.socialMessage}/${pageId}`}
           columns={columns}
           permission={permission}
           disableSelect
-          tableData={dataSource}
         />
       </div>
       <div className="message-detail">

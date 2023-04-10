@@ -78,7 +78,7 @@ export default function SettingPage() {
                     <SaveTwoTone
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleSave();
+                        document.getElementById(record?.id)?.blur();
                       }}
                     />
                   }

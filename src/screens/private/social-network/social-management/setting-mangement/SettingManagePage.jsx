@@ -80,7 +80,7 @@ export default function SettingManagePage({ pageId }) {
                     <SaveTwoTone
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleSave();
+                        document.getElementById(record?.id)?.blur();
                       }}
                     />
                   }
