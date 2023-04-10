@@ -4,12 +4,14 @@ import { useMutation } from 'react-query';
 import { notifyService } from '../../../../services/notifyService';
 import {
   connectPageToSystem,
+  subscribeFacebookPage,
   useGetSocialGroups,
 } from '../socialNetworkService';
 import Title from '../../../../components/shared/element/Title';
 import BasicAvatar from '../../../../components/shared/antd/BasicAvatar';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
 import Hint from '../../../../components/shared/element/Hint';
+import { customHistory } from '../../../../routes/CustomRouter';
 
 export default function SocialPagePopup(props) {
   const {
@@ -22,17 +24,35 @@ export default function SocialPagePopup(props) {
   } = props;
   const listConnected = useRef([]);
   const currentConnected = useRef(null);
-  const getAllSocialConnected = useRef(false);
+  const getAllSocialConnected = useRef(
+    listPage?.every((page) =>
+      listPageConnected?.some(
+        (pageConnected) => page.id === pageConnected
+      )
+    )
+  );
   listConnected.current = listPageConnected;
 
-  useGetSocialGroups(getAllSocialConnected.current);
+  const { data } = useGetSocialGroups(getAllSocialConnected.current);
   getAllSocialConnected.current = false;
+
+  const useSubscribeFbPage = useMutation(subscribeFacebookPage, {
+    onSuccess: (resp) => {
+      if (resp) {
+        useConnectPageToSystem.mutate({
+          socialType: type,
+          name: currentConnected.current?.name,
+          extendData: JSON.stringify(currentConnected.current),
+        });
+      }
+    },
+  });
 
   const useConnectPageToSystem = useMutation(connectPageToSystem, {
     onSuccess: (resp) => {
       if (resp) {
         getAllSocialConnected.current = true;
-        listConnected.current?.push(currentConnected.current);
+        listConnected.current?.push(currentConnected.current?.id);
         notifyService.showSucsessMessage({
           description: 'Connect successfully',
         });
@@ -90,19 +110,37 @@ export default function SocialPagePopup(props) {
                 <Button
                   type="primary"
                   onClick={() => {
-                    currentConnected.current = item?.id;
+                    currentConnected.current = item;
 
-                    useConnectPageToSystem.mutate({
-                      socialType: type,
-                      name: item?.name,
-                      extendData: JSON.stringify(item),
+                    useSubscribeFbPage.mutate({
+                      pageId: item?.id,
+                      accessToken: item?.accessToken,
                     });
                   }}
                 >
                   Connect
                 </Button>
               ) : (
-                <Button type="primary">Manage page</Button>
+                <Button
+                  type="primary"
+                  onClick={() => {
+                    const mappedPage = data?.filter((x) => {
+                      if (x?.SocialNetwork?.extendData) {
+                        let tempExtendData = JSON.parse(
+                          x.SocialNetwork.extendData
+                        );
+                        return tempExtendData?.id === item?.id;
+                      }
+                    })[0];
+
+                    customHistory.push(
+                      `/social-network/${mappedPage?.id}`,
+                      JSON.parse(mappedPage.SocialNetwork.extendData)
+                    );
+                  }}
+                >
+                  Manage page
+                </Button>
               )}
             </div>
           </Card>
