@@ -24,7 +24,7 @@ export default function AddNewPage(props) {
     window.fbAsyncInit = function () {
       window.FB.init({
         // This is App ID
-        appId: '594535438672562',
+        appId: '3442544212646501',
         cookie: true,
         status: true,
         xfbml: true,
@@ -52,7 +52,7 @@ export default function AddNewPage(props) {
   });
 
   const useGetPageToken = useMutation(connectFacebook, {
-    onSuccess: (resp) => {
+    onSuccess: (resp) => {console.log(resp)
       toggleOpen(true);
       listPage.current = resp?.data?.map((item) => {
         return {
@@ -92,7 +92,7 @@ export default function AddNewPage(props) {
         // }
       },
       {
-        config_id: '3405322813086507', // configuration ID goes here
+        config_id: '950524619696540', // configuration ID goes here
       }
     );
     // }

@@ -1,151 +1,161 @@
-import { useRef } from 'react';
-import { Button, Card, Modal } from 'antd';
-import { useMutation } from 'react-query';
-import { notifyService } from '../../../../services/notifyService';
+import { useRef } from "react";
+import { Button, Card, Modal } from "antd";
+import { useMutation } from "react-query";
+import { notifyService } from "../../../../services/notifyService";
 import {
-  connectPageToSystem,
-  subscribeFacebookPage,
-  useGetSocialGroups,
-} from '../socialNetworkService';
-import Title from '../../../../components/shared/element/Title';
-import BasicAvatar from '../../../../components/shared/antd/BasicAvatar';
-import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
-import Hint from '../../../../components/shared/element/Hint';
-import { customHistory } from '../../../../routes/CustomRouter';
+	connectPageToSystem,
+	extendFbToken,
+	subscribeFacebookPage,
+	useGetSocialGroups,
+} from "../socialNetworkService";
+import { customHistory } from "../../../../routes/CustomRouter";
+import Title from "../../../../components/shared/element/Title";
+import BasicAvatar from "../../../../components/shared/antd/BasicAvatar";
+import ToolTipWrapper from "../../../../components/shared/antd/ToolTipWrapper";
+import Hint from "../../../../components/shared/element/Hint";
 
 export default function SocialPagePopup(props) {
-  const {
-    open,
-    close,
-    type,
-    listPage = [],
-    listPageConnected = [],
-    onRefreshClick,
-  } = props;
-  const listConnected = useRef([]);
-  const currentConnected = useRef(null);
-  const getAllSocialConnected = useRef(
-    listPage?.every((page) =>
-      listPageConnected?.some(
-        (pageConnected) => page.id === pageConnected
-      )
-    )
-  );
-  listConnected.current = listPageConnected;
+	const {
+		open,
+		close,
+		type,
+		listPage = [],
+		listPageConnected = [],
+		onRefreshClick,
+	} = props;
+	const listConnected = useRef([]);
+	const currentConnected = useRef(null);
+	const getAllSocialConnected = useRef(
+		listPage?.every((page) =>
+			listPageConnected?.some((pageConnected) => page.id === pageConnected)
+		)
+	);
+	listConnected.current = listPageConnected;
 
-  const { data } = useGetSocialGroups(getAllSocialConnected.current);
-  getAllSocialConnected.current = false;
+	const { data } = useGetSocialGroups(getAllSocialConnected.current);
+	getAllSocialConnected.current = false;
 
-  const useSubscribeFbPage = useMutation(subscribeFacebookPage, {
-    onSuccess: (resp) => {
-      if (resp) {
-        useConnectPageToSystem.mutate({
-          socialType: type,
-          name: currentConnected.current?.name,
-          extendData: JSON.stringify(currentConnected.current),
-        });
-      }
-    },
-  });
+	const useSubscribeFbPage = useMutation(subscribeFacebookPage, {
+		onSuccess: (resp) => {
+			if (resp) {
+				useExtendFbToken.mutate({
+					accessToken: currentConnected.current?.accessToken,
+				});
+			}
+		},
+	});
 
-  const useConnectPageToSystem = useMutation(connectPageToSystem, {
-    onSuccess: (resp) => {
-      if (resp) {
-        getAllSocialConnected.current = true;
-        listConnected.current?.push(currentConnected.current?.id);
-        notifyService.showSucsessMessage({
-          description: 'Connect successfully',
-        });
-      }
-    },
-  });
+	const useExtendFbToken = useMutation(extendFbToken, {
+		onSuccess: (resp) => {
+			if (resp) {console.log(currentConnected.current?.accessToken);
+        currentConnected.current.accessToken = resp?.access_token;
+        console.log(resp);
+				useConnectPageToSystem.mutate({
+					socialType: type,
+					name: currentConnected.current?.name,
+					extendData: JSON.stringify(currentConnected.current),
+				});
+			}
+		},
+	});
 
-  return (
-    <Modal
-      open={open}
-      onCancel={close}
-      footer={
-        <div className="social-popup-footer">
-          <Hint
-            message={
-              <div className="social-footer-hint">
-                <span>
-                  If you don't see your pages, please connect again by
-                  clicking <a onClick={onRefreshClick}>here</a>.
-                </span>
-                <span>
-                  We will need ADMIN permission to your pages to
-                  connect.
-                </span>
-              </div>
-            }
-          />
-        </div>
-      }
-      maskClosable={false}
-      className="social-page-popup"
-      destroyOnClose
-    >
-      <Title>Your pages</Title>
-      {listPage?.map((item, index) => (
-        <ToolTipWrapper
-          key={index}
-          tooltip={
-            listConnected.current?.includes(item?.id) &&
-            'This page is already connected'
-          }
-          // placement="left"
-        >
-          <Card className="social-page-container">
-            <div className="flex-center social-page-wrapper">
-              <div className="flex-center left-section">
-                <BasicAvatar
-                  size={56}
-                  src={item?.pictureUrl}
-                  name={item?.name}
-                />
-                <span className="social-page-name">{item?.name}</span>
-              </div>
-              {!listConnected.current?.includes(item?.id) ? (
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    currentConnected.current = item;
+	const useConnectPageToSystem = useMutation(connectPageToSystem, {
+		onSuccess: (resp) => {
+			if (resp) {
+				getAllSocialConnected.current = true;
+				listConnected.current?.push(currentConnected.current?.id);
+				notifyService.showSucsessMessage({
+					description: "Connect successfully",
+				});
+			}
+		},
+	});
 
-                    useSubscribeFbPage.mutate({
-                      pageId: item?.id,
-                      accessToken: item?.accessToken,
-                    });
-                  }}
-                >
-                  Connect
-                </Button>
-              ) : (
-                <Button
-                  type="primary"
-                  onClick={() => {
-                    const mappedPage = data?.filter((x) => {
-                      if (x?.SocialNetwork?.extendData) {
-                        let tempExtendData = JSON.parse(
-                          x.SocialNetwork.extendData
-                        );
-                        return tempExtendData?.id === item?.id;
-                      }
-                    })[0];
+	return (
+		<Modal
+			open={open}
+			onCancel={close}
+			footer={
+				<div className="social-popup-footer">
+					<Hint
+						message={
+							<div className="social-footer-hint">
+								<span>
+									If you don't see your pages, please connect again by clicking{" "}
+									<a onClick={onRefreshClick}>here</a>.
+								</span>
+								<span>
+									We will need ADMIN permission to your pages to connect.
+								</span>
+							</div>
+						}
+					/>
+				</div>
+			}
+			maskClosable={false}
+			className="social-page-popup"
+			destroyOnClose
+		>
+			<Title>Your pages</Title>
+			{listPage?.map((item, index) => (
+				<ToolTipWrapper
+					key={index}
+					tooltip={
+						listConnected.current?.includes(item?.id) &&
+						"This page is already connected"
+					}
+					// placement="left"
+				>
+					<Card className="social-page-container">
+						<div className="flex-center social-page-wrapper">
+							<div className="flex-center left-section">
+								<BasicAvatar
+									size={56}
+									src={item?.pictureUrl}
+									name={item?.name}
+								/>
+								<span className="social-page-name">{item?.name}</span>
+							</div>
+							{!listConnected.current?.includes(item?.id) ? (
+								<Button
+									type="primary"
+									onClick={() => {
+										currentConnected.current = item;
 
-                    customHistory.push(
-                      `/social-network/${mappedPage?.id}`,
-                      JSON.parse(mappedPage.SocialNetwork.extendData)
-                    );
-                  }}
-                >
-                  Manage page
-                </Button>
-              )}
-            </div>
-          </Card>
-        </ToolTipWrapper>
-      ))}
-    </Modal>
-  );
+										useSubscribeFbPage.mutate({
+											pageId: item?.id,
+											accessToken: item?.accessToken,
+										});
+									}}
+								>
+									Connect
+								</Button>
+							) : (
+								<Button
+									type="primary"
+									onClick={() => {
+										const mappedPage = data?.filter((x) => {
+											if (x?.SocialNetwork?.extendData) {
+												let tempExtendData = JSON.parse(
+													x.SocialNetwork.extendData
+												);
+												return tempExtendData?.id === item?.id;
+											}
+										})[0];
+
+										customHistory.push(
+											`/social-network/${mappedPage?.id}`,
+											JSON.parse(mappedPage.SocialNetwork.extendData)
+										);
+									}}
+								>
+									Manage page
+								</Button>
+							)}
+						</div>
+					</Card>
+				</ToolTipWrapper>
+			))}
+		</Modal>
+	);
 }
