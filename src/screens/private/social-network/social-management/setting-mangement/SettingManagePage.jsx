@@ -2,18 +2,21 @@ import { useState, useRef } from 'react';
 import { Input } from 'antd';
 import { SaveTwoTone } from '@ant-design/icons';
 import { useMutation } from 'react-query';
-import { updateSetting, useGetAllSetting } from './settingService';
-import { notifyService } from '../../../services/notifyService';
-import useEffectOnce from '../../../components/hooks/useEffectOnce';
-import AdminTable from '../../../components/shared/antd/Table/Table';
-import ElementWithPermission from '../../../components/shared/element/ElementWithPermission';
-import ToolTipWrapper from '../../../components/shared/antd/ToolTipWrapper';
+import { notifyService } from '../../../../../services/notifyService';
+import {
+  updateSocialSetting,
+  useGetTabSetting,
+} from '../../socialNetworkService';
+import useEffectOnce from '../../../../../components/hooks/useEffectOnce';
+import AdminTable from '../../../../../components/shared/antd/Table/Table';
+import ElementWithPermission from '../../../../../components/shared/element/ElementWithPermission';
+import ToolTipWrapper from '../../../../../components/shared/antd/ToolTipWrapper';
 
-export default function SettingPage() {
-  const getAllSetting = useRef(true);
+export default function SettingManagePage({ pageId }) {
   const [_, forceUpdate] = useState(null);
+  const getAllSetting = useRef(true);
 
-  const { data } = useGetAllSetting(getAllSetting.current);
+  const { data } = useGetTabSetting(pageId, getAllSetting.current);
   getAllSetting.current = false;
 
   useEffectOnce(() => {
@@ -25,7 +28,7 @@ export default function SettingPage() {
       });
   });
 
-  const useUpdateSetting = useMutation(updateSetting, {
+  const useUpdateSetting = useMutation(updateSocialSetting, {
     onSuccess: (resp) => {
       if (resp) {
         notifyService.showSucsessMessage({
@@ -50,22 +53,21 @@ export default function SettingPage() {
       width: 500,
       render: (text, record) => {
         function handleSave() {
-          if (
-            record.value !==
-            document.getElementById(record?.id)?.value
-          ) {
-            useUpdateSetting.mutate({
+          useUpdateSetting.mutate({
+            id: record?.id,
+            data: {
               key: record?.key,
               group: record?.group,
+              tabId: record?.tabId,
               value: document.getElementById(record?.id)?.value,
-            });
-          }
+            },
+          });
         }
 
         return (
           <>
             <ElementWithPermission
-              permission="update-setting"
+              permission="update-social-setting"
               fallbackComponent={<>{text}</>}
             >
               <ToolTipWrapper tooltip="You can press enter or unfocus the input to save">
@@ -94,7 +96,7 @@ export default function SettingPage() {
   ];
 
   const permission = {
-    table: 'table-setting',
+    table: 'get-social-setting',
   };
 
   return (

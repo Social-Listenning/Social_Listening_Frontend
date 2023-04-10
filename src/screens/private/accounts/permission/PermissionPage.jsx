@@ -80,6 +80,7 @@ export default function PermissionManangement(props) {
       actionList={[{ icon: <MinusOutlined />, label: 'Remove' }]}
       handleActionClick={handleActionClick}
       defaultFilter={defaultFilter}
+      disableSelect
     />
   );
 }

@@ -1,7 +1,12 @@
 import { useParams, useLocation } from 'react-router-dom';
 import { Tabs } from 'antd';
-import { TeamOutlined, CommentOutlined, SettingOutlined } from '@ant-design/icons';
+import {
+  TeamOutlined,
+  CommentOutlined,
+  SettingOutlined,
+} from '@ant-design/icons';
 import MessageManagePage from './message-management/MessageManagePage';
+import SettingManagePage from './setting-mangement/SettingManagePage';
 import '../socialNetwork.scss';
 
 export default function SocialMangePage() {
@@ -33,7 +38,7 @@ export default function SocialMangePage() {
     {
       key: 3,
       label: formatTab(<SettingOutlined />, 'Setting'),
-      children: null,
+      children: <SettingManagePage pageId={id} />,
     },
   ];
 

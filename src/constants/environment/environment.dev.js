@@ -14,6 +14,7 @@ const environment = {
   socialGroup: `${baseUrl}/socialGroup`,
   socialMessage: `${baseUrl}/social-message`,
   setting: `${baseUrl}/setting`,
+  socialTabSetting: `${baseUrl}/socialTabSeting`,
 };
 
 export const gender = [

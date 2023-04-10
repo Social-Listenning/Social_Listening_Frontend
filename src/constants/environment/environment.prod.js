@@ -13,6 +13,7 @@ const environment = {
   socialNetwork: `${baseUrl}/socialNetwork`,
   socialGroup: `${baseUrl}/socialGroup`,
   setting: `${baseUrl}/setting`,
+  socialTabSetting: `${baseUrl}/socialTabSeting`,
 };
 
 export const gender = [
