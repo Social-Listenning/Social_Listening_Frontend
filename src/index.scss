@@ -90,7 +90,6 @@ a {
 // #region config antd,
 .ant-spin-nested-loading {
   width: 100%;
-  height: 100%;
 }
 
 .ant-layout {
@@ -117,6 +116,25 @@ button.ant-btn {
 tbody.ant-table-tbody,
 input.ant-input {
   font-size: var(--app-font-size);
+}
+
+.ant-input-suffix {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .ant-input-clear-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    .anticon {
+      font-size: var(--app-font-size);
+    }
+  }
+  .anticon {
+    font-size: calc(var(--app-font-size) + 0.4rem);
+  }
 }
 
 .ant-dropdown {

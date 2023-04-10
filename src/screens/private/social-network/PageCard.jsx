@@ -76,7 +76,18 @@ export default function PageCard(props) {
             }}
           />
         </ToolTipWrapper>,
-        // <SettingOutlined />,
+        <ToolTipWrapper tooltip="Setting this page">
+          <SettingOutlined
+            onClick={(e) => {
+              e.stopPropagation();
+              customHistory.push(
+                `/social-network/${socialNetworkId}`,
+                { tab: 3 }
+              );
+            }}
+          />
+          ,
+        </ToolTipWrapper>,
       ]}
     >
       <Meta

@@ -31,14 +31,17 @@ export default function PermissionManangement(props) {
     {
       title: 'Permission Name',
       dataIndex: 'permission.displayName',
+      sort: false,
     },
     {
       title: 'Permission Key',
       dataIndex: 'permission.permission',
+      sort: false,
     },
     {
       title: 'Screen',
       dataIndex: 'permission.screen',
+      sort: false,
     },
   ];
 

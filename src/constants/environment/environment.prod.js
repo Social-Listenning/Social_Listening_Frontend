@@ -12,6 +12,7 @@ const environment = {
   notification: `${baseUrl}/notification`,
   socialNetwork: `${baseUrl}/socialNetwork`,
   socialGroup: `${baseUrl}/socialGroup`,
+  setting: `${baseUrl}/setting`,
 };
 
 export const gender = [

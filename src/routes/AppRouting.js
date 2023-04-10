@@ -32,7 +32,12 @@ const SocialNetworkPage = lazy(() =>
   import('../screens/private/social-network/SocialNetworkPage')
 );
 const SocialManagement = lazy(() =>
-  import('../screens/private/social-network/social-management/SocialManagePage')
+  import(
+    '../screens/private/social-network/social-management/SocialManagePage'
+  )
+);
+const SettingManagement = lazy(() =>
+  import('../screens/private/setting/SettingPage')
 );
 // #endregion
 
@@ -74,7 +79,12 @@ export const privateRoutes = [
   },
   {
     path: 'social-network/:id',
-    element: <SocialManagement />
+    element: <SocialManagement />,
+  },
+  {
+    path: 'setting',
+    element: <SettingManagement />,
+    permissionRequired: 'table-setting',
   },
 ];
 

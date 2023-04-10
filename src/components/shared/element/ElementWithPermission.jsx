@@ -11,5 +11,5 @@ export default function ElementWithPermission(props) {
       return <>{props.children}</>;
     }
   }
-  return;
+  return props.fallbackComponent;
 }

@@ -94,6 +94,13 @@ export default function AdminTable(props) {
     }
   });
 
+  // make sure when the tableData change table auto update
+  useUpdateEffect(() => {
+    if (tableData?.length > 0) {
+      setDataSource(tableData);
+    }
+  }, [tableData]);
+
   useUpdateEffect(() => {
     refreshData();
   }, [filterType, sorter]);
