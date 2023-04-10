@@ -1,6 +1,6 @@
 import { useParams, useLocation } from 'react-router-dom';
 import { Tabs } from 'antd';
-import { TeamOutlined, CommentOutlined } from '@ant-design/icons';
+import { TeamOutlined, CommentOutlined, SettingOutlined } from '@ant-design/icons';
 import MessageManagePage from './message-management/MessageManagePage';
 import '../socialNetwork.scss';
 
@@ -27,8 +27,13 @@ export default function SocialMangePage() {
       key: 2,
       label: formatTab(<CommentOutlined />, 'Message'),
       children: (
-        <MessageManagePage pageId={id} socialPage={location?.state} />
+        <MessageManagePage pageId={id} socialPage={location.state} />
       ),
+    },
+    {
+      key: 3,
+      label: formatTab(<SettingOutlined />, 'Setting'),
+      children: null,
     },
   ];
 
@@ -36,7 +41,7 @@ export default function SocialMangePage() {
     <Tabs
       // centered
       className="social-tab"
-      defaultActiveKey={2}
+      defaultActiveKey={location.state?.tab ?? 2}
       items={items}
     />
   );
