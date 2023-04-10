@@ -67,7 +67,7 @@ export default function PrivateLayout(props) {
   const [notiList, setNotiList] = useState([]);
   const useGetAllNotification = useMutation(getAllNotification, {
     onSuccess: (resp) => {
-      setNotiList(resp?.data);
+      setNotiList(resp);
     },
   });
   useEffectOnce(
@@ -216,11 +216,11 @@ export default function PrivateLayout(props) {
                           label: `All`,
                           children: menu,
                         },
-                        {
-                          key: 2,
-                          label: `Unread`,
-                          children: menu,
-                        },
+                        // {
+                        //   key: 2,
+                        //   label: `Unread`,
+                        //   children: menu,
+                        // },
                       ]}
                     />
                   </div>

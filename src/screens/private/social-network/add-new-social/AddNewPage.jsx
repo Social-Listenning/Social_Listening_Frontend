@@ -26,8 +26,9 @@ export default function AddNewPage(props) {
         // This is App ID
         appId: '594535438672562',
         cookie: true,
+        status: true,
         xfbml: true,
-        version: 'v14.0',
+        version: 'v16.0',
       });
 
       window.FB.AppEvents.logPageView();
@@ -52,15 +53,16 @@ export default function AddNewPage(props) {
 
   const useGetPageToken = useMutation(connectFacebook, {
     onSuccess: (resp) => {
+      toggleOpen(true);
       listPage.current = resp?.data?.map((item) => {
         return {
           id: item.id,
           name: item.name,
+          accessToken: item.access_token,
           pictureUrl: item.picture?.data?.url,
           wallpaperUrl: item.cover?.source,
         };
       });
-      toggleOpen(true);
     },
   });
 
@@ -122,15 +124,22 @@ export default function AddNewPage(props) {
         </div>
       </Card>
 
-      <SocialPagePopup
-        open={open}
-        close={() => {
-          toggleOpen(false);
-        }}
-        type={socialType.current}
-        listPage={listPage.current}
-        listPageConnected={listPageConnected}
-      />
+      {open && (
+        <SocialPagePopup
+          open={open}
+          close={() => {
+            toggleOpen(false);
+          }}
+          type={socialType.current}
+          listPage={listPage.current}
+          listPageConnected={listPageConnected}
+          onRefreshClick={() => {
+            if (socialType.current === 'Facebook') {
+              onFacebookLogin();
+            }
+          }}
+        />
+      )}
     </>
   );
 }

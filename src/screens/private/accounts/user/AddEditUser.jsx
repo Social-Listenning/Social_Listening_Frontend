@@ -3,13 +3,13 @@ import { useMutation, useQueryClient } from 'react-query';
 import { gender } from '../../../../constants/environment/environment.dev';
 import { notifyService } from '../../../../services/notifyService';
 import { createAccountAdmin } from '../accountService';
-import useUpdateEffect from '../../../../components/hooks/useUpdateEffect';
+import useEffectOnce from '../../../../components/hooks/useEffectOnce';
 import AddEditWrapper from '../../../../components/shared/antd/Table/Drawer/AddEditWrapper';
 import ClassicSelect from '../../../../components/shared/antd/Select/Classic';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
 
 export default function AddEditAdminAccount(props) {
-  const { open, onClose, data, action } = props;
+  const { open, onClose, selectedData, action } = props;
 
   const [addEditUserForm] = Form.useForm();
   const queryClient = useQueryClient();
@@ -20,21 +20,21 @@ export default function AddEditAdminAccount(props) {
         notifyService.showSucsessMessage({
           description: 'Create new user successfully',
         });
-        closeDrawer()
+        closeDrawer();
       }
     },
   });
 
-  useUpdateEffect(() => {
+  useEffectOnce(() => {
     addEditUserForm.setFieldsValue({
-      email: data?.email,
-      userName: data?.userName,
-      fullName: data?.fullName,
-      phoneNumber: data?.phoneNumber,
-      role: data?.role?.roleName ?? 'ADMIN',
-      gender: data?.gender ?? 'Other',
+      email: selectedData?.email,
+      userName: selectedData?.userName,
+      fullName: selectedData?.fullName,
+      phoneNumber: selectedData?.phoneNumber,
+      role: selectedData?.role?.roleName ?? 'ADMIN',
+      gender: selectedData?.gender ?? 'Other',
     });
-  }, [action]);
+  });
 
   async function handleSubmit(value) {
     // #region format value

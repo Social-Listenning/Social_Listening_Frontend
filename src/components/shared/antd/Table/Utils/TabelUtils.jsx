@@ -1,32 +1,15 @@
 import { useState } from 'react';
 import { ReloadOutlined, TableOutlined } from '@ant-design/icons';
-import { apiService } from '../../../../../services/apiService';
-import { Getter } from '../../../../../utils/dataGetter';
 import useUpdateEffect from '../../../../hooks/useUpdateEffect';
 import WithCheckbox from '../../Dropdown/WithCheckbox';
-import ImportDrawer from '../Drawer/ImportDrawer';
 import IconButton from '../../../element/Button/IconButton';
-import NewButton from '../../../element/Button/NewButton';
-import DeleteButton from '../../../element/Button/DeleteButton';
-import ImportButton from '../../../element/Button/ImportButton';
-import ExportButton from '../../../element/Button/ExportButton';
-import ElementWithPermission from '../../../element/ElementWithPermission';
 
 export default function TabelUtils(props) {
   const {
     originColumn,
     columnList,
-    apiImport,
-    apiExport,
-    dumpImportData,
-    importColumns,
     updateColumn,
-    selectAction,
-    openAddEdit,
-    showDelete,
-    deleteMultiple,
     refreshTable,
-    permission,
   } = props;
 
   // #region display columns section
@@ -54,59 +37,8 @@ export default function TabelUtils(props) {
     columnList?.map((x) => x?.title);
   // #endregion
 
-  // #region drawer section
-  const [openImport, setOpenImport] = useState(false);
-  // #endregion
-
   return (
     <>
-      <div className="table-toolbars flex-center">
-        <ElementWithPermission permission={permission.new}>
-          <NewButton
-            onClick={() => {
-              selectAction('Add');
-              openAddEdit(true);
-            }}
-          />
-        </ElementWithPermission>
-
-        <ElementWithPermission permission={permission.import}>
-          <ImportButton
-            onClick={() => {
-              setOpenImport(true);
-            }}
-          />
-        </ElementWithPermission>
-
-        <ElementWithPermission permission={permission.export}>
-          <ExportButton
-            onClick={() => {
-              apiService.post(apiExport).then((resp) => {
-                // change data to array buffer
-                const uint8Array = new Uint8Array(
-                  resp?.result?.fileContents?.data
-                );
-                const arrayBuffer = uint8Array.buffer;
-
-                // download the file
-                Getter.downloadFile(
-                  arrayBuffer,
-                  'user',
-                  resp?.result?.contentType
-                );
-              });
-            }}
-          />
-        </ElementWithPermission>
-
-        {showDelete && (
-          <DeleteButton
-            onClick={() => {
-              deleteMultiple();
-            }}
-          />
-        )}
-      </div>
       <div className="table-utils flex-center">
         <WithCheckbox
           clickTrigger
@@ -153,13 +85,6 @@ export default function TabelUtils(props) {
           onClick={refreshTable}
         />
       </div>
-      <ImportDrawer
-        open={openImport}
-        toggleOpen={setOpenImport}
-        apiImport={apiImport}
-        dumpImportData={dumpImportData}
-        importColumns={importColumns}
-      />
     </>
   );
 }

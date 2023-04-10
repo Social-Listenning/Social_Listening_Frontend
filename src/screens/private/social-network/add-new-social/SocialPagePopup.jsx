@@ -2,10 +2,14 @@ import { useRef } from 'react';
 import { Button, Card, Modal } from 'antd';
 import { useMutation } from 'react-query';
 import { notifyService } from '../../../../services/notifyService';
-import { connectPageToSystem, useGetSocialGroups } from '../socialNetworkService';
+import {
+  connectPageToSystem,
+  useGetSocialGroups,
+} from '../socialNetworkService';
 import Title from '../../../../components/shared/element/Title';
 import BasicAvatar from '../../../../components/shared/antd/BasicAvatar';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
+import Hint from '../../../../components/shared/element/Hint';
 
 export default function SocialPagePopup(props) {
   const {
@@ -14,6 +18,7 @@ export default function SocialPagePopup(props) {
     type,
     listPage = [],
     listPageConnected = [],
+    onRefreshClick,
   } = props;
   const listConnected = useRef([]);
   const currentConnected = useRef(null);
@@ -21,13 +26,13 @@ export default function SocialPagePopup(props) {
   listConnected.current = listPageConnected;
 
   useGetSocialGroups(getAllSocialConnected.current);
+  getAllSocialConnected.current = false;
 
   const useConnectPageToSystem = useMutation(connectPageToSystem, {
     onSuccess: (resp) => {
       if (resp) {
         getAllSocialConnected.current = true;
         listConnected.current?.push(currentConnected.current);
-
         notifyService.showSucsessMessage({
           description: 'Connect successfully',
         });
@@ -39,7 +44,25 @@ export default function SocialPagePopup(props) {
     <Modal
       open={open}
       onCancel={close}
-      footer={null}
+      footer={
+        <div className="social-popup-footer">
+          <Hint
+            message={
+              <div className="social-footer-hint">
+                <span>
+                  If you don't see your pages, please connect again by
+                  clicking <a onClick={onRefreshClick}>here</a>.
+                </span>
+                <span>
+                  We will need ADMIN permission to your pages to
+                  connect.
+                </span>
+              </div>
+            }
+          />
+        </div>
+      }
+      maskClosable={false}
       className="social-page-popup"
       destroyOnClose
     >

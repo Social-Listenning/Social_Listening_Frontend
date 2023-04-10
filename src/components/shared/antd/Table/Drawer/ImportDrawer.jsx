@@ -17,7 +17,7 @@ import ImportButton from '../../../element/Button/ImportButton';
 export default function ImportDrawer(props) {
   const {
     open,
-    toggleOpen,
+    close,
     apiImport,
     importColumns,
     dumpImportData,
@@ -75,9 +75,9 @@ export default function ImportDrawer(props) {
     propsMapped.current = colMapped
       .map((item) => {
         return {
-          header: item.leftCol,
+          header: item.systemCol,
           props: importColumns.filter(
-            (col) => col?.title === item?.rightCol
+            (col) => col?.title === item?.excelHeader
           )[0]?.dataIndex,
         };
       })
@@ -119,7 +119,7 @@ export default function ImportDrawer(props) {
   }
 
   function closeDrawer() {
-    toggleOpen(false);
+    close();
     file.current = null;
     header.current = [];
     if (currentStep !== 0) {

@@ -1,16 +1,15 @@
-import { useQueryClient } from 'react-query';
+import { useGetDecodedToken } from '../../../routes/private/privateService';
 
 export default function ElementWithPermission(props) {
-  const queryClient = useQueryClient();
+  const { data } = useGetDecodedToken();
   const permissionRequired = props.permission;
 
   if (permissionRequired) {
-    const userData = queryClient.getQueryData('userData');
-    const permissionList = userData?.permissions;
+    const permissionList = data?.permissions;
 
     if (permissionList?.includes(permissionRequired)) {
       return <>{props.children}</>;
     }
   }
-  return;
+  return props.fallbackComponent;
 }

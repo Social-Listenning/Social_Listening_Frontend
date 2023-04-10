@@ -43,5 +43,6 @@ export const menuSidebar = [
     key: 'setting',
     label: 'Setting',
     icon: <SettingOutlined />,
+    permission: 'table-setting',
   },
 ];
