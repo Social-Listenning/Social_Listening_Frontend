@@ -1,4 +1,4 @@
-import { useParams, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Tabs } from 'antd';
 import {
   TeamOutlined,
@@ -10,7 +10,6 @@ import SettingManagePage from './setting-mangement/SettingManagePage';
 import '../socialNetwork.scss';
 
 export default function SocialMangePage() {
-  const { id } = useParams();
   const location = useLocation();
 
   function formatTab(icon, label) {
@@ -32,13 +31,18 @@ export default function SocialMangePage() {
       key: 2,
       label: formatTab(<CommentOutlined />, 'Message'),
       children: (
-        <MessageManagePage pageId={id} socialPage={location.state} />
+        <MessageManagePage
+          pageId={location.state?.socialId}
+          socialPage={location.state.socialPage}
+        />
       ),
     },
     {
       key: 3,
       label: formatTab(<SettingOutlined />, 'Setting'),
-      children: <SettingManagePage pageId={id} />,
+      children: (
+        <SettingManagePage pageId={location.state?.socialId} />
+      ),
     },
   ];
 

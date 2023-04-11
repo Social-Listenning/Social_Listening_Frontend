@@ -15,7 +15,19 @@ import emptyImage from '../../../assets/images/image_not_available.png';
 const { Meta } = Card;
 
 export default function PageCard(props) {
-  const { socialNetworkId, pageData, type } = props;
+  const { socialNetworkData, type } = props;
+
+  let pageData = null;
+  if (socialNetworkData?.SocialNetwork?.extendData) {
+    pageData = JSON.parse(
+      socialNetworkData?.SocialNetwork?.extendData
+    );
+  }
+
+  let forwardData = {
+    socialId: socialNetworkData?.id,
+    socialPage: pageData,
+  };
 
   function redirectToPage(id) {
     if (type === 'Facebook') {
@@ -34,8 +46,8 @@ export default function PageCard(props) {
     <Card
       onClick={() => {
         customHistory.push(
-          `/social-network/${socialNetworkId}`,
-          pageData
+          `/social-network/${socialNetworkData?.name}`,
+          forwardData
         );
       }}
       className="page-card"
@@ -89,8 +101,9 @@ export default function PageCard(props) {
             onClick={(e) => {
               e.stopPropagation();
               customHistory.push(
-                `/social-network/${socialNetworkId}`,
+                `/social-network/${socialNetworkData?.name}`,
                 {
+                  ...forwardData,
                   tab: 3,
                 }
               );

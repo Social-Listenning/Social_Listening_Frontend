@@ -19,20 +19,13 @@ export default function SocialNetworkPage() {
   return (
     <div className="social-network">
       <AddNewPage listPageConnected={listPageConnected} />
-      {data?.map((item, index) => {
-        let extendData = null;
-        if (item?.SocialNetwork?.extendData) {
-          extendData = JSON.parse(item?.SocialNetwork?.extendData);
-        }
-        return (
-          <PageCard
-            key={index}
-            socialNetworkId={item?.id}
-            pageData={extendData}
-            type={item?.SocialNetwork?.socialType}
-          />
-        );
-      })}
+      {data?.map((item, index) => (
+        <PageCard
+          key={index}
+          socialNetworkData={item}
+          type={item?.SocialNetwork?.socialType}
+        />
+      ))}
     </div>
   );
 }
