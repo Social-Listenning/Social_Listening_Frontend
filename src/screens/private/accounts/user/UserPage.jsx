@@ -133,11 +133,11 @@ export default function UserManagement(props) {
       dataIndex: 'password',
       required: true,
     },
-    {
-      title: 'Role',
-      dataIndex: 'roleName',
-      required: true,
-    },
+    // {
+    //   title: 'Role',
+    //   dataIndex: 'roleName',
+    //   required: true,
+    // },
     {
       title: 'Full Name',
       dataIndex: 'fullName',
@@ -156,27 +156,27 @@ export default function UserManagement(props) {
     {
       email: 'user1@gmail.com',
       password: 'secret-password',
-      roleName: 'MANAGER',
+      // roleName: 'MANAGER',
     },
     {
       email: 'user2@gmail.com',
       password: 'secret-password',
-      roleName: 'MANAGER',
+      // roleName: 'MANAGER',
     },
     {
       email: 'user3@gmail.com',
       password: 'secret-password',
-      roleName: 'SUPPORTER',
+      // roleName: 'SUPPORTER',
     },
     {
       email: 'user4@gmail.com',
       password: 'secret-password',
-      roleName: 'SUPPORTER',
+      // roleName: 'SUPPORTER',
     },
     {
       email: 'user5@gmail.com',
       password: 'secret-password',
-      roleName: 'MANAGER',
+      // roleName: 'MANAGER',
     },
   ];
 
