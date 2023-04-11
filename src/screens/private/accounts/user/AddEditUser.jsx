@@ -1,8 +1,16 @@
+import { useRef } from 'react';
 import { Form, Input } from 'antd';
 import { useMutation, useQueryClient } from 'react-query';
-import { gender } from '../../../../constants/environment/environment.dev';
+import {
+  gender,
+  role,
+} from '../../../../constants/environment/environment.dev';
 import { notifyService } from '../../../../services/notifyService';
-import { createAccountAdmin } from '../accountService';
+import { createAccount, editAccount } from '../accountService';
+import {
+  getRole,
+  useGetAllRole,
+} from '../../../../routes/private/privateService';
 import useEffectOnce from '../../../../components/hooks/useEffectOnce';
 import AddEditWrapper from '../../../../components/shared/antd/Table/Drawer/AddEditWrapper';
 import ClassicSelect from '../../../../components/shared/antd/Select/Classic';
@@ -13,8 +21,17 @@ export default function AddEditAdminAccount(props) {
 
   const [addEditUserForm] = Form.useForm();
   const queryClient = useQueryClient();
-  const roleData = queryClient.getQueryData('allRole');
-  const useCreateAccountAdmin = useMutation(createAccountAdmin, {
+  const userData = queryClient.getQueryData('userData');
+  const { data } = useGetAllRole(userData?.role === 'ADMIN');
+  const roleData = useRef(data);
+
+  const useGetAvailableRoles = useMutation(getRole, {
+    onSuccess: (resp) => {
+      roleData.current = resp;
+    },
+  });
+
+  const useCreateAccount = useMutation(createAccount, {
     onSuccess: (resp) => {
       if (resp) {
         notifyService.showSucsessMessage({
@@ -25,32 +42,61 @@ export default function AddEditAdminAccount(props) {
     },
   });
 
+  const useEditAccount = useMutation(editAccount, {
+    onSuccess: (resp) => {
+      if (resp) {
+        notifyService.showSucsessMessage({
+          description: 'Save user successfully',
+        });
+        closeDrawer();
+      }
+    },
+  });
+
   useEffectOnce(() => {
+    if (userData?.role !== 'ADMIN') {
+      useGetAvailableRoles.mutate();
+    }
+
+    let role = selectedData?.role?.roleName;
+    if (action === 'Add') {
+      if (userData?.role === 'ADMIN') {
+        role = 'Admin';
+      } else if (userData?.role === 'OWNER') {
+        role = 'Supporter';
+      }
+    }
+
     addEditUserForm.setFieldsValue({
       email: selectedData?.email,
       userName: selectedData?.userName,
       fullName: selectedData?.fullName,
       phoneNumber: selectedData?.phoneNumber,
-      role: selectedData?.role?.roleName ?? 'ADMIN',
+      role: role,
       gender: selectedData?.gender ?? 'Other',
     });
   });
 
   async function handleSubmit(value) {
-    // #region format value
-    const formatValue = {
-      ...value,
-      roleId: roleData?.filter((r) => r.roleName === value.role)[0]
-        ?.id,
-    };
-    delete formatValue.role;
-    delete formatValue.confirmPassword;
-    // #endregion
-
     if (action === 'Add') {
-      useCreateAccountAdmin.mutate(formatValue);
+      roleData.current = roleData.current ?? data;
+      
+      const formatValue = {
+        ...value,
+        roleId: roleData.current?.filter(
+          (r) =>
+            r.roleName?.toLowerCase() === value.role.toLowerCase()
+        )[0]?.id,
+      };
+      delete formatValue.role;
+      delete formatValue.confirmPassword;
+
+      useCreateAccount.mutate({
+        role: userData?.role,
+        data: formatValue,
+      });
     } else if (action === 'Edit') {
-      console.log('b');
+      useEditAccount.mutate({ ...value, id: selectedData?.id });
     }
   }
 
@@ -64,7 +110,7 @@ export default function AddEditAdminAccount(props) {
       open={open}
       onClose={closeDrawer}
       form={addEditUserForm}
-      loading={useCreateAccountAdmin.isLoading}
+      loading={useCreateAccount.isLoading}
     >
       <Form
         form={addEditUserForm}
@@ -95,71 +141,80 @@ export default function AddEditAdminAccount(props) {
           </Form.Item>
         </ToolTipWrapper>
 
-        <ToolTipWrapper
-          tooltip="Password must between 8 - 50"
-          placement="left"
-        >
-          <Form.Item
-            label="Password"
-            name="password"
-            rules={[
-              {
-                required: true,
-                validator: (_, value) => {
-                  let errorMsg = 'Password is required';
-                  if (value?.length >= 8 && value?.length <= 50) {
-                    return Promise.resolve();
-                  }
-                  // if it not between 8 - 50, check it has value or not
-                  // if it has value -> user already input the field
-                  if (value?.length > 0) {
-                    errorMsg = 'Password must between 8 - 50';
-                  }
-                  return Promise.reject(errorMsg);
-                },
-              },
-            ]}
-          >
-            <Input.Password />
-          </Form.Item>
-        </ToolTipWrapper>
+        {action === 'Add' && (
+          <>
+            <ToolTipWrapper
+              tooltip="Password must between 8 - 50"
+              placement="left"
+            >
+              <Form.Item
+                label="Password"
+                name="password"
+                rules={[
+                  {
+                    required: true,
+                    validator: (_, value) => {
+                      let errorMsg = 'Password is required';
+                      if (value?.length >= 8 && value?.length <= 50) {
+                        return Promise.resolve();
+                      }
+                      // if it not between 8 - 50, check it has value or not
+                      // if it has value -> user already input the field
+                      if (value?.length > 0) {
+                        errorMsg = 'Password must between 8 - 50';
+                      }
+                      return Promise.reject(errorMsg);
+                    },
+                  },
+                ]}
+              >
+                <Input.Password />
+              </Form.Item>
+            </ToolTipWrapper>
 
-        <ToolTipWrapper
-          tooltip="Confirm password must match"
-          placement="left"
-        >
-          <Form.Item
-            label="Confirm Password"
-            name="confirmPassword"
-            rules={[
-              {
-                required: true,
-                message: 'Confirm Password is required',
-              },
-              ({ getFieldValue }) => ({
-                validator(_, value) {
-                  if (!value || getFieldValue('password') === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error('The confirm password do not match')
-                  );
-                },
-              }),
-            ]}
-          >
-            <Input.Password />
-          </Form.Item>
-        </ToolTipWrapper>
+            <ToolTipWrapper
+              tooltip="Confirm password must match"
+              placement="left"
+            >
+              <Form.Item
+                label="Confirm Password"
+                name="confirmPassword"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Confirm Password is required',
+                  },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (
+                        !value ||
+                        getFieldValue('password') === value
+                      ) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error('The confirm password do not match')
+                      );
+                    },
+                  }),
+                ]}
+              >
+                <Input.Password />
+              </Form.Item>
+            </ToolTipWrapper>
+          </>
+        )}
 
         <ToolTipWrapper
           {...(action === 'Add' && {
-            tooltip: 'You can only create Admin accounts',
+            tooltip: `You can only create ${addEditUserForm.getFieldValue(
+              'role'
+            )} accounts`,
           })}
           placement="left"
         >
           <Form.Item label="Role" name="role">
-            <ClassicSelect disabled />
+            <ClassicSelect disabled options={role} />
           </Form.Item>
         </ToolTipWrapper>
 

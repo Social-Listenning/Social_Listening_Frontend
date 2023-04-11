@@ -97,6 +97,7 @@ export default function AddEditPermissions(props) {
       open={open}
       onClose={closeDrawer}
       form={addEditPermissionForm}
+      loading={useAssignPermission.isLoading}
     >
       <Hint message="You have to choose screens to get permissions" />
       <br />

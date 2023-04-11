@@ -16,12 +16,10 @@ export default function TableAction(props) {
   function handleAction(e) {
     selectAction(actionList[e.key]?.label);
 
-    if (Checker.isEqualArrays(actionList, defaultAction)) {
-      if (actionList[e.key]?.label === 'Edit') {
-        openAddEdit();
-      } else if (actionList[e.key]?.label === 'Delete') {
-        onClickDelete(selectedRecord);
-      }
+    if (actionList[e.key]?.label === 'Edit') {
+      openAddEdit();
+    } else if (actionList[e.key]?.label === 'Delete') {
+      onClickDelete(selectedRecord);
     } else {
       if (!Checker.isNullOrEmpty(handleActionClick)) {
         let reset = false;

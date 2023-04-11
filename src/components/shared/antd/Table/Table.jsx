@@ -211,13 +211,13 @@ export default function AdminTable(props) {
   let formatActionList = actionList;
   
   // edit permission
-  if (!data?.permissions.includes(permission?.edit)) {
+  if (!data?.permissions?.includes(permission?.edit)) {
     formatActionList = formatActionList?.filter(
       (item) => item?.label !== 'Edit'
     );
   }
   // delete permission
-  if (!data?.permissions.includes(permission?.delete)) {
+  if (!data?.permissions?.includes(permission?.delete)) {
     formatActionList = formatActionList?.filter(
       (item) => item?.label !== 'Delete'
     );
