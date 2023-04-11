@@ -47,3 +47,17 @@ export const removePermission = async (data) => {
   );
   return resp?.result;
 };
+
+export const activateUser = async (id) => {
+  const resp = await apiService.post(
+    `${environment.user}/activate/${id}`
+  );
+  return resp?.result;
+};
+
+export const deactivateUser = async (id) => {
+  const resp = await apiService.post(
+    `${environment.user}/activate/${id}`
+  );
+  return resp?.result;
+};

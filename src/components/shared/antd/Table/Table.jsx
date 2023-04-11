@@ -209,25 +209,20 @@ export default function AdminTable(props) {
   const { data } = useGetDecodedToken();
   let actionCol = [];
   let formatActionList = actionList;
-  const isContainDefaultAction = defaultAction.every((d) => {
-    return actionList.some(
-      (a) => a.label === d.label && a.icon === d.icon
+  
+  // edit permission
+  if (!data?.permissions.includes(permission?.edit)) {
+    formatActionList = formatActionList?.filter(
+      (item) => item?.label !== 'Edit'
     );
-  });
-  if (isContainDefaultAction) {
-    // edit permission
-    if (!data?.permissions.includes(permission?.edit)) {
-      formatActionList = formatActionList?.filter(
-        (item) => item?.label !== 'Edit'
-      );
-    }
-    // delete permission
-    if (!data?.permissions.includes(permission?.delete)) {
-      formatActionList = formatActionList?.filter(
-        (item) => item?.label !== 'Delete'
-      );
-    }
   }
+  // delete permission
+  if (!data?.permissions.includes(permission?.delete)) {
+    formatActionList = formatActionList?.filter(
+      (item) => item?.label !== 'Delete'
+    );
+  }
+
   if (formatActionList?.length > 0) {
     actionCol = [
       {
