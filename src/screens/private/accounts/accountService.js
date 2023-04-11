@@ -1,9 +1,18 @@
 import { apiService } from '../../../services/apiService';
 import environment from '../../../constants/environment/environment.dev';
 
-export const createAccountAdmin = async (userModel) => {
+export const createAccount = async (userModel) => {
+  let url = `${environment.user}/create`;
+  if (userModel?.role === 'ADMIN') {
+    url.concat(`/admin`);
+  }
+  const resp = await apiService.post(url, userModel?.data);
+  return resp?.result;
+};
+
+export const editAccount = async (userModel) => {
   const resp = await apiService.post(
-    `${environment.user}/create/admin`,
+    `${environment.user}/edit`,
     userModel
   );
   return resp?.result;

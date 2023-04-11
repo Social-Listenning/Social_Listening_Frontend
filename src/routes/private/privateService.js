@@ -22,6 +22,12 @@ export const useGetAllRole = (enabled = true) => {
   });
 };
 
+// get role that had level <= current user role
+export const getRole = async () => {
+  const resp = await apiService.get(`${environment.role}/can-create`);
+  return resp;
+};
+
 export const getAllNotification = async (page) => {
   const resp = await apiService.post(environment.notification, page);
   return resp?.result;
