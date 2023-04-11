@@ -1,8 +1,12 @@
 import { useRef, useState } from 'react';
-import { useQueryClient } from 'react-query';
+import { PoweroffOutlined, CheckOutlined } from '@ant-design/icons';
+import { useQueryClient, useMutation } from 'react-query';
 import { useGetSocialGroups } from '../../../../screens/private/social-network/socialNetworkService';
 import { role } from '../../../../constants/environment/environment.dev';
 import { RoleChip } from '../../../../components/shared/element/Chip';
+import { defaultAction } from '../../../../constants/table/action';
+import { activateUser, deactivateUser } from '../accountService';
+import { notifyService } from '../../../../services/notifyService';
 import useToggle from '../../../../components/hooks/useToggle';
 import environment from '../../../../constants/environment/environment.dev';
 import AdminTable from '../../../../components/shared/antd/Table/Table';
@@ -11,7 +15,6 @@ import DateTimeFormat from '../../../../components/shared/element/DateTimeFormat
 import AssignButton from '../../../../components/shared/element/Button/AssignButton';
 import ElementWithPermission from '../../../../components/shared/element/ElementWithPermission';
 import AddEditAdminAccount from './AddEditUser';
-import { defaultAction } from '../../../../constants/table/action';
 import AssignUserModal from './AssignUserModal';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
 
@@ -194,6 +197,58 @@ export default function UserManagement(props) {
     </>
   );
 
+  const useActivateUser = useMutation(activateUser, {
+    onSuccess: (resp) => {
+      if (resp) {
+        notifyService.showSucsessMessage({
+          description: 'Activate successfully',
+        });
+      }
+    },
+  });
+
+  const useDeactivateUser = useMutation(deactivateUser, {
+    onSuccess: (resp) => {
+      if (resp) {
+        notifyService.showSucsessMessage({
+          description: 'Deactivate successfully',
+        });
+      }
+    },
+  });
+
+  let additionalList = [
+    {
+      icon: <CheckOutlined />,
+      label: 'Activate',
+    },
+    {
+      icon: <PoweroffOutlined />,
+      label: 'Deactivate',
+    },
+  ];
+
+  if (!data?.permissions.includes('activate-user')) {
+    additionalList = additionalList?.filter(
+      (item) => item?.label !== 'Activate'
+    );
+  }
+
+  if (!data?.permissions.includes('deactivate-user')) {
+    additionalList = additionalList?.filter(
+      (item) => item?.label !== 'Deactivate'
+    );
+  }
+
+  function handleActionClick(action, data) {
+    if (action === 'Activate') {
+      useActivateUser.mutate(data?.id);
+    } else if (action === 'Deactivate') {
+      useDeactivateUser.mutate(data?.id);
+    }
+    return true;
+  }
+
   return (
     <>
       <AdminTable
@@ -209,7 +264,8 @@ export default function UserManagement(props) {
         permission={permission}
         defaultFilter={defaultFilter}
         customToolbar={customToolbar}
-        actionList={[...defaultAction]}
+        actionList={[...defaultAction, ...additionalList]}
+        handleActionClick={handleActionClick}
         getSelectedRows={getSelectedRows}
         scroll={{ x: 2000 }}
       />
