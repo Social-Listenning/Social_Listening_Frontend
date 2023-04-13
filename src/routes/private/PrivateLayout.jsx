@@ -17,6 +17,7 @@ import { menuSidebar } from '../../constants/menu/sidebar';
 import { menuUserHeader } from '../../constants/menu/header';
 import { useSocket } from '../../components/contexts/socket/SocketProvider';
 import { getAllNotification } from './privateService';
+import { useGetSocialGroups } from '../../screens/private/social-network/socialNetworkService';
 import useEffectOnce from '../../components/hooks/useEffectOnce';
 import useUpdateEffect from '../../components/hooks/useUpdateEffect';
 import useToggle from '../../components/hooks/useToggle';
@@ -33,25 +34,52 @@ export default function PrivateLayout(props) {
   const queryClient = useQueryClient();
   const [collapsed, setCollapsed] = useToggle(false);
   const { socket, disconnect } = useSocket();
-  const userData = queryClient.getQueryData("userData");
+  const userData = queryClient.getQueryData('userData');
 
   // #region menu sidebar setup
   const path = Getter.getPathName(); // also the key of the menu sidebar
   const listPath = path?.split('/');
   const currentPath = listPath[listPath?.length - 1];
+
+  const [availableMenu, setAvailableMenu] = useState(menuSidebar);
   const openKey = Getter.getOpenKeyForMenu(
-    menuSidebar,
+    availableMenu,
     Converter.convertStringToTitleCase(currentPath)
   );
 
-  const [availableMenu, setAvailableMenu] = useState(
-    menuSidebar.map((x) => x)
+  const canGetSocialGroups = useRef(true);
+  const { data: socialGroups } = useGetSocialGroups(
+    canGetSocialGroups.current
   );
-  function filterMenuSidebar(permission) {
+  canGetSocialGroups.current = false;
+
+  useUpdateEffect(() => {
+    if (socialGroups?.length > 0) {
+      setAvailableMenu([
+        ...availableMenu?.map((item) => {
+          if (item.key === 'social-network') {
+            item['children'] = socialGroups?.map((sg) => {
+              return {
+                key: `social-network/${sg?.name}`,
+                label: sg?.name,
+                id: sg?.id,
+              };
+            });
+          }
+          return item;
+        }),
+      ]);
+    }
+  }, [socialGroups]);
+
+  function filterMenuSidebar(permission, role) {
     const filtered = menuSidebar.map((item) => {
       if (item.children && item.children.length > 0) {
         const filteredChildren = item.children.filter(
-          (child) => !child.permission || permission.includes(child.permission)
+          (child) =>
+            (!child.permission ||
+              permission.includes(child.permission)) &&
+            (!child.role || child.role?.includes(role))
         );
         return { ...item, children: filteredChildren };
       } else {
@@ -59,33 +87,60 @@ export default function PrivateLayout(props) {
       }
     });
     return filtered.filter(
-      (item) => !item.permission || permission.includes(item.permission)
+      (item) =>
+        (!item.permission || permission.includes(item.permission)) &&
+        (!item.role || item.role?.includes(role))
     );
+  }
+
+  function handleItemSelect(e) {
+    // #region handle social-network item
+    let correctSocial = null;
+    // get the social group data
+    if (e.keyPath[0].includes('social-network')) {
+      availableMenu.map((item) => {
+        if (item.children?.length > 0) {
+          item.children.map((childItem) => {
+            if (childItem?.id) {
+              correctSocial = socialGroups.filter(
+                (social) => social?.id === childItem?.id
+              )[0];
+              return;
+            }
+          });
+        }
+      });
+    }
+
+    // format the social data
+    let forwardData = null;
+    if (correctSocial) {
+      let pageData = null;
+      if (correctSocial?.SocialNetwork?.extendData) {
+        pageData = JSON.parse(correctSocial.SocialNetwork.extendData);
+      }
+
+      forwardData = {
+        socialId: correctSocial?.id,
+        socialPage: pageData,
+      };
+    }
+    // #endregion
+
+    navigate(`/${Converter.toLowerCaseFirstLetter(e.key)}`, {
+      state: forwardData,
+    });
   }
   // #endregion
 
+  // #region notification
   const [notiList, setNotiList] = useState([]);
   const useGetAllNotification = useMutation(getAllNotification, {
     onSuccess: (resp) => {
       setNotiList(resp);
     },
   });
-  useEffectOnce(
-    () => {
-      // filter the menu sidebar
-      setAvailableMenu(filterMenuSidebar(userData.permissions));
-
-      // get notification
-      useGetAllNotification.mutate({
-        offset: 0,
-        size: 10,
-        pageNumber: 1,
-        totalElement: 10000,
-        orders: [],
-        filter: [],
-      });
-    }
-  );
+  // #endregion
 
   // #region chart notification
   const [openChart, setOpenChart] = useToggle(false);
@@ -155,6 +210,27 @@ export default function PrivateLayout(props) {
     }
   }
 
+  useEffectOnce(() => {
+    if (!currentPath) {
+      navigate('/home');
+    }
+    
+    // filter the menu sidebar
+    setAvailableMenu(
+      filterMenuSidebar(userData.permissions, userData.role)
+    );
+
+    // get notification
+    useGetAllNotification.mutate({
+      offset: 0,
+      size: 10,
+      pageNumber: 1,
+      totalElement: 10000,
+      orders: [],
+      filter: [],
+    });
+  });
+
   return (
     <Layout className="private-layout">
       <Sider
@@ -173,15 +249,12 @@ export default function PrivateLayout(props) {
           }}
         />
         <Menu
-          onSelect={(e) => {
-            navigate(`/${Converter.toLowerCaseFirstLetter(e.key)}`);
-          }}
+          onSelect={handleItemSelect}
           theme="dark"
           mode="inline"
-          items={availableMenu ?? menuSidebar}
+          items={availableMenu}
           selectedKeys={[path]}
-          {...(currentPath &&
-            !collapsed && { defaultOpenKeys: [openKey] })}
+          defaultOpenKeys={[openKey ? openKey : 'social-network']}
         />
       </Sider>
 
@@ -258,16 +331,18 @@ export default function PrivateLayout(props) {
         </Content>
       </Layout>
 
-      <PieChartResult
-        open={openChart}
-        toggleOpen={setOpenChart}
-        title={title.current}
-        result={{
-          total: resultChart.current?.totalImport,
-          success: resultChart.current?.importSuccess,
-          fail: resultChart.current?.totalImport,
-        }}
-      />
+      {openChart && (
+        <PieChartResult
+          open={openChart}
+          toggleOpen={setOpenChart}
+          title={title.current}
+          result={{
+            total: resultChart.current?.totalImport,
+            success: resultChart.current?.importSuccess,
+            fail: resultChart.current?.importFailure,
+          }}
+        />
+      )}
     </Layout>
   );
 }

@@ -38,6 +38,7 @@ export const menuSidebar = [
     key: 'social-network',
     label: 'Social Network',
     icon: <GlobalOutlined />,
+    role: 'OWNER, MANAGER, SUPPORTER',
   },
   {
     key: 'setting',

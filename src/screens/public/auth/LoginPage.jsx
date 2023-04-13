@@ -18,7 +18,7 @@ export default function LoginPage() {
       await apiService.post('/auth/log-in', model).then((resp) => {
         if (resp?.result) {
           localStorage.setItem('token', resp.result?.access);
-          customHistory.push('/');
+          customHistory.push('/home');
           notifyService.showSucsessMessage({
             description: 'Login successfully',
           });

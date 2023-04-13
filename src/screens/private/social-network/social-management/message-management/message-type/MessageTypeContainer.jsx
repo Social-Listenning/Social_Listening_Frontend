@@ -36,6 +36,12 @@ export default function MessageTypeContainer(props) {
     }
   }, [showRecommend]);
 
+  useUpdateEffect(() => {
+    if (messageDetail.message?.length > 0) {
+      setMessageList(messageDetail?.message);
+    }
+  }, [messageDetail?.message]);
+
   const useReplyFbMessage = useMutation(replyFbMessage, {
     onSuccess: (resp) => {
       if (resp) {
@@ -68,8 +74,8 @@ export default function MessageTypeContainer(props) {
             },
           ];
         });
-		
-		document.getElementById('respond-input').value = '';
+
+        document.getElementById('respond-input').value = '';
 
         notifyService.showSucsessMessage({
           description: 'Reply successfully',

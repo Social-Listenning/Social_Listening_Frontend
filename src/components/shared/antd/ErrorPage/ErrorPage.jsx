@@ -36,7 +36,7 @@ export default function ErrorPage(props) {
           <Button
             className="redirect-btn"
             onClick={() => {
-              navigate('/');
+              navigate('/home');
             }}
           >
             Go Home

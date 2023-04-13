@@ -1,7 +1,11 @@
-import React from 'react'
+import ElementWithPermission from '../../../components/shared/element/ElementWithPermission';
+import SocialNetworkPage from '../social-network/SocialNetworkPage';
+import '../social-network/socialNetwork.scss';
 
 export default function HomePage() {
   return (
-    <div></div>
-  )
+    <ElementWithPermission permission="connect-social-network">
+      <SocialNetworkPage />
+    </ElementWithPermission>
+  );
 }

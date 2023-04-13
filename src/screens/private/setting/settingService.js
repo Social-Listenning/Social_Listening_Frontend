@@ -8,9 +8,10 @@ export const getAllSetting = async () => {
 };
 
 export const useGetAllSetting = (enabled = true) => {
-  return useQuery("allSetting", getAllSetting, {
-    enabled: enabled
-  })
+  return useQuery('allSetting', getAllSetting, {
+    enabled: enabled,
+    keepUnusedData: true, // set to true to keep stale data when the window is not focused
+  });
 };
 
 export const updateSetting = async (data) => {

@@ -24,7 +24,7 @@ export default function ConfirmEmail() {
         .then((resp) => {
           if (resp?.result) {
             localStorage.setItem('token', resp.result?.access);
-            customHistory.push('/');
+            customHistory.push('/home');
             notifyService.showSucsessMessage({
               description: 'Login successfully',
             });

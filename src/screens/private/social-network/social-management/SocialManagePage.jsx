@@ -7,17 +7,26 @@ import {
 } from '@ant-design/icons';
 import MessageManagePage from './message-management/MessageManagePage';
 import SettingManagePage from './setting-mangement/SettingManagePage';
+import ElementWithPermission from '../../../../components/shared/element/ElementWithPermission';
 import '../socialNetwork.scss';
 
 export default function SocialMangePage() {
   const location = useLocation();
 
-  function formatTab(icon, label) {
-    return (
+  function formatTab(icon, label, permission) {
+    const tabFormatted = (
       <>
         {icon}
         <span>{label}</span>
       </>
+    );
+
+    return permission ? (
+      <ElementWithPermission permission={permission}>
+        {tabFormatted}
+      </ElementWithPermission>
+    ) : (
+      tabFormatted
     );
   }
 
@@ -33,13 +42,17 @@ export default function SocialMangePage() {
       children: (
         <MessageManagePage
           pageId={location.state?.socialId}
-          socialPage={location.state.socialPage}
+          socialPage={location.state?.socialPage}
         />
       ),
     },
     {
       key: 3,
-      label: formatTab(<SettingOutlined />, 'Setting'),
+      label: formatTab(
+        <SettingOutlined />,
+        'Setting',
+        'get-social-setting'
+      ),
       children: (
         <SettingManagePage pageId={location.state?.socialId} />
       ),
