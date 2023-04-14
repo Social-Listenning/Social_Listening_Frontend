@@ -14,7 +14,7 @@ import BasicAvatar from '../../../../../../components/shared/antd/BasicAvatar';
 import IconButton from '../../../../../../components/shared/element/Button/IconButton';
 import IconMoreButton from '../../../../../../components/shared/element/Button/IconMoreButton';
 import ClassicDropdown from '../../../../../../components/shared/antd/Dropdown/Classic';
-import PostHeader from './PostHeader';
+import PostHeader from '../../post-management/PostHeader';
 import ChatHeader from './ChatHeader';
 
 const listAction = ['Reply'];

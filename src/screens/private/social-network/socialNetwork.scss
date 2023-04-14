@@ -102,6 +102,11 @@
     }
   }
 
+  .message-date {
+    font-size: calc(var(--app-font-size) - 0.4rem);
+    font-weight: 400 !important;
+  }
+
   .message-detail-hint {
     font-size: calc(var(--app-font-size) + 0.2rem);
   }
@@ -133,51 +138,6 @@
       .message-type-loader {
         .anticon {
           scale: 4;
-        }
-      }
-
-      .message-date {
-        font-size: calc(var(--app-font-size) - 0.4rem);
-      }
-
-      .post-section {
-        flex-direction: column;
-        align-items: start;
-
-        .post-header {
-          width: 100%;
-          justify-content: space-between;
-
-          .post-info {
-            gap: var(--padding-layout);
-
-            .post-avt-holder {
-              position: relative;
-
-              .post-avt-status {
-                position: absolute;
-                bottom: -0.6rem;
-                right: 0;
-                z-index: 1;
-              }
-            }
-
-            .post-user-date {
-              flex-direction: column;
-              align-items: start;
-            }
-          }
-
-          .post-util {
-            .anticon {
-              scale: 1.2;
-            }
-          }
-        }
-
-        .post-detail {
-          --line: 3;
-          text-align: justify;
         }
       }
 

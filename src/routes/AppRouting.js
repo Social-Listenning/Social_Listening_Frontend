@@ -28,6 +28,9 @@ const PermissionManagement = lazy(() =>
 const RoleManagement = lazy(() =>
   import('../screens/private/accounts/role/RolePage')
 );
+const SocialNetworkPage = lazy(() =>
+  import('../screens/private/social-network/SocialNetworkPage')
+);
 const SocialManagement = lazy(() =>
   import(
     '../screens/private/social-network/social-management/SocialManagePage'
@@ -68,6 +71,11 @@ export const privateRoutes = [
     path: 'account/role',
     element: <RoleManagement />,
     permissionRequired: 'get-role',
+  },
+  {
+    path: 'social-network',
+    element: <SocialNetworkPage />,
+    permissionRequired: 'connect-social-network',
   },
   {
     path: 'social-network/:name',

@@ -13,6 +13,7 @@ const environment = {
   socialNetwork: `${baseUrl}/socialNetwork`,
   socialGroup: `${baseUrl}/socialGroup`,
   socialMessage: `${baseUrl}/social-message`,
+  socialPost: `${baseUrl}/social-post`,
   setting: `${baseUrl}/setting`,
   socialTabSetting: `${baseUrl}/socialTabSeting`,
 };

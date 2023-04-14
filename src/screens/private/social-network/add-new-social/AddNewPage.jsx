@@ -3,8 +3,10 @@ import { Card } from 'antd';
 import { PlusOutlined, FacebookFilled } from '@ant-design/icons';
 import { useMutation } from 'react-query';
 import { notifyService } from '../../../../services/notifyService';
+import { getSettingByKeyAndGroup } from '../../setting/settingService';
 import { connectFacebook } from '../socialNetworkService';
 import useToggle from '../../../../components/hooks/useToggle';
+import useEffectOnce from '../../../../components/hooks/useEffectOnce';
 import SocialPagePopup from './SocialPagePopup';
 import ClassicDropdown from '../../../../components/shared/antd/Dropdown/Classic';
 
@@ -19,12 +21,38 @@ export default function AddNewPage(props) {
   const [open, toggleOpen] = useToggle(false);
 
   // #region facebook
+  const appId = useRef(null);
+  const appConfigId = useRef(null);
+  const appSecret = useRef(null);
+  useEffectOnce(() => {
+    getSettingByKeyAndGroup({
+      key: 'FACEBOOK_APP_ID',
+      group: 'CONNECTOR',
+    }).then((resp) => {
+      appId.current = resp?.value;
+    });
+    
+    getSettingByKeyAndGroup({
+      key: 'FACEBOOK_APP_CONFIG_ID',
+      group: 'CONNECTOR',
+    }).then((resp) => {
+      appConfigId.current = resp?.value;
+    });
+    
+    getSettingByKeyAndGroup({
+      key: 'FACEBOOK_APP_SECRET',
+      group: 'CONNECTOR',
+    }).then((resp) => {
+      appSecret.current = resp?.value;
+    });
+  });
+
   const listPage = useRef(null);
   useEffect(() => {
     window.fbAsyncInit = function () {
       window.FB.init({
         // This is App ID
-        appId: '3442544212646501',
+        appId: appId.current,
         cookie: true,
         status: true,
         xfbml: true,
@@ -52,7 +80,8 @@ export default function AddNewPage(props) {
   });
 
   const useGetPageToken = useMutation(connectFacebook, {
-    onSuccess: (resp) => {console.log(resp)
+    onSuccess: (resp) => {
+      console.log(resp);
       toggleOpen(true);
       listPage.current = resp?.data?.map((item) => {
         return {
@@ -92,7 +121,7 @@ export default function AddNewPage(props) {
         // }
       },
       {
-        config_id: '950524619696540', // configuration ID goes here
+        config_id: appConfigId.current, // configuration ID goes here
       }
     );
     // }
@@ -138,6 +167,8 @@ export default function AddNewPage(props) {
               onFacebookLogin();
             }
           }}
+          appId={appId.current}
+          appSecret={appSecret.current}
         />
       )}
     </>
