@@ -1,13 +1,14 @@
 import { useLocation } from 'react-router-dom';
 import { Tabs } from 'antd';
 import {
-  TeamOutlined,
+  FormOutlined,
   CommentOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import MessageManagePage from './message-management/MessageManagePage';
-import SettingManagePage from './setting-mangement/SettingManagePage';
 import ElementWithPermission from '../../../../components/shared/element/ElementWithPermission';
+import MessageManagePage from './message-management/MessageManagePage';
+import PostManagePage from './post-management/PostManagePage';
+import SettingManagePage from './setting-mangement/SettingManagePage';
 import '../socialNetwork.scss';
 
 export default function SocialMangePage() {
@@ -48,6 +49,16 @@ export default function SocialMangePage() {
     },
     {
       key: 3,
+      label: formatTab(<FormOutlined />, 'Post'),
+      children: (
+        <PostManagePage
+          pageId={location.state?.socialId}
+          socialPage={location.state?.socialPage}
+        />
+      ),
+    },
+    {
+      key: 9,
       label: formatTab(
         <SettingOutlined />,
         'Setting',

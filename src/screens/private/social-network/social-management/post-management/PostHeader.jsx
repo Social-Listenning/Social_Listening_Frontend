@@ -1,11 +1,11 @@
-import BasicAvatar from '../../../../../../components/shared/antd/BasicAvatar';
-import IconMoreButton from '../../../../../../components/shared/element/Button/IconMoreButton';
-import ClassicDropdown from '../../../../../../components/shared/antd/Dropdown/Classic';
+import BasicAvatar from '../../../../../components/shared/antd/BasicAvatar';
+import IconMoreButton from '../../../../../components/shared/element/Button/IconMoreButton';
+import ClassicDropdown from '../../../../../components/shared/antd/Dropdown/Classic';
 
 export default function PostHeader({ pageData, postData }) {
   const dateSent = new Date(postData?.createdAt)?.toLocaleString();
   return (
-    <div className="post-section flex-center">
+    <div className="post-header-container flex-center">
       <div className="post-header flex-center">
         <div className="post-info flex-center">
           <BasicAvatar

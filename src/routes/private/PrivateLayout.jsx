@@ -18,6 +18,7 @@ import { menuUserHeader } from '../../constants/menu/header';
 import { useSocket } from '../../components/contexts/socket/SocketProvider';
 import { getAllNotification } from './privateService';
 import { useGetSocialGroups } from '../../screens/private/social-network/socialNetworkService';
+import { useGetAllSetting } from '../../screens/private/setting/settingService';
 import useEffectOnce from '../../components/hooks/useEffectOnce';
 import useUpdateEffect from '../../components/hooks/useUpdateEffect';
 import useToggle from '../../components/hooks/useToggle';
@@ -182,6 +183,17 @@ export default function PrivateLayout(props) {
   }, [socket]);
   // #endregion
 
+  // #region get default data
+  // get all setting and save it to local host
+  // const getSetting = useRef(
+  //   userData.permissions.includes('table-setting')
+  // );
+  // const { data: settingData } = useGetAllSetting(getSetting.current);
+  // getSetting.current = false;
+  // localStorage.setItem('allSetting', JSON.stringify(settingData));
+  
+  // #endregion
+
   async function handleMenuHeader(e) {
     // logout option
     if (menuUserHeader[e.key] === 'Logout') {
@@ -202,7 +214,7 @@ export default function PrivateLayout(props) {
         });
       }
 
-      localStorage.removeItem('token');
+      localStorage.clear();
     }
     // profile option
     else if (menuUserHeader[e.key] === 'Profile') {
@@ -214,7 +226,7 @@ export default function PrivateLayout(props) {
     if (!currentPath) {
       navigate('/home');
     }
-    
+
     // filter the menu sidebar
     setAvailableMenu(
       filterMenuSidebar(userData.permissions, userData.role)

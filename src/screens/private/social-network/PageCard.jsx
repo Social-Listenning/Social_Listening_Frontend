@@ -8,9 +8,10 @@ import { Card } from 'antd';
 import { useMutation } from 'react-query';
 import { customHistory } from '../../../routes/CustomRouter';
 import { disconnectFacebook } from './socialNetworkService';
+import emptyImage from '../../../assets/images/image_not_available.png';
 import BasicAvatar from '../../../components/shared/antd/BasicAvatar';
 import ToolTipWrapper from '../../../components/shared/antd/ToolTipWrapper';
-import emptyImage from '../../../assets/images/image_not_available.png';
+import ElementWithPermission from '../../../components/shared/element/ElementWithPermission';
 
 const { Meta } = Card;
 
@@ -96,20 +97,22 @@ export default function PageCard(props) {
             }}
           />
         </ToolTipWrapper>,
-        <ToolTipWrapper tooltip="Setting this page">
-          <SettingOutlined
-            onClick={(e) => {
-              e.stopPropagation();
-              customHistory.push(
-                `/social-network/${socialNetworkData?.name}`,
-                {
-                  ...forwardData,
-                  tab: 3,
-                }
-              );
-            }}
-          />
-        </ToolTipWrapper>,
+        <ElementWithPermission permission="get-social-setting">
+          <ToolTipWrapper tooltip="Setting this page">
+            <SettingOutlined
+              onClick={(e) => {
+                e.stopPropagation();
+                customHistory.push(
+                  `/social-network/${socialNetworkData?.name}`,
+                  {
+                    ...forwardData,
+                    tab: 9,
+                  }
+                );
+              }}
+            />
+          </ToolTipWrapper>
+        </ElementWithPermission>,
       ]}
     >
       <Meta
