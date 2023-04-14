@@ -13,7 +13,7 @@
 
     &:hover {
       transition: all ease 0.3s;
-      box-shadow: 0px 2px 92px 0px rgb(0 0 0 / 25%);
+      box-shadow: 0px 2px 9.2rem 0px rgb(0 0 0 / 25%);
       transform: translate(0, -3px);
     }
 
@@ -90,8 +90,9 @@
 }
 
 .social-tab {
+  margin-top: calc(var(--padding-layout) * -1);
+
   .ant-tabs-nav {
-    height: 3.6rem;
     .ant-tabs-nav-list {
       .ant-tabs-tab {
         font-size: 1.8rem;
@@ -105,6 +106,7 @@
   .message-date {
     font-size: calc(var(--app-font-size) - 0.4rem);
     font-weight: 400 !important;
+    color: #00000073;
   }
 
   .message-detail-hint {

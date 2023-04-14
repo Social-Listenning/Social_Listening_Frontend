@@ -15,9 +15,7 @@ export default function PostHeader({ pageData, postData }) {
           />
           <div className="post-user-date flex-center">
             <b className="post-user">{pageData?.name}</b>
-            <span className="message-date">
-              {dateSent}
-            </span>
+            <span className="message-date">{dateSent}</span>
           </div>
         </div>
         <ClassicDropdown
@@ -28,8 +26,8 @@ export default function PostHeader({ pageData, postData }) {
           <IconMoreButton />
         </ClassicDropdown>
       </div>
-      <div className="post-detail limit-line">
-        {postData?.message}
+      <div className="post-detail">
+        <span className="limit-line">{postData?.message}</span>
       </div>
     </div>
   );
