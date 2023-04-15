@@ -94,7 +94,7 @@ export default function PostManagePage({ pageId, socialPage }) {
                 width: `calc(100% - ${width}px)`,
               }}
             >
-              <CommentDetail />
+              <CommentDetail socialPage={socialPage} />
             </div>
           </>
         ) : (
