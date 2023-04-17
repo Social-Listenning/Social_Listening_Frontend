@@ -4,20 +4,20 @@ import {
   CloseCircleTwoTone,
 } from '@ant-design/icons';
 import { useLocation } from 'react-router-dom';
-import { apiService } from '../../../services/apiService';
-import { notifyService } from '../../../services/notifyService';
-import { customHistory } from '../../../routes/CustomRouter';
-import environment from '../../../constants/environment/environment.dev';
-import useToggle from '../../../components/hooks/useToggle';
-import useEffectOnce from '../../../components/hooks/useEffectOnce';
-import './auth.scss';
+import { apiService } from '../../../../services/apiService';
+import { notifyService } from '../../../../services/notifyService';
+import { customHistory } from '../../../../routes/CustomRouter';
+import environment from '../../../../constants/environment/environment.dev';
+import useToggle from '../../../../components/hooks/useToggle';
+import useEffectOnce from '../../../../components/hooks/useEffectOnce';
+import '../auth.scss';
 
 export default function VerifyEmailPage() {
   const location = useLocation();
   const [correctToken, setCorrectToken] = useToggle(false);
 
   useEffectOnce(() => {
-    const queryParams = location.search;
+    const queryParams = location?.search;
     if (queryParams && queryParams?.includes('?token=')) {
       const token = queryParams.substring(7);
       if (token) {
@@ -37,6 +37,7 @@ export default function VerifyEmailPage() {
               }
             });
         } catch (ex) {
+          setCorrectToken(false);
           notifyService.showErrorMessage({
             description: ex.message,
           });
@@ -51,7 +52,10 @@ export default function VerifyEmailPage() {
         {correctToken ? (
           <CheckCircleTwoTone style={{ fontSize: '12rem' }} />
         ) : (
-          <CloseCircleTwoTone style={{ fontSize: '12rem' }} />
+          <CloseCircleTwoTone
+            twoToneColor="#ff5656"
+            style={{ fontSize: '12rem' }}
+          />
         )}
         <h1 className="auth-title" style={{ fontSize: '3.4rem' }}>
           {correctToken

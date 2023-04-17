@@ -2,16 +2,28 @@ import { lazy } from 'react';
 
 // #region public routes
 const LoginPage = lazy(() =>
-  import('../screens/public/auth/LoginPage')
+  import('../screens/public/auth/login/LoginPage')
 );
 const RegisterPage = lazy(() =>
-  import('../screens/public/auth/RegisterPage')
+  import('../screens/public/auth/register/RegisterPage')
 );
 const RegisterSuccessPage = lazy(() =>
-  import('../screens/public/auth/RegisterSuccessPage')
+  import('../screens/public/auth/register/RegisterSuccessPage')
 );
 const VerifyEmailPage = lazy(() =>
-  import('../screens/public/auth/VerifyEmailPage')
+  import('../screens/public/auth/register/VerifyEmailPage')
+);
+const ForgotPasswordPage = lazy(() =>
+  import('../screens/public/auth/forgot-password/ForgotPasswordPage')
+);
+const ForgotPasswordStatus = lazy(() =>
+  import('../screens/public/auth/forgot-password/ForgotPasswordStatus')
+);
+const ResetPasswordPage = lazy(() =>
+  import('../screens/public/auth/forgot-password/ResetPasswordPage')
+);
+const ResetPasswordStatus = lazy(() =>
+  import('../screens/public/auth/forgot-password/ResetPasswordStatus')
 );
 // #endregion
 
@@ -55,6 +67,12 @@ export const publicRoutes = [
   { path: 'register', element: <RegisterPage /> },
   { path: 'register-success', element: <RegisterSuccessPage /> },
   { path: 'confirm-email', element: <VerifyEmailPage /> },
+  { path: 'forgot-password', element: <ForgotPasswordPage /> },
+  { path: 'forgot-password-success', element: <ForgotPasswordStatus /> },
+  { path: 'forgot-password-fail', element: <ForgotPasswordStatus /> },
+  { path: 'recovery-password', element: <ResetPasswordPage /> },
+  { path: 'recovery-password-success', element: <ResetPasswordStatus /> },
+  { path: 'recovery-password-fail', element: <ResetPasswordStatus /> },
 ];
 
 export const privateRoutes = [

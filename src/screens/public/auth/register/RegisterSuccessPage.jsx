@@ -1,12 +1,12 @@
 import { Button } from 'antd';
 import { MailTwoTone } from '@ant-design/icons';
 import { useLocation } from 'react-router-dom';
-import { apiService } from '../../../services/apiService';
-import { notifyService } from '../../../services/notifyService';
-import { customHistory } from '../../../routes/CustomRouter';
-import environment from '../../../constants/environment/environment.dev';
-import useToggle from '../../../components/hooks/useToggle';
-import './auth.scss';
+import { apiService } from '../../../../services/apiService';
+import { notifyService } from '../../../../services/notifyService';
+import { customHistory } from '../../../../routes/CustomRouter';
+import environment from '../../../../constants/environment/environment.dev';
+import useToggle from '../../../../components/hooks/useToggle';
+import '../auth.scss';
 
 export default function RegisterSuccessPage() {
   const location = useLocation();
@@ -29,9 +29,6 @@ export default function RegisterSuccessPage() {
             notifyService.showSucsessMessage({
               description: 'Login successfully',
             });
-            // dont need to toggle loading
-            // because it will redirect user
-            return;
           }
         });
     } catch (ex) {

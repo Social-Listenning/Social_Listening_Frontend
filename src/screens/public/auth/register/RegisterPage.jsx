@@ -1,33 +1,33 @@
 import { Form, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
-import { customHistory } from '../../../routes/CustomRouter';
-import { apiService } from '../../../services/apiService';
-import { notifyService } from '../../../services/notifyService';
-import environment from '../../../constants/environment/environment.dev';
-import useToggle from '../../../components/hooks/useToggle';
-import ToolTipWrapper from '../../../components/shared/antd/ToolTipWrapper';
-import authImage from '../../../assets/images/auth.png';
-import './auth.scss';
+import { Link, useNavigate } from 'react-router-dom';
+import { apiService } from '../../../../services/apiService';
+import { notifyService } from '../../../../services/notifyService';
+import environment from '../../../../constants/environment/environment.dev';
+import useToggle from '../../../../components/hooks/useToggle';
+import authImage from '../../../../assets/images/auth.png';
+import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
+import '../auth.scss';
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const [loading, toggleLoading] = useToggle(false);
+  const navigate = useNavigate();
 
   async function handleSubmit(model) {
     toggleLoading(true);
     try {
-      await apiService.post(`${environment.auth}/log-in`, model).then((resp) => {
-        if (resp?.result) {
-          localStorage.setItem('token', resp.result?.access);
-          customHistory.push('/home');
-          notifyService.showSucsessMessage({
-            description: 'Login successfully',
-          });
-          // dont need to toggle loading
-          // because it will redirect user
-          return;
-        }
-      });
+      await apiService
+        .post(`${environment.auth}/register`, model)
+        .then((resp) => {
+          if (resp?.result) {
+            navigate('/register-success', {
+              state: { email: model.email, password: model.password },
+            });
+            notifyService.showSucsessMessage({
+              description: 'Register successfully',
+            });
+          }
+        });
     } catch (ex) {
       notifyService.showErrorMessage({
         description: ex.message,
@@ -39,7 +39,7 @@ export default function LoginPage() {
   return (
     <div className="auth-wrapper">
       <div className="auth-header">
-        <h1 className="auth-title">Login</h1>
+        <h1 className="auth-title">Register</h1>
         <img src={authImage} width="140" alt="auth-pic" />
       </div>
       <div className="auth-body">
@@ -105,7 +105,38 @@ export default function LoginPage() {
             </Form.Item>
           </ToolTipWrapper>
 
-          {/* <Checkbox className="remember-auth">Remember me</Checkbox> */}
+          <ToolTipWrapper
+            tooltip="Confirm password must match"
+            placement="topRight"
+          >
+            <Form.Item
+              name="confirmPassword"
+              rules={[
+                {
+                  required: true,
+                  message: 'Confirm Password is required',
+                },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (
+                      !value ||
+                      getFieldValue('password') === value
+                    ) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error('The confirm password do not match')
+                    );
+                  },
+                }),
+              ]}
+            >
+              <Input.Password
+                placeholder="Confirm Password *"
+                prefix={<LockOutlined />}
+              />
+            </Form.Item>
+          </ToolTipWrapper>
 
           <Button
             type="primary"
@@ -113,14 +144,14 @@ export default function LoginPage() {
             className="submit-auth-btn"
             loading={loading}
           >
-            Login
+            Register
           </Button>
         </Form>
       </div>
       <div className="auth-footer">
-        <span>Don't have account?</span>
-        <Link to={'/register'} className="register-redirect">
-          Register here
+        <span>Already had account?</span>
+        <Link to="/login" className="register-redirect">
+          Login here
         </Link>
       </div>
     </div>
