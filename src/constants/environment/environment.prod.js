@@ -6,6 +6,7 @@ const environment = {
   baseUrl: baseUrl,
   webSocket: webSocket,
   facebookGraph: facebookGraph,
+  auth: `${baseUrl}/auth`,
   user: `${baseUrl}/user`,
   role: `${baseUrl}/role`,
   permission: `${baseUrl}/permission`,

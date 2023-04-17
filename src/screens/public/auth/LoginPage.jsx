@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { customHistory } from '../../../routes/CustomRouter';
 import { apiService } from '../../../services/apiService';
 import { notifyService } from '../../../services/notifyService';
+import environment from '../../../constants/environment/environment.dev';
 import useToggle from '../../../components/hooks/useToggle';
 import ToolTipWrapper from '../../../components/shared/antd/ToolTipWrapper';
 import authImage from '../../../assets/images/auth.png';
@@ -15,7 +16,7 @@ export default function LoginPage() {
   async function handleSubmit(model) {
     toggleLoading(true);
     try {
-      await apiService.post('/auth/log-in', model).then((resp) => {
+      await apiService.post(`${environment.auth}/log-in`, model).then((resp) => {
         if (resp?.result) {
           localStorage.setItem('token', resp.result?.access);
           customHistory.push('/home');

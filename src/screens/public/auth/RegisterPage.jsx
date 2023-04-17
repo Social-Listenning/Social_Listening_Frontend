@@ -3,6 +3,7 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiService } from '../../../services/apiService';
 import { notifyService } from '../../../services/notifyService';
+import environment from '../../../constants/environment/environment.dev';
 import useToggle from '../../../components/hooks/useToggle';
 import authImage from '../../../assets/images/auth.png';
 import ToolTipWrapper from '../../../components/shared/antd/ToolTipWrapper';
@@ -15,9 +16,9 @@ export default function RegisterPage() {
   async function handleSubmit(model) {
     toggleLoading(true);
     try {
-      await apiService.post('/auth/register', model).then((resp) => {
+      await apiService.post(`${environment.auth}/register`, model).then((resp) => {
         if (resp?.result) {
-          navigate('/confirm-email', {
+          navigate('/register-success', {
             state: { email: model.email, password: model.password },
           });
           notifyService.showSucsessMessage({
@@ -33,7 +34,7 @@ export default function RegisterPage() {
         description: ex.message,
       });
     }
-    toggleLoading(true);
+    toggleLoading(false);
   }
 
   return (

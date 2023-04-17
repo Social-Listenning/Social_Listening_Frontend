@@ -7,8 +7,11 @@ const LoginPage = lazy(() =>
 const RegisterPage = lazy(() =>
   import('../screens/public/auth/RegisterPage')
 );
-const ConfirmEmailPage = lazy(() =>
-  import('../screens/public/auth/ConfirmEmailPage')
+const RegisterSuccessPage = lazy(() =>
+  import('../screens/public/auth/RegisterSuccessPage')
+);
+const VerifyEmailPage = lazy(() =>
+  import('../screens/public/auth/VerifyEmailPage')
 );
 // #endregion
 
@@ -50,7 +53,8 @@ const ErrorPages = lazy(() =>
 export const publicRoutes = [
   { path: 'login', element: <LoginPage /> },
   { path: 'register', element: <RegisterPage /> },
-  { path: 'confirm-email', element: <ConfirmEmailPage /> },
+  { path: 'register-success', element: <RegisterSuccessPage /> },
+  { path: 'confirm-email', element: <VerifyEmailPage /> },
 ];
 
 export const privateRoutes = [

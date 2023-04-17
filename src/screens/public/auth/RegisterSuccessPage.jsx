@@ -4,10 +4,11 @@ import { useLocation } from 'react-router-dom';
 import { apiService } from '../../../services/apiService';
 import { notifyService } from '../../../services/notifyService';
 import { customHistory } from '../../../routes/CustomRouter';
+import environment from '../../../constants/environment/environment.dev';
 import useToggle from '../../../components/hooks/useToggle';
 import './auth.scss';
 
-export default function ConfirmEmail() {
+export default function RegisterSuccessPage() {
   const location = useLocation();
   const [loading, toggleLoading] = useToggle(false);
 
@@ -20,7 +21,7 @@ export default function ConfirmEmail() {
     toggleLoading(true);
     try {
       await apiService
-        .post('/auth/log-in', authModel)
+        .post(`${environment.auth}/log-in`, authModel)
         .then((resp) => {
           if (resp?.result) {
             localStorage.setItem('token', resp.result?.access);
