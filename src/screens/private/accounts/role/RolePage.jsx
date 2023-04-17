@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Card, Divider } from 'antd';
 import { useGetAllRole } from '../../../../routes/private/privateService';
 import useToggle from '../../../../components/hooks/useToggle';
+import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
 import ModalDetail from './ModalDetail';
 import './rolePage.scss';
 
@@ -21,25 +22,31 @@ export default function RolePage() {
     <div className="role-page-wrapper">
       {data?.map((item, index) => (
         <Card key={index} title={item?.roleName}>
-          <div
-            onClick={() => {
-              type.current = 'User';
-              role.current = item?.roleName;
-              toggleOpenModal(true);
-            }}
-          >
-            Total User: {item?._count?.User}
-          </div>
+          <ToolTipWrapper tooltip="Click to open details">
+            <div
+              className="role-summarize"
+              onClick={() => {
+                type.current = 'User';
+                role.current = item?.roleName;
+                toggleOpenModal(true);
+              }}
+            >
+              Total User: {item?._count?.User}
+            </div>
+          </ToolTipWrapper>
           <Divider />
-          <div
-            onClick={() => {
-              type.current = 'Permission';
-              role.current = item?.roleName;
-              toggleOpenModal(true);
-            }}
-          >
-            Total Permission: {item?._count?.Role_Permission}
-          </div>
+          <ToolTipWrapper tooltip="Click to open details">
+            <div
+              className="role-summarize"
+              onClick={() => {
+                type.current = 'Permission';
+                role.current = item?.roleName;
+                toggleOpenModal(true);
+              }}
+            >
+              Total Permission: {item?._count?.Role_Permission}
+            </div>
+          </ToolTipWrapper>
         </Card>
       ))}
 

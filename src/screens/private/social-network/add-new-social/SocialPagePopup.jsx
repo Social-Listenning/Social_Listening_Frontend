@@ -149,11 +149,21 @@ export default function SocialPagePopup(props) {
                         return tempExtendData?.id === item?.id;
                       }
                     })[0];
-console.log(mappedPage)
-                    // customHistory.push(
-                    //   `/social-network/${mappedPage?.id}`,
-                    //   JSON.parse(mappedPage.SocialNetwork.extendData)//socialId,socialPage
-                    // );
+
+                    let pageData = null;
+                    if (mappedPage?.SocialNetwork?.extendData) {
+                      pageData = JSON.parse(
+                        mappedPage?.SocialNetwork?.extendData
+                      );
+                    }
+
+                    customHistory.push(
+                      `/social-network/${mappedPage?.id}`,
+                      {
+                        socialId: mappedPage?.id,
+                        socialPage: pageData,
+                      }
+                    );
                   }}
                 >
                   Manage page
