@@ -1,7 +1,7 @@
 import React from 'react';
 import { Handle } from 'reactflow';
 
-export default function InputNode(props) {
+export default function EndNode(props) {
 
   return (
     <div className="node">

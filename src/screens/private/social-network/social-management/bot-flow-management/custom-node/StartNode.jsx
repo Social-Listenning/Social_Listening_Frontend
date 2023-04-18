@@ -1,18 +1,12 @@
 import React from 'react';
 import { Handle } from 'reactflow';
 
-export default function DefaultNode(props) {
+export default function StartNode(props) {
 
   return (
     <div className="node">
       <Handle
-        id="c"
-        type="target"
-        position="left"
-        isConnectable={true}
-      />
-      <Handle
-        id="c"
+        id="a"
         type="source"
         position="right"
         isConnectable={true}
