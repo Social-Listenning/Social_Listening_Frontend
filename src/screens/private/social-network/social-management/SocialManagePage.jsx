@@ -4,11 +4,13 @@ import {
   FormOutlined,
   CommentOutlined,
   SettingOutlined,
+  RobotOutlined,
 } from '@ant-design/icons';
 import ElementWithPermission from '../../../../components/shared/element/ElementWithPermission';
 import MessageManagePage from './message-management/MessageManagePage';
 import PostManagePage from './post-management/PostManagePage';
 import SettingManagePage from './setting-mangement/SettingManagePage';
+import BotFlowManagePage from './bot-flow-management/BotFlowManagePage';
 import '../socialNetwork.scss';
 
 export default function SocialMangePage() {
@@ -57,6 +59,11 @@ export default function SocialMangePage() {
     //     />
     //   ),
     // },
+    {
+      key: 4,
+      label: formatTab(<RobotOutlined />, 'Bot'),
+      children: <BotFlowManagePage />,
+    },
     {
       key: 9,
       label: formatTab(

@@ -1,0 +1,27 @@
+.react-flow__node {
+  border-radius: 0.8rem;
+  -webkit-box-shadow: 0 2px 0.8rem 0 rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 0.8rem 0 rgba(0, 0, 0, 0.25);
+  padding: 1rem;
+  background-color: white;
+  width: 20rem;
+  height: 4rem;
+
+  &.selected:focus {
+    box-shadow: 0 0 0.8rem 0 var(--primary-color);
+  }
+
+  .react-flow__handle {
+    background: transparent;
+    width: 0.8rem;
+    height: 0.8rem;
+
+    &.react-flow__handle-right {
+      border-color: var(--success-color);
+    }
+
+    &.react-flow__handle-left {
+      border-color: var(--primary-color);
+    }
+  }
+}
