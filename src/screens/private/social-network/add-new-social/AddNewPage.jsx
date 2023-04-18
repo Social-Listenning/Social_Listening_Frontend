@@ -39,12 +39,12 @@ export default function AddNewPage(props) {
       appConfigId.current = resp?.value;
     });
     
-    // getSettingByKeyAndGroup({
-    //   key: 'FACEBOOK_APP_SECRET',
-    //   group: 'CONNECTOR',
-    // }).then((resp) => {
-    //   appSecret.current = resp?.value;
-    // });
+    getSettingByKeyAndGroup({
+      key: 'FACEBOOK_APP_SECRET',
+      group: 'CONNECTOR',
+    }).then((resp) => {
+      appSecret.current = resp?.value;
+    });
   });
 
   const listPage = useRef(null);

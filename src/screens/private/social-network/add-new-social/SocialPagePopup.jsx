@@ -45,7 +45,7 @@ export default function SocialPagePopup(props) {
       if (resp) {
         useExtendFbToken.mutate({
           appId: appId,
-          appSecret: '9c67de81b8b0c99f120a14a394ad6082',
+          appSecret: appSecret,
           accessToken: currentConnected.current?.accessToken,
         });
       }
