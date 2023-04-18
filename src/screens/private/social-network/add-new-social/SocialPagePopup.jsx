@@ -45,7 +45,7 @@ export default function SocialPagePopup(props) {
       if (resp) {
         useExtendFbToken.mutate({
           appId: appId,
-          appSecret: appSecret,
+          appSecret: '9c67de81b8b0c99f120a14a394ad6082',
           accessToken: currentConnected.current?.accessToken,
         });
       }
@@ -150,9 +150,19 @@ export default function SocialPagePopup(props) {
                       }
                     })[0];
 
+                    let pageData = null;
+                    if (mappedPage?.SocialNetwork?.extendData) {
+                      pageData = JSON.parse(
+                        mappedPage?.SocialNetwork?.extendData
+                      );
+                    }
+
                     customHistory.push(
                       `/social-network/${mappedPage?.id}`,
-                      JSON.parse(mappedPage.SocialNetwork.extendData)
+                      {
+                        socialId: mappedPage?.id,
+                        socialPage: pageData,
+                      }
                     );
                   }}
                 >

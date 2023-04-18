@@ -1,12 +1,13 @@
 import { Form, Input, Button } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
-import { apiService } from '../../../services/apiService';
-import { notifyService } from '../../../services/notifyService';
-import useToggle from '../../../components/hooks/useToggle';
-import authImage from '../../../assets/images/auth.png';
-import ToolTipWrapper from '../../../components/shared/antd/ToolTipWrapper';
-import './auth.scss';
+import { apiService } from '../../../../services/apiService';
+import { notifyService } from '../../../../services/notifyService';
+import environment from '../../../../constants/environment/environment.dev';
+import useToggle from '../../../../components/hooks/useToggle';
+import authImage from '../../../../assets/images/auth.png';
+import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
+import '../auth.scss';
 
 export default function RegisterPage() {
   const [loading, toggleLoading] = useToggle(false);
@@ -15,25 +16,24 @@ export default function RegisterPage() {
   async function handleSubmit(model) {
     toggleLoading(true);
     try {
-      await apiService.post('/auth/register', model).then((resp) => {
-        if (resp?.result) {
-          navigate('/confirm-email', {
-            state: { email: model.email, password: model.password },
-          });
-          notifyService.showSucsessMessage({
-            description: 'Register successfully',
-          });
-          // dont need to toggle loading
-          // because it will redirect user
-          return;
-        }
-      });
+      await apiService
+        .post(`${environment.auth}/register`, model)
+        .then((resp) => {
+          if (resp?.result) {
+            navigate('/register-success', {
+              state: { email: model.email, password: model.password },
+            });
+            notifyService.showSucsessMessage({
+              description: 'Register successfully',
+            });
+          }
+        });
     } catch (ex) {
       notifyService.showErrorMessage({
         description: ex.message,
       });
     }
-    toggleLoading(true);
+    toggleLoading(false);
   }
 
   return (
@@ -150,7 +150,7 @@ export default function RegisterPage() {
       </div>
       <div className="auth-footer">
         <span>Already had account?</span>
-        <Link to={'/login'} className="register-redirect">
+        <Link to="/login" className="register-redirect">
           Login here
         </Link>
       </div>

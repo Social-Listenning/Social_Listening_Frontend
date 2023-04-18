@@ -38,6 +38,11 @@ export default function UserManagement(props) {
     toggleOpenAssign(true);
   }
 
+  let formatRole = role;
+  if (userData?.role !== 'ADMIN') {
+    formatRole = role.filter((item) => item.label !== 'Admin');
+  }
+
   let apiGetData = environment.user;
   if (userData?.role === 'OWNER') {
     apiGetData += '/all';
@@ -72,7 +77,7 @@ export default function UserManagement(props) {
       sort: false,
       filter: {
         filterType: 'Dropdown',
-        options: role,
+        options: formatRole,
       },
       render: (record) => {
         return <RoleChip currentRole={record} />;
@@ -218,6 +223,13 @@ export default function UserManagement(props) {
   });
 
   let additionalList = [
+    ...defaultAction.filter((item) => {
+      if (userData?.role === 'ADMIN') {
+        return item?.label !== 'Delete';
+      } else {
+        return item;
+      }
+    }),
     {
       icon: <CheckOutlined />,
       label: 'Activate',
@@ -264,7 +276,7 @@ export default function UserManagement(props) {
         permission={permission}
         defaultFilter={defaultFilter}
         customToolbar={customToolbar}
-        actionList={[...defaultAction, ...additionalList]}
+        actionList={[...additionalList]}
         handleActionClick={handleActionClick}
         getSelectedRows={getSelectedRows}
         scroll={{ x: 2000 }}

@@ -18,10 +18,15 @@
   }
 
   .auth-body {
+    font-size: var(--app-font-size);
     margin-top: 4rem;
 
     input {
       font-size: 1.6rem;
+    }
+
+    .forgot-pwd {
+      text-align: right;
     }
   }
 

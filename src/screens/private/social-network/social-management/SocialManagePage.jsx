@@ -47,16 +47,16 @@ export default function SocialMangePage() {
         />
       ),
     },
-    {
-      key: 3,
-      label: formatTab(<FormOutlined />, 'Post'),
-      children: (
-        <PostManagePage
-          pageId={location.state?.socialId}
-          socialPage={location.state?.socialPage}
-        />
-      ),
-    },
+    // {
+    //   key: 3,
+    //   label: formatTab(<FormOutlined />, 'Post'),
+    //   children: (
+    //     <PostManagePage
+    //       pageId={location.state?.socialId}
+    //       socialPage={location.state?.socialPage}
+    //     />
+    //   ),
+    // },
     {
       key: 9,
       label: formatTab(
