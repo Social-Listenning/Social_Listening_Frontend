@@ -3,7 +3,7 @@ import { Checker } from '../../../../utils/dataChecker';
 
 export default function ClassicDropdown(props) {
   const {
-    list,
+    list = [],
     selectedKeys = [],
     clickTrigger = false,
     noneOption = false,

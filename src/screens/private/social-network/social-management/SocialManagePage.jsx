@@ -61,7 +61,7 @@ export default function SocialMangePage() {
     },
     {
       key: 4,
-      label: formatTab(<RobotOutlined />, 'Bot'),
+      label: formatTab(<RobotOutlined />, 'Design Bot Flow'),
       children: <BotFlowManagePage />,
     },
     {
@@ -81,7 +81,7 @@ export default function SocialMangePage() {
     <Tabs
       // centered
       className="social-tab"
-      defaultActiveKey={location.state?.tab ?? 2}
+      defaultActiveKey={location.state?.tab ?? 4}
       items={items}
     />
   );

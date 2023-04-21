@@ -70,19 +70,6 @@ function downloadFile(buffer, fileName, type) {
   URL.revokeObjectURL(url);
 }
 
-function generateId(length = 4) {
-  var result = '';
-  var characters =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  var charactersLength = characters.length;
-  for (var i = 0; i < length; i++) {
-    result += characters.charAt(
-      Math.floor(Math.random() * charactersLength)
-    );
-  }
-  return result;
-}
-
 export const Getter = {
   getPathName,
   getListPathName,
@@ -90,5 +77,4 @@ export const Getter = {
   getOpenKeyForMenu,
   getCurrentActivatedItemInMenu,
   downloadFile,
-  generateId,
 };
