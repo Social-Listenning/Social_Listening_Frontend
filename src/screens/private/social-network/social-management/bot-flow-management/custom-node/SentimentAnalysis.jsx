@@ -14,16 +14,21 @@ export default function SentimentAnalysis(props) {
   useEffectOnce(() => {
     data.syncData(id, {
       handle: {
-        negative: `sentiment-handle-0`,
-        neutral: `sentiment-handle-1`,
-        positive: `sentiment-handle-2`,
+        negative: `sentiment-output-handle-0`,
+        neutral: `sentiment-output-handle-1`,
+        positive: `sentiment-output-handle-2`,
       },
     });
   });
 
   return (
     <div className="node-wrapper flex-center">
-      <Handle className="msg-handle" type="target" position="left" />
+      <Handle
+        className="msg-handle"
+        id="sentiment-input-handle"
+        type="target"
+        position="left"
+      />
       <div className="node-title flex-center">
         <ExperimentOutlined />
         Sentiment Analysis
@@ -33,7 +38,7 @@ export default function SentimentAnalysis(props) {
           <div key={item} className="customer-resp">
             <Button className="full-width">{item}</Button>
             <Handle
-              id={`sentiment-handle-${index}`}
+              id={`sentiment-output-handle-${index}`}
               className="resp-handle"
               type="source"
               position="right"

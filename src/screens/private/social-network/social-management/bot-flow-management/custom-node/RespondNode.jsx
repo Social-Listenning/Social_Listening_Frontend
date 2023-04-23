@@ -1,6 +1,6 @@
 import { Handle } from 'reactflow';
 import {
-  SmileOutlined,
+  MessageOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons';
 import { Input } from 'antd';
@@ -11,10 +11,10 @@ export default function RespondNode(props) {
   return (
     <div className="node-wrapper flex-center">
       <div className="node-title flex-center">
-        <SmileOutlined />
+        <MessageOutlined />
         Your response
       </div>
-      <div className="your-msg-input">
+      {/* <div className="your-msg-input">
         <Input.TextArea
           allowClear
           autoSize={{ minRows: 5, maxRows: 5 }}
@@ -22,7 +22,7 @@ export default function RespondNode(props) {
             data.syncData(id, { response: e.currentTarget.value });
           }}
         />
-      </div>
+      </div> */}
       <Handle id="resp-input-handle" type="target" position="left" />
       <Handle
         id="resp-output-handle"

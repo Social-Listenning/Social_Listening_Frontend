@@ -57,7 +57,6 @@ export default function BotFlowManagePage() {
   }, []);
 
   const deleteNodeById = (id) => {
-    console.log(selectedNode?.id, id)
     setNodes((nds) => nds.filter((node) => node.id !== id));
     setEdges((eds) =>
       eds.filter((edge) => edge.target !== id || edge.source === id)
@@ -128,6 +127,28 @@ export default function BotFlowManagePage() {
     setSelectedNode(null);
   };
 
+  const updateVariableInputNode = () => {
+    edges.forEach((eds) => {
+      const sourceNode = nodes.filter(
+        (nds) => nds.id === eds.source
+      )[0];
+      const targetNode = nodes.filter(
+        (nds) => nds.id === eds.target
+      )[0];
+
+      // if source output had variable
+      if (sourceNode?.data?.output?.variable) {
+        // and target input did not had variable
+        if (!targetNode?.data?.input?.variable) {
+          // put input variable in the target
+          syncDataFromNode(targetNode.id, {
+            input: { variable: sourceNode.data.output.variable },
+          });
+        }
+      }
+    });
+  };
+
   // delete node also delete the selected one
   // useUpdateEffect(() => {
   //   if (
@@ -137,12 +158,17 @@ export default function BotFlowManagePage() {
   //   }
   // }, [nodes]);
 
+  useUpdateEffect(() => {
+    updateVariableInputNode();
+  }, [edges]);
+
   return (
     <div style={{ height: '76vh' }} ref={reactFlowWrapper}>
       <BotFlowMenu
         selectedNode={selectedNode}
         goBackMenu={goBackMenu}
         variableList={variableList}
+        syncVariable={updateVariableInputNode}
         updateVariableList={setVariableList}
       />
       <VariableMenu variableList={variableList} />

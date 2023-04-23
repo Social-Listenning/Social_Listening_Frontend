@@ -112,20 +112,39 @@
   }
 
   .flow-title {
-    font-size: var(--app-font-size);
+    font-size: calc(var(--app-font-size) + 2px);
+    color: var(--primary-color);
     justify-content: start;
     gap: 0.8rem;
   }
 
   .flow-body {
-    margin-top: 1.6rem;
+    margin-top: 1rem;
     padding: 0 0.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
 
     .flow-node-data {
       font-size: var(--app-font-size);
-      flex-direction: column;
-      align-items: start;
-      gap: 0.4rem;
+      font-weight: 500;
+
+      .sentiment-display {
+        display: flex;
+        flex-direction: column;
+
+        .negative {
+          color: var(--error-color);
+        }
+
+        .neutral {
+          color: var(--warning-color);
+        }
+
+        .positive {
+          color: var(--success-color);
+        }
+      }
     }
   }
 }

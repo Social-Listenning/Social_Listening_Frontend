@@ -13,7 +13,11 @@ export default function ReceiveNode(props) {
         <PlayCircleOutlined />
         Receive message
       </div>
-      <Handle type="source" position="right" />
+      <Handle
+        id="receive-output-handle"
+        type="source"
+        position="right"
+      />
       <CloseCircleOutlined
         className="node-close-btn"
         onClick={() => {
