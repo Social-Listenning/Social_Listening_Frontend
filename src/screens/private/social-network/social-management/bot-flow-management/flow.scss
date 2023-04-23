@@ -1,0 +1,204 @@
+.react-flow__node {
+  border-radius: 0.8rem;
+  -webkit-box-shadow: 0 2px 0.8rem 0 rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 0.8rem 0 rgba(0, 0, 0, 0.25);
+  padding: 1rem;
+  background-color: white;
+  min-width: 20rem;
+  max-width: 28rem;
+  min-height: 4rem;
+
+  &.selected:focus {
+    box-shadow: 0 0 0.8rem 0 var(--primary-color);
+  }
+
+  .react-flow__handle {
+    background: transparent;
+    width: 1.2rem;
+    height: 1.2rem;
+    border-width: 0.2rem;
+
+    &.react-flow__handle-right {
+      border-color: var(--success-color);
+      right: -0.8rem;
+    }
+
+    &.react-flow__handle-left {
+      border-color: var(--primary-color);
+      left: -0.8rem;
+    }
+  }
+}
+
+.node-wrapper {
+  flex-direction: column;
+  align-items: start;
+  gap: 0.8rem;
+
+  .msg-handle {
+    top: 2.4rem;
+  }
+
+  .node-title {
+    font-size: calc(var(--app-font-size) + 0.2rem);
+    gap: 0.8rem;
+    font-weight: 500;
+  }
+
+  --flexible-width: 26rem;
+  .your-msg-input {
+    min-width: var(--flexible-width);
+  }
+
+  .customer-resp-wrapper {
+    min-width: var(--flexible-width);
+    flex-direction: column;
+    align-items: unset;
+    gap: 0.8rem;
+
+    .customer-resp {
+      position: relative;
+
+      .resp-handle {
+        right: -1.8rem;
+      }
+    }
+  }
+
+  .node-close-btn {
+    position: absolute;
+    cursor: pointer;
+    top: 0.2rem;
+    right: 0.2rem;
+    color: #ff5656;
+
+    &:hover {
+      color: #ff0000;
+    }
+  }
+}
+
+.flow-menu {
+  position: absolute;
+  z-index: 10;
+  min-width: 30rem;
+  min-height: 100%;
+  right: 0;
+  top: 50%;
+  padding: 1rem;
+  transform: translateY(-50%);
+  background-color: var(--gray-layout-color);
+
+  .flow-item-wrapper {
+    flex-direction: column;
+    padding: 0;
+
+    .flow-item {
+      font-size: var(--app-font-size);
+      padding: 1.2rem;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      border-bottom: 1px solid #d3d7dd;
+      min-height: 6rem;
+      cursor: grab;
+
+      .anticon {
+        color: var(--primary-color);
+        font-size: 2.4rem;
+      }
+    }
+  }
+
+  .flow-title {
+    font-size: calc(var(--app-font-size) + 2px);
+    color: var(--primary-color);
+    justify-content: start;
+    gap: 0.8rem;
+  }
+
+  .flow-body {
+    margin-top: 1rem;
+    padding: 0 0.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+
+    .flow-node-data {
+      font-size: var(--app-font-size);
+      font-weight: 500;
+
+      .sentiment-display {
+        display: flex;
+        flex-direction: column;
+
+        .negative {
+          color: var(--error-color);
+        }
+
+        .neutral {
+          color: var(--warning-color);
+        }
+
+        .positive {
+          color: var(--success-color);
+        }
+      }
+    }
+  }
+}
+
+.new-var-option {
+  color: var(--primary-color);
+  font-weight: 500;
+  justify-content: start;
+  gap: 0.4rem;
+
+  .anticon {
+    font-size: 1.6rem;
+  }
+}
+
+.variable-menu {
+  position: absolute;
+  z-index: 10;
+  min-width: 20rem;
+  min-height: 28rem;
+  background-color: #fff;
+  border: 1px solid #dedede;
+
+  &.shrink {
+    min-height: 0;
+    height: 3.4rem;
+  }
+
+  .variable-title {
+    padding: 0.4rem;
+    font-size: var(--app-font-size);
+    background-color: #dadada;
+
+    .expand-btn {
+      position: absolute;
+      right: 0.8rem;
+      font-size: 2rem;
+      cursor: pointer;
+    }
+  }
+
+  .variable-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    max-height: 26rem;
+
+    .variable-item {
+      padding: 1.2rem;
+      border-bottom: 1px solid #e7e7e7;
+
+      &:first-child {
+        border-top: 1px solid #e7e7e7;
+      }
+    }
+  }
+}

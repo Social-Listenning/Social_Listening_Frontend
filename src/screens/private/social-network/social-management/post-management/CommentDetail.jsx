@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import { Switch, Tag, Input } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
-import { useGetMessageDetail } from '../../socialNetworkService';
+import { useMutation } from 'react-query';
+import { notifyService } from '../../../../../services/notifyService';
+import {
+  replyFbMessage,
+  saveMessageToSystem,
+  useGetMessageDetail,
+} from '../../socialNetworkService';
 import useToggle from '../../../../../components/hooks/useToggle';
 import BasicAvatar from '../../../../../components/shared/antd/BasicAvatar';
 import ToolTipWrapper from '../../../../../components/shared/antd/ToolTipWrapper';
@@ -16,8 +22,48 @@ export default function CommentDetail({ socialPage }) {
   const [rangeFilter, setRangeFilter] = useToggle(false);
   const [messageReplied, setMessageReplied] = useState(null); //the comments that user currently reply
   const [messageList, setMessageList] = useState([]);
-  const [comment, setComment] = useState(null); 
-  
+  const [comment, setComment] = useState(null);
+
+  const useReplyFbMessage = useMutation(replyFbMessage, {
+    onSuccess: (resp) => {
+      if (resp) {
+        useSaveMessageToSystem.mutate({
+          networkId: socialPage?.id,
+          message: comment,
+          sender: socialPage?.name,
+          createdAt: new Date(),
+          // type: `Agent#${data?.id}`,
+          // parent: messageDetail?.post,
+          // postId: messageDetail?.post?.postId,
+          commentId: messageReplied?.messageId,
+          parentId: messageReplied?.messageId,
+        });
+      }
+    },
+  });
+
+  const useSaveMessageToSystem = useMutation(saveMessageToSystem, {
+    onSuccess: (resp) => {
+      if (resp) {
+        setMessageList((old) => {
+          return [
+            ...old,
+            {
+              createdAt: new Date(),
+              // type: `Agent#${data?.id}`,
+              message: comment,
+            },
+          ];
+        });
+
+        notifyService.showSucsessMessage({
+          description: 'Reply successfully',
+        });
+        setComment('');
+      }
+    },
+  });
+
   // const { data, isFetching } = useGetMessageDetail(
   //   msgSelected?.id,
   //   getDetail.current
@@ -77,16 +123,16 @@ export default function CommentDetail({ socialPage }) {
                 </span>
               </Tag>
               {/* {item?.type === 'Comment' && (
-                    <ClassicDropdown
-                      clickTrigger
-                      list={listAction}
-                      handleItemClick={(e) => {
-                        setMessageReplied(item);
-                      }}
-                    >
-                      <IconMoreButton />
-                    </ClassicDropdown>
-                  )} */}
+                <ClassicDropdown
+                  clickTrigger
+                  list={listAction}
+                  handleItemClick={(e) => {
+                    setMessageReplied(item);
+                  }}
+                >
+                  <IconMoreButton />
+                </ClassicDropdown>
+              )} */}
             </div>
           );
         })}
@@ -152,12 +198,11 @@ export default function CommentDetail({ socialPage }) {
             icon={<SendOutlined className="respond-icon" />}
             type="link"
             onClick={() => {
-              // useReplyFbMessage.mutate({
-              //   cmtId: messageReplied?.messageId,
-              //   accessToken: socialPage?.accessToken,
-              //   message:
-              //     document.getElementById('respond-input')?.value,
-              // });
+              useReplyFbMessage.mutate({
+                cmtId: messageReplied?.messageId,
+                accessToken: socialPage?.accessToken,
+                message: comment,
+              });
             }}
           />
         </div>
