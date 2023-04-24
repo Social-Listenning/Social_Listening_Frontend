@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Input, Modal, Slider } from 'antd';
+import { Form, Input, Modal, Slider } from 'antd';
 import {
   NotificationOutlined,
   ExperimentOutlined,
@@ -14,6 +14,7 @@ import useUpdateEffect from '../../../../../components/hooks/useUpdateEffect';
 import ClassicSelect from '../../../../../components/shared/antd/Select/Classic';
 import SaveButton from '../../../../../components/shared/element/Button/SaveButton';
 import Title from '../../../../../components/shared/element/Title';
+import ToolTipWrapper from '../../../../../components/shared/antd/ToolTipWrapper';
 
 const nodeTypes = [
   {
@@ -51,31 +52,54 @@ export default function BotFlowMenu(props) {
     (item) => item.value === selectedNode?.type
   )[0]?.label;
 
-  // #region receive message
-  const addNewId = crypto.randomUUID();
-  const [varReceiveOutput, setVarReceiveOutput] = useState(
-    selectedNode?.data?.output?.variable
-  );
-  const [openAddNew, setOpenAddNew] = useToggle(false);
-  const handleSelectReceiveOutput = (e) => {
-    if (e === addNewId) {
-      setVarReceiveOutput(null);
-      setOpenAddNew(true);
-    } else {
-      setVarReceiveOutput(e);
-      selectedNode.data.syncData(selectedNode.id, {
-        output: { variable: e },
+  const updateUsedVariable = (label) => {
+    updateVariableList((vars) => {
+      vars.map((item) => {
+        // change last variable (if had) to unused
+        if (item.label === selectedNode?.data?.output?.variable) {
+          item.used = false;
+        }
+        // change current variable to used
+        if (item?.label === label) {
+          item.used = true;
+        }
+        return item;
       });
-      syncVariable();
-    }
+      return vars;
+    });
   };
+
+  // #region add new variable
+  const [openAddNew, setOpenAddNew] = useToggle(false);
+  const [addNewVariableForm] = Form.useForm();
   useUpdateEffect(() => {
     if (openAddNew) {
       document.getElementById('add-new-attribute')?.focus();
     }
   }, [openAddNew]);
   const closeAddNewModal = () => {
+    addNewVariableForm.resetFields();
     setOpenAddNew(false);
+  };
+  // #endregion
+
+  // #region receive message
+  const addNewId = crypto.randomUUID();
+  const [varReceiveOutput, setVarReceiveOutput] = useState(
+    selectedNode?.data?.output?.variable
+  );
+  const handleSelectReceiveOutput = (e) => {
+    if (e === addNewId) {
+      setVarReceiveOutput(null);
+      setOpenAddNew(true);
+    } else {
+      setVarReceiveOutput(e);
+      updateUsedVariable(e);
+      selectedNode.data.syncData(selectedNode.id, {
+        output: { variable: e },
+      });
+      syncVariable();
+    }
   };
   // #endregion
 
@@ -109,6 +133,7 @@ export default function BotFlowMenu(props) {
       setOpenAddNew(true);
     } else {
       setVarSentimentOutput(e);
+      updateUsedVariable(e);
       selectedNode.data.syncData(selectedNode.id, {
         output: { variable: e },
       });
@@ -156,9 +181,14 @@ export default function BotFlowMenu(props) {
                       ),
                       value: addNewId,
                     },
-                    ...variableList.map((item) => {
-                      return { label: item, value: item };
-                    }),
+                    ...variableList
+                      .filter((item) => !item?.used)
+                      .map((item) => {
+                        return {
+                          label: item?.label,
+                          value: item?.label,
+                        };
+                      }),
                   ]}
                   handleSelect={handleSelectReceiveOutput}
                 />
@@ -181,8 +211,7 @@ export default function BotFlowMenu(props) {
                       Negative: 0 - {sentiment[0]}
                     </span>
                     <span className="neutral">
-                      Neutral:
-                      {sentiment[0]} - {sentiment[1]}
+                      Neutral: {sentiment[0]} - {sentiment[1]}
                     </span>
                     <span className="positive">
                       Positive: {sentiment[1]} - 1
@@ -205,9 +234,14 @@ export default function BotFlowMenu(props) {
                         ),
                         value: addNewId,
                       },
-                      ...variableList.map((item) => {
-                        return { label: item, value: item };
-                      }),
+                      ...variableList
+                        .filter((item) => !item?.used)
+                        .map((item) => {
+                          return {
+                            label: item?.label,
+                            value: item?.label,
+                          };
+                        }),
                     ]}
                   />
                 </div>
@@ -218,25 +252,7 @@ export default function BotFlowMenu(props) {
               <>
                 <div className="flow-node-data">
                   <span>Intent</span>
-                  <ClassicSelect
-                    filterLabel
-                    placeHolder={null}
-                    // value={varReceiveOutput}
-                    // options={[
-                    //   {
-                    //     label: (
-                    //       <span className="new-var-option flex-center">
-                    //         <PlusOutlined /> Add new variable
-                    //       </span>
-                    //     ),
-                    //     value: addNewId,
-                    //   },
-                    //   ...variableList.map((item) => {
-                    //     return { label: item, value: item };
-                    //   }),
-                    // ]}
-                    // handleSelect={handleSelectReceiveOutput}
-                  />
+                  <ClassicSelect filterLabel placeHolder={null} />
                 </div>
                 <div className="flow-node-data">
                   <span>Response option</span>
@@ -261,21 +277,64 @@ export default function BotFlowMenu(props) {
               footer={
                 <SaveButton
                   onClick={() => {
-                    updateVariableList((old) =>
-                      old.concat(
-                        document.getElementById('add-new-attribute')
-                          ?.value
-                      )
-                    );
-                    closeAddNewModal();
+                    addNewVariableForm.submit();
                   }}
                 />
               }
               centered
               destroyOnClose
             >
-              <Title>Add new attribute</Title>
-              <Input id="add-new-attribute" />
+              <Title>Add new variable</Title>
+              <Form
+                name="new-variable-form"
+                className="new-variable-form"
+                layout="vertical"
+                autoComplete="off"
+                size="large"
+                form={addNewVariableForm}
+                onFinish={(model) => {
+                  updateVariableList((old) =>
+                    old.concat({
+                      label: model?.variable,
+                      used: false,
+                    })
+                  );
+                  closeAddNewModal();
+                }}
+              >
+                <ToolTipWrapper
+                  tooltip="Only unique variable allowed"
+                  placement="bottom"
+                >
+                  <Form.Item
+                    name="variable"
+                    rules={[
+                      {
+                        required: true,
+                        validator: (_, value) => {
+                          if (!value) {
+                            return Promise.reject(
+                              'Variable is required'
+                            );
+                          } else {
+                            if (
+                              variableList.filter(
+                                (item) => item?.label === value
+                              )?.length
+                            ) {
+                              return Promise.reject(
+                                'Variable must be unique'
+                              );
+                            } else return Promise.resolve();
+                          }
+                        },
+                      },
+                    ]}
+                  >
+                    <Input id="add-new-attribute" />
+                  </Form.Item>
+                </ToolTipWrapper>
+              </Form>
             </Modal>
           )}
         </>

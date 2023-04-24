@@ -16,7 +16,8 @@ export default function NotifyAgent(props) {
       <Handle id="resp-input-handle" type="target" position="left" />
       <CloseCircleOutlined
         className="node-close-btn"
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
           data.deleteNode(id);
         }}
       />

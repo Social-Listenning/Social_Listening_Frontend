@@ -20,7 +20,8 @@ export default function ReceiveNode(props) {
       />
       <CloseCircleOutlined
         className="node-close-btn"
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
           data.deleteNode(id);
         }}
       />

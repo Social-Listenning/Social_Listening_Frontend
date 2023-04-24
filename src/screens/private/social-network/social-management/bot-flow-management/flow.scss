@@ -132,6 +132,7 @@
       .sentiment-display {
         display: flex;
         flex-direction: column;
+        font-weight: 400;
 
         .negative {
           color: var(--error-color);
@@ -158,6 +159,10 @@
   .anticon {
     font-size: 1.6rem;
   }
+}
+
+.new-variable-form {
+  margin-top: 1.6rem;
 }
 
 .variable-menu {
