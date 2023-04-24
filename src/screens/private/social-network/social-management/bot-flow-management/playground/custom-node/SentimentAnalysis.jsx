@@ -4,7 +4,7 @@ import {
   ExperimentOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons';
-import useEffectOnce from '../../../../../../components/hooks/useEffectOnce';
+import useEffectOnce from '../../../../../../../components/hooks/useEffectOnce';
 
 const listSentiment = ['Negative', 'Neutral', 'Positive'];
 

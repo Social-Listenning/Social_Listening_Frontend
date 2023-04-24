@@ -1,3 +1,11 @@
+:root {
+  --menu-width: 26rem;
+}
+
+.react-flow-container {
+  height: var(--split-screen-height);
+}
+
 .react-flow__node {
   border-radius: 0.8rem;
   -webkit-box-shadow: 0 2px 0.8rem 0 rgba(0, 0, 0, 0.25);
@@ -78,20 +86,40 @@
   }
 }
 
+.flow-nav {
+  justify-content: space-between;
+  background-color: #ebebeb;
+  position: absolute;
+  width: 100%;
+  z-index: 11;
+  padding: 1.2rem 2rem;
+
+  .flow-name {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    font-weight: 500;
+  }
+
+  .flow-utils {
+    gap: 0.8rem;
+  }
+}
+
 .flow-menu {
   position: absolute;
   z-index: 10;
-  min-width: 30rem;
-  min-height: 100%;
+  min-width: var(--menu-width);
+  min-height: 34rem;
   right: 0;
-  top: 50%;
+  top: 8rem;
   padding: 1rem;
-  transform: translateY(-50%);
   background-color: var(--gray-layout-color);
+  border: 1px solid #dedede;
 
   .flow-item-wrapper {
     flex-direction: column;
     padding: 0;
+    margin: 0;
 
     .flow-item {
       font-size: var(--app-font-size);
@@ -150,27 +178,14 @@
   }
 }
 
-.new-var-option {
-  color: var(--primary-color);
-  font-weight: 500;
-  justify-content: start;
-  gap: 0.4rem;
-
-  .anticon {
-    font-size: 1.6rem;
-  }
-}
-
-.new-variable-form {
-  margin-top: 1.6rem;
-}
-
 .variable-menu {
   position: absolute;
   z-index: 10;
-  min-width: 20rem;
+  min-width: var(--menu-width);
   min-height: 28rem;
   background-color: #fff;
+  top: 44rem;
+  right: 0;
   border: 1px solid #dedede;
 
   &.shrink {
@@ -181,7 +196,7 @@
   .variable-title {
     padding: 0.4rem;
     font-size: var(--app-font-size);
-    background-color: #dadada;
+    background-color: var(--gray-layout-color);
 
     .expand-btn {
       position: absolute;
@@ -205,5 +220,28 @@
         border-top: 1px solid #e7e7e7;
       }
     }
+  }
+}
+
+.new-var-option {
+  color: var(--primary-color);
+  font-weight: 500;
+  justify-content: start;
+  gap: 0.4rem;
+
+  .anticon {
+    font-size: 1.6rem;
+  }
+}
+
+.new-variable-form {
+  margin-top: 1.6rem;
+}
+
+.flow-spinner {
+  max-height: unset !important;
+
+  .anticon {
+    scale: 6;
   }
 }

@@ -8,13 +8,13 @@ import {
   LeftOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import useToggle from '../../../../../components/hooks/useToggle';
-import useEffectOnce from '../../../../../components/hooks/useEffectOnce';
-import useUpdateEffect from '../../../../../components/hooks/useUpdateEffect';
-import ClassicSelect from '../../../../../components/shared/antd/Select/Classic';
-import SaveButton from '../../../../../components/shared/element/Button/SaveButton';
-import Title from '../../../../../components/shared/element/Title';
-import ToolTipWrapper from '../../../../../components/shared/antd/ToolTipWrapper';
+import useToggle from '../../../../../../components/hooks/useToggle';
+import useEffectOnce from '../../../../../../components/hooks/useEffectOnce';
+import useUpdateEffect from '../../../../../../components/hooks/useUpdateEffect';
+import ClassicSelect from '../../../../../../components/shared/antd/Select/Classic';
+import SaveButton from '../../../../../../components/shared/element/Button/SaveButton';
+import Title from '../../../../../../components/shared/element/Title';
+import ToolTipWrapper from '../../../../../../components/shared/antd/ToolTipWrapper';
 
 const nodeTypes = [
   {
@@ -68,6 +68,21 @@ export default function BotFlowMenu(props) {
       return vars;
     });
   };
+
+  useUpdateEffect(() => {
+    if (selectedNode?.type === 'Receive') {
+      setVarReceiveOutput(selectedNode?.data?.output?.variable);
+    } else if (selectedNode?.type === 'SentimentAnalysis') {
+      setSentiment(
+        selectedNode?.data?.sentiment?.neutral?.split(' - ') ?? [
+          0.3, 0.7,
+        ]
+      );
+      setVarSentimentOutput(selectedNode?.data?.output?.variable);
+    } else if (selectedNode?.type === 'Respond') {
+      setRespond(selectedNode?.data?.respond);
+    }
+  }, [selectedNode]);
 
   // #region add new variable
   const [openAddNew, setOpenAddNew] = useToggle(false);
@@ -142,22 +157,36 @@ export default function BotFlowMenu(props) {
   };
   // #endregion
 
+  // #region respond
+  const [respond, setRespond] = useState(null);
+  const handleRepond = (e) => {
+    setRespond(e);
+    selectedNode?.data?.syncData(selectedNode?.id, {
+      respond: e,
+    });
+  };
+  // #endregion
+
   return (
     <div className="flow-menu">
       {!selectedNode ? (
-        <ul className="flow-item-wrapper flex-center">
-          {nodeTypes?.map((item, index) => (
-            <li
-              key={index}
-              className="flow-item"
-              onDragStart={(event) => onDragStart(event, item.value)}
-              draggable
-            >
-              {item.icon}
-              <span>{item.label}</span>
-            </li>
-          ))}
-        </ul>
+        <>
+          <ul className="flow-item-wrapper flex-center">
+            {nodeTypes?.map((item, index) => (
+              <li
+                key={index}
+                className="flow-item"
+                onDragStart={(event) =>
+                  onDragStart(event, item.value)
+                }
+                draggable
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </li>
+            ))}
+          </ul>
+        </>
       ) : (
         <>
           <div className="flow-title flex-center">
@@ -258,11 +287,10 @@ export default function BotFlowMenu(props) {
                   <span>Response option</span>
                   <Input.TextArea
                     allowClear
+                    value={respond}
                     autoSize={{ minRows: 5, maxRows: 5 }}
                     onChange={(e) => {
-                      selectedNode?.data?.syncData(selectedNode?.id, {
-                        response: e.currentTarget.value,
-                      });
+                      handleRepond(e.currentTarget.value);
                     }}
                   />
                 </div>
