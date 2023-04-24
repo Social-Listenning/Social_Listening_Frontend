@@ -39,6 +39,13 @@ export const menuSidebar = [
     label: 'Social Network',
     icon: <GlobalOutlined />,
     role: 'OWNER, MANAGER, SUPPORTER',
+    children: [
+      {
+        key: 'social-network/pages-management',
+        label: 'Manage Pages',
+        permission: 'connect-social-network',
+      },
+    ],
   },
   {
     key: 'setting',

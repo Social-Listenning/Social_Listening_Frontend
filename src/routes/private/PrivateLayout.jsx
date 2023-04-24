@@ -59,13 +59,16 @@ export default function PrivateLayout(props) {
       setAvailableMenu([
         ...availableMenu?.map((item) => {
           if (item.key === 'social-network') {
-            item['children'] = socialGroups?.map((sg) => {
-              return {
-                key: `social-network/${sg?.name}`,
-                label: sg?.name,
-                id: sg?.id,
-              };
-            });
+            item.children = [
+              ...item.children,
+              ...socialGroups?.map((sg) => {
+                return {
+                  key: `social-network/${sg?.name}`,
+                  label: sg?.name,
+                  id: sg?.id,
+                };
+              }),
+            ];
           }
           return item;
         }),
@@ -191,7 +194,7 @@ export default function PrivateLayout(props) {
   // const { data: settingData } = useGetAllSetting(getSetting.current);
   // getSetting.current = false;
   // localStorage.setItem('allSetting', JSON.stringify(settingData));
-  
+
   // #endregion
 
   async function handleMenuHeader(e) {

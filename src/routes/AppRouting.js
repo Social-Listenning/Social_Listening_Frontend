@@ -95,7 +95,7 @@ export const privateRoutes = [
     permissionRequired: 'get-role',
   },
   {
-    path: 'social-network',
+    path: 'social-network/pages-management',
     element: <SocialNetworkPage />,
     permissionRequired: 'connect-social-network',
   },

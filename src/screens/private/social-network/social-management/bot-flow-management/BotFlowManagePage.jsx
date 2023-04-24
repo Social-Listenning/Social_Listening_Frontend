@@ -28,6 +28,7 @@ const nodeTypes = {
 export default function BotFlowManagePage() {
   const reactFlowWrapper = useRef(null);
   const edgeUpdateSuccessful = useRef(true);
+  const isDeleteNode = useRef(false);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
@@ -57,6 +58,7 @@ export default function BotFlowManagePage() {
   }, []);
 
   const deleteNodeById = (id) => {
+    isDeleteNode.current = true;
     setNodes((nds) => nds.filter((node) => node.id !== id));
     setEdges((eds) =>
       eds.filter((edge) => edge.target !== id || edge.source === id)
@@ -149,16 +151,16 @@ export default function BotFlowManagePage() {
     });
   };
 
-  // delete node also delete the selected one
-  // useUpdateEffect(() => {
-  //   if (
-  //     !nodes.filter((nds) => selectedNode?.id === nds?.id)?.length
-  //   ) {
-  //     goBackMenu();
-  //   }
-  // }, [nodes]);
+  useUpdateEffect(() => {
+    // delete node also delete the selected one
+    if (isDeleteNode.current) {
+      goBackMenu();
+    }
+    isDeleteNode.current = false;
+  }, [nodes]);
 
   useUpdateEffect(() => {
+    // update variable for input handle when connected 2 nodes
     updateVariableInputNode();
   }, [edges]);
 
@@ -186,12 +188,12 @@ export default function BotFlowManagePage() {
         onEdgeUpdateEnd={onEdgeUpdateEnd}
         onNodeClick={(e) => {
           const id = e.currentTarget.dataset.id;
-          setSelectedNode(nodes.filter((nds) => nds.id === id)[0]);
           e.currentTarget.onkeydown = function (x) {
             if (x.key == 'Delete') {
               deleteNodeById(id);
             }
           };
+          setSelectedNode(nodes.filter((nds) => nds.id === id)[0]);
         }}
         onEdgeClick={(e) => {
           let id = e.currentTarget.dataset.testid;

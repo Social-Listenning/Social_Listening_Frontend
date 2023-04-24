@@ -48,7 +48,8 @@ export default function SentimentAnalysis(props) {
       </div>
       <CloseCircleOutlined
         className="node-close-btn"
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
           data.deleteNode(id);
         }}
       />
