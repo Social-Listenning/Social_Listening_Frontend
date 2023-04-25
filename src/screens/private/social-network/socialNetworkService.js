@@ -126,3 +126,27 @@ export const useGetSocialPost = (id, enabled = true) => {
     enabled: enabled,
   });
 };
+
+export const createBotFlow = async (data) => {
+  const resp = await apiService.post(
+    `${environment.workflow}/create`,
+    data
+  );
+  return resp?.result;
+};
+
+export const updateBotFlow = async (data) => {
+  const resp = await apiService.put(
+    `${environment.workflow}/${data?.id}/update`,
+    data?.body
+  );
+  return resp?.result;
+};
+
+export const changeStatusBotFlow = async (data) => {
+  const resp = await apiService.put(
+    `${environment.workflow}/${data?.id}/active`,
+    data?.body
+  );
+  return resp?.result;
+};

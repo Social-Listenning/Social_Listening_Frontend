@@ -48,6 +48,8 @@ export default function SettingPage() {
       title: 'Value',
       dataIndex: 'value',
       width: 500,
+      sort: false,
+      disableFilter: true,
       render: (text, record) => {
         function handleSave() {
           if (

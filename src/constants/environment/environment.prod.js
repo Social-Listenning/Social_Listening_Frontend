@@ -17,6 +17,7 @@ const environment = {
   socialPost: `${baseUrl}/social-post`,
   setting: `${baseUrl}/setting`,
   socialTabSetting: `${baseUrl}/socialTabSeting`,
+  workflow: `${baseUrl}/workflow`,
 };
 
 export const gender = [

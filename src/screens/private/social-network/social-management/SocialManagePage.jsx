@@ -62,7 +62,12 @@ export default function SocialMangePage() {
     {
       key: 4,
       label: formatTab(<RobotOutlined />, 'Design Bot Flow'),
-      children: <BotFlowManagePage />,
+      children: (
+        <BotFlowManagePage
+          pageId={location.state?.socialId}
+          socialPage={location.state?.socialPage}
+        />
+      ),
     },
     {
       key: 9,

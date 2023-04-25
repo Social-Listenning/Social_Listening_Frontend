@@ -25,6 +25,7 @@ export default function AdminTable(props) {
     dumpImportData = [],
     actionList = defaultAction,
     apiGetData,
+    apiGetBody,
     apiDeleteOne,
     apiDeleteMultiple,
     apiImport,
@@ -129,9 +130,10 @@ export default function AdminTable(props) {
           .post(apiGetData, {
             orders: sorter,
             filter: filterType,
-            size: 25,
+            size: 10000,
             pageNumber: 1,
             totalElement: 10000,
+            ...apiGetBody,
           })
           .then((resp) => {
             if (resp?.result?.data) {
@@ -173,6 +175,9 @@ export default function AdminTable(props) {
       try {
         apiService.post(`${apiDeleteOne}/${key}`).then((resp) => {
           if (resp?.result) {
+            notifyService.showSucsessMessage({
+              description: 'Delete successfully',
+            });
             refreshData();
           }
         });
@@ -209,7 +214,7 @@ export default function AdminTable(props) {
   const { data } = useGetDecodedToken();
   let actionCol = [];
   let formatActionList = actionList;
-  
+
   // edit permission
   if (!data?.permissions?.includes(permission?.edit)) {
     formatActionList = formatActionList?.filter(
