@@ -1,13 +1,35 @@
 import { Form, Input } from 'antd';
+import { useMutation } from 'react-query';
+import { createBotFlow } from '../../../socialNetworkService';
+import { notifyService } from '../../../../../../services/notifyService';
 import AddEditWrapper from '../../../../../../components/shared/antd/Table/Drawer/AddEditWrapper';
 
 export default function AddEditBotFlow(props) {
-  const { open, onClose, selectedData, action } = props;
+  const { open, onClose, selectedData, action, pageId } = props;
 
   const [addEditWorkflowForm] = Form.useForm();
+  const useCreateBotFlow = useMutation(createBotFlow, {
+    onSuccess: (resp) => {
+      if (resp) {
+        notifyService.showSucsessMessage({
+          description: 'Create bot flow successfully',
+        });
+        closeDrawer();
+      }
+    },
+  });
 
-  async function handleSubmit(value) {
+  function handleSubmit(value) {
     if (action === 'Add') {
+      useCreateBotFlow.mutate({
+        name: value?.name,
+        tabId: pageId,
+        data: {
+          nodes: [],
+          edges: [],
+          variables: [],
+        },
+      });
     } else if (action === 'Edit') {
     }
   }
@@ -22,6 +44,7 @@ export default function AddEditBotFlow(props) {
       open={open}
       onClose={closeDrawer}
       form={addEditWorkflowForm}
+      loading={useCreateBotFlow.isLoading}
     >
       <Form
         form={addEditWorkflowForm}

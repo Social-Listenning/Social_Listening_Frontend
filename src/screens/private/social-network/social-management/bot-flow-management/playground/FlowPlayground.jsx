@@ -8,6 +8,9 @@ import ReactFlow, {
   updateEdge,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
+import { useMutation } from 'react-query';
+import { updateBotFlow } from '../../../socialNetworkService';
+import { notifyService } from '../../../../../../services/notifyService';
 import ReceiveNode from './custom-node/ReceiveNode';
 import RespondNode from './custom-node/RespondNode';
 import SentimentAnalysis from './custom-node/SentimentAnalysis';
@@ -24,18 +27,31 @@ const nodeTypes = {
   NotifyAgent: NotifyAgent,
 };
 
-export default function FlowPlayground({
-  flowDetail,
-  setFlowDetail,
-}) {
+export default function FlowPlayground(props) {
+  const { pageId, flowDetail, setFlowDetail } = props;
+  const extendData = useRef({
+    nodes: [],
+    edges: [],
+    variables: [],
+  });
+  if (flowDetail?.extendData) {
+    extendData.current = JSON.parse(flowDetail.extendData);
+  };
+  console.log(extendData.current.nodes)
   const reactFlowWrapper = useRef(null);
   const edgeUpdateSuccessful = useRef(true);
   const isDeleteNode = useRef(false);
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState(
+    extendData.current?.nodes
+  );
+  const [edges, setEdges, onEdgesChange] = useEdgesState(
+    extendData.current?.edges
+  );
+  const [variableList, setVariableList] = useState(
+    extendData.current?.variables
+  );
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [selectedNode, setSelectedNode] = useState(null);
-  const [variableList, setVariableList] = useState([]);
 
   const onConnect = useCallback(
     (params) => setEdges((eds) => addEdge(params, eds)),
@@ -173,9 +189,38 @@ export default function FlowPlayground({
     setFlowDetail(null);
   };
 
+  const useUpdateBotFlow = useMutation(updateBotFlow, {
+    onSuccess: (resp) => {
+      if (resp) {
+        notifyService.showSucsessMessage({
+          description: 'Update flow successfully',
+        });
+      }
+    },
+  });
+  const updateBotflow = () => {
+    useUpdateBotFlow.mutate({
+      id: flowDetail?.id,
+      body: {
+        name: flowDetail?.name,
+        tabId: pageId,
+        data: {
+          nodes: nodes,
+          edges: edges,
+          variables: variableList,
+        },
+      },
+    });
+  };
+
   return (
     <div className="react-flow-container" ref={reactFlowWrapper}>
-      <WorkflowNav flowDetail={flowDetail} exit={goBackToTable} />
+      <WorkflowNav
+        flowDetail={flowDetail}
+        updateFlow={updateBotflow}
+        loadingUpdate={useUpdateBotFlow.isLoading}
+        exit={goBackToTable}
+      />
       <BotFlowMenu
         selectedNode={selectedNode}
         goBackMenu={goBackMenu}
@@ -187,7 +232,14 @@ export default function FlowPlayground({
       <ReactFlow
         snapToGrid
         fitView
-        nodes={nodes}
+        nodes={nodes?.map((node) => {
+          node.data = {
+            ...node.data,
+            syncData: syncDataFromNode,
+            deleteNode: deleteNodeById,
+          };
+          return node;
+        })}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
@@ -199,7 +251,7 @@ export default function FlowPlayground({
         onNodeClick={(e) => {
           const id = e.currentTarget.dataset.id;
           e.currentTarget.onkeydown = function (x) {
-            if (x.key == 'Delete') {
+            if (x.key === 'Delete') {
               deleteNodeById(id);
             }
           };
@@ -211,7 +263,7 @@ export default function FlowPlayground({
             id = id.substring(9);
           }
           e.currentTarget.onkeydown = function (x) {
-            if (x.key == 'Delete') {
+            if (x.key === 'Delete') {
               deleteEdgeById(id);
             }
           };

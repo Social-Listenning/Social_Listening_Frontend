@@ -239,13 +239,11 @@ export default function UserManagement(props) {
       label: 'Deactivate',
     },
   ];
-
   if (!userData?.permissions?.includes('activate-user')) {
     additionalList = additionalList?.filter(
       (item) => item?.label !== 'Activate'
     );
   }
-
   if (!userData?.permissions?.includes('deactivate-user')) {
     additionalList = additionalList?.filter(
       (item) => item?.label !== 'Deactivate'
