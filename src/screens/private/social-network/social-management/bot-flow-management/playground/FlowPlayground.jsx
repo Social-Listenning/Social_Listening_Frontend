@@ -28,7 +28,7 @@ const nodeTypes = {
 };
 
 export default function FlowPlayground(props) {
-  const { pageId, flowDetail, setFlowDetail } = props;
+  const { pageId, flowDetail, getCurrentFlow } = props;
   const extendData = useRef({
     nodes: [],
     edges: [],
@@ -36,8 +36,8 @@ export default function FlowPlayground(props) {
   });
   if (flowDetail?.extendData) {
     extendData.current = JSON.parse(flowDetail.extendData);
-  };
-  console.log(extendData.current.nodes)
+  }
+  console.log(extendData.current);
   const reactFlowWrapper = useRef(null);
   const edgeUpdateSuccessful = useRef(true);
   const isDeleteNode = useRef(false);
@@ -186,7 +186,7 @@ export default function FlowPlayground(props) {
   }, [edges]);
 
   const goBackToTable = () => {
-    setFlowDetail(null);
+    getCurrentFlow(null);
   };
 
   const useUpdateBotFlow = useMutation(updateBotFlow, {
@@ -207,7 +207,9 @@ export default function FlowPlayground(props) {
         data: {
           nodes: nodes,
           edges: edges,
-          variables: variableList,
+          variables: nodes
+            ?.filter((nds) => nds.data?.output?.variable)
+            .map((nds) => nds.data?.output?.variable),
         },
       },
     });
@@ -225,7 +227,6 @@ export default function FlowPlayground(props) {
         selectedNode={selectedNode}
         goBackMenu={goBackMenu}
         variableList={variableList}
-        syncVariable={updateVariableInputNode}
         updateVariableList={setVariableList}
       />
       <VariableMenu variableList={variableList} />

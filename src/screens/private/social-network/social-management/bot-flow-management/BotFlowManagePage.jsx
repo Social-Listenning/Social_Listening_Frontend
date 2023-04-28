@@ -9,12 +9,12 @@ export default function BotFlowManagePage({ pageId, socialPage }) {
   return (
     <>
       {!flowDetail ? (
-        <TableBotFlow pageId={pageId} setFlowDetail={setFlowDetail} />
+        <TableBotFlow pageId={pageId} getCurrentFlow={setFlowDetail} />
       ) : (
         <FlowPlayground
           pageId={pageId}
           flowDetail={flowDetail}
-          setFlowDetail={setFlowDetail}
+          getCurrentFlow={setFlowDetail}
         />
       )}
     </>

@@ -1,11 +1,12 @@
 import { useState, useRef } from 'react';
-import { Badge, Layout, Menu, Tabs } from 'antd';
+import { Badge, Layout, Menu, Tabs, Button } from 'antd';
 import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   DownOutlined,
   CheckCircleOutlined,
   BellOutlined,
+  MessageOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from 'react-query';
@@ -358,6 +359,13 @@ export default function PrivateLayout(props) {
           }}
         />
       )}
+
+      <div className="user-util">
+        <Button shape="circle" type="primary">
+          <MessageOutlined />
+        </Button>
+        {/* <iframe class="chat-iframe" /> */}
+      </div>
     </Layout>
   );
 }

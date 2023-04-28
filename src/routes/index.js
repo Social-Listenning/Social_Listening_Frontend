@@ -28,6 +28,7 @@ export default function AppRoutes() {
                     <PermissionRoute
                       permissionRequired={route.permissionRequired}
                       element={route.element}
+                      noLayout={route.noLayout}
                     />
                   }
                 />

@@ -10,7 +10,7 @@ import BooleanRow from '../../../../../../components/shared/element/BooleanRow';
 import DateTimeFormat from '../../../../../../components/shared/element/DateTimeFormat';
 import AddEditBotFlow from './AddEditBotFlow';
 
-export default function TableBotFlow({ pageId, setFlowDetail }) {
+export default function TableBotFlow({ pageId, getCurrentFlow }) {
   const currentAction = useRef(null);
   const queryClient = useQueryClient();
   const userData = queryClient.getQueryData('userData');
@@ -26,7 +26,7 @@ export default function TableBotFlow({ pageId, setFlowDetail }) {
           <b
             className="pointer"
             onClick={() => {
-              setFlowDetail(value);
+              getCurrentFlow(value);
             }}
           >
             {record}
@@ -128,7 +128,12 @@ export default function TableBotFlow({ pageId, setFlowDetail }) {
       keyProps="id"
       columns={columns}
       permission={permission}
-      addEditComponent={<AddEditBotFlow pageId={pageId} />}
+      addEditComponent={
+        <AddEditBotFlow
+          pageId={pageId}
+          getCurrentFlow={getCurrentFlow}
+        />
+      }
       actionList={[...defaultAction, ...additionalList]}
       handleActionClick={handleActionClick}
     />

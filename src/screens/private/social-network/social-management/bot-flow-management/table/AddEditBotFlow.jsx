@@ -5,7 +5,14 @@ import { notifyService } from '../../../../../../services/notifyService';
 import AddEditWrapper from '../../../../../../components/shared/antd/Table/Drawer/AddEditWrapper';
 
 export default function AddEditBotFlow(props) {
-  const { open, onClose, selectedData, action, pageId } = props;
+  const {
+    open,
+    onClose,
+    selectedData,
+    action,
+    pageId,
+    getCurrentFlow,
+  } = props;
 
   const [addEditWorkflowForm] = Form.useForm();
   const useCreateBotFlow = useMutation(createBotFlow, {
@@ -15,6 +22,7 @@ export default function AddEditBotFlow(props) {
           description: 'Create bot flow successfully',
         });
         closeDrawer();
+        getCurrentFlow(resp);
       }
     },
   });
