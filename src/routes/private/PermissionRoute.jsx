@@ -1,7 +1,12 @@
 import { Navigate } from 'react-router-dom';
 import { useGetDecodedToken } from './privateService';
+import PrivateLayout from './PrivateLayout';
 
-export default function PermissionRoute({ permissionRequired, element }) {
+export default function PermissionRoute({
+  permissionRequired,
+  element,
+  noLayout = false,
+}) {
   const { data } = useGetDecodedToken();
 
   if (permissionRequired) {
@@ -12,5 +17,9 @@ export default function PermissionRoute({ permissionRequired, element }) {
     }
   }
 
-  return <>{element}</>;
+  if (noLayout) {
+    return <>{element}</>;
+  }
+
+  return <PrivateLayout>{element}</PrivateLayout>;
 }

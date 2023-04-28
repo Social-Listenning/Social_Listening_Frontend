@@ -29,7 +29,7 @@ export default function VariableMenu(props) {
         <ul className="variable-list">
           {variableList?.map((item, index) => (
             <li key={index} className="variable-item">
-              {item?.label}
+              {item}
             </li>
           ))}
         </ul>

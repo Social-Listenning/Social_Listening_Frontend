@@ -43,7 +43,6 @@ const onDragStart = (event, nodeType) => {
 export default function BotFlowMenu(props) {
   const {
     selectedNode,
-    syncVariable,
     goBackMenu,
     variableList = [],
     updateVariableList,
@@ -71,20 +70,19 @@ export default function BotFlowMenu(props) {
 
   useUpdateEffect(() => {
     if (selectedNode?.type === 'Receive') {
-      setVarReceiveOutput(selectedNode?.data?.output?.variable);
     } else if (selectedNode?.type === 'SentimentAnalysis') {
       setSentiment(
         selectedNode?.data?.sentiment?.neutral?.split(' - ') ?? [
           0.3, 0.7,
         ]
       );
-      setVarSentimentOutput(selectedNode?.data?.output?.variable);
     } else if (selectedNode?.type === 'Respond') {
       setRespond(selectedNode?.data?.respond);
     }
   }, [selectedNode]);
 
   // #region add new variable
+  const addNewId = crypto.randomUUID();
   const [openAddNew, setOpenAddNew] = useToggle(false);
   const [addNewVariableForm] = Form.useForm();
   useUpdateEffect(() => {
@@ -98,31 +96,8 @@ export default function BotFlowMenu(props) {
   };
   // #endregion
 
-  // #region receive message
-  const addNewId = crypto.randomUUID();
-  const [varReceiveOutput, setVarReceiveOutput] = useState(
-    selectedNode?.data?.output?.variable
-  );
-  const handleSelectReceiveOutput = (e) => {
-    if (e === addNewId) {
-      setVarReceiveOutput(null);
-      setOpenAddNew(true);
-    } else {
-      setVarReceiveOutput(e);
-      updateUsedVariable(e);
-      selectedNode.data.syncData(selectedNode.id, {
-        output: { variable: e },
-      });
-      syncVariable();
-    }
-  };
-  // #endregion
-
   // #region sentiment analysis
   const [sentiment, setSentiment] = useState([0.3, 0.7]);
-  const [varSentimentOutput, setVarSentimentOutput] = useState(
-    selectedNode?.data?.output?.variable
-  );
   useEffectOnce(() => {
     selectedNode?.data?.syncData(selectedNode?.id, {
       sentiment: {
@@ -141,19 +116,6 @@ export default function BotFlowMenu(props) {
         positive: `${value[1]} - 1`,
       },
     });
-  };
-  const handleSelectSentimentOutput = (e) => {
-    if (e === addNewId) {
-      setVarSentimentOutput(null);
-      setOpenAddNew(true);
-    } else {
-      setVarSentimentOutput(e);
-      updateUsedVariable(e);
-      selectedNode.data.syncData(selectedNode.id, {
-        output: { variable: e },
-      });
-      syncVariable();
-    }
   };
   // #endregion
 
@@ -195,40 +157,13 @@ export default function BotFlowMenu(props) {
           </div>
           <div className="flow-body">
             {selectedNode.type === 'Receive' ? (
-              <div className="flow-node-data">
-                <span>Set received message to variable</span>
-                <ClassicSelect
-                  filterLabel
-                  value={varReceiveOutput}
-                  placeHolder={null}
-                  options={[
-                    {
-                      label: (
-                        <span className="new-var-option flex-center">
-                          <PlusOutlined /> Add new variable
-                        </span>
-                      ),
-                      value: addNewId,
-                    },
-                    ...variableList
-                      .filter((item) => !item?.used)
-                      .map((item) => {
-                        return {
-                          label: item?.label,
-                          value: item?.label,
-                        };
-                      }),
-                  ]}
-                  handleSelect={handleSelectReceiveOutput}
-                />
-              </div>
+              <></>
             ) : selectedNode.type === 'SentimentAnalysis' ? (
               <>
                 <div className="flow-node-data">
                   <span>Select the sentiment range</span>
                   <Slider
                     range
-                    className="full-width"
                     value={sentiment}
                     min={0}
                     max={1}
@@ -236,44 +171,48 @@ export default function BotFlowMenu(props) {
                     onChange={handleChangeSentiment}
                   />
                   <div className="sentiment-display">
-                    <span className="negative">
-                      Negative: 0 - {sentiment[0]}
-                    </span>
-                    <span className="neutral">
+                    <span>Negative: 0 - {sentiment[0]}</span>
+                    <span>
                       Neutral: {sentiment[0]} - {sentiment[1]}
                     </span>
-                    <span className="positive">
-                      Positive: {sentiment[1]} - 1
-                    </span>
+                    <span>Positive: {sentiment[1]} - 1</span>
                   </div>
                 </div>
-                <div className="flow-node-data">
-                  <span>Set the sentiment to variable</span>
-                  <ClassicSelect
-                    filterLabel
-                    placeHolder={null}
-                    value={varSentimentOutput}
-                    onChange={handleSelectSentimentOutput}
-                    options={[
-                      {
-                        label: (
-                          <span className="new-var-option flex-center">
-                            <PlusOutlined /> Add new variable
-                          </span>
-                        ),
-                        value: addNewId,
-                      },
-                      ...variableList
-                        .filter((item) => !item?.used)
-                        .map((item) => {
-                          return {
-                            label: item?.label,
-                            value: item?.label,
-                          };
-                        }),
-                    ]}
-                  />
-                </div>
+                <ToolTipWrapper
+                  tooltip="Notify agent will end the flow"
+                  placement="left"
+                >
+                  <div className="flow-node-data">
+                    <span>
+                      Select sentiment's amount to notify agent
+                    </span>
+                    <ClassicSelect
+                      filterLabel
+                      placeHolder={null}
+                      defaultValue={1}
+                      options={[
+                        ...Array(5)
+                          .fill()
+                          .map((_, index) => {
+                            return {
+                              label:
+                                index !== 0
+                                  ? `${index + 1} sentiments`
+                                  : `None`,
+                              value: index + 1,
+                            };
+                          }),
+                      ]}
+                      onChange={(e) => {
+                        if (e > 1) {
+                          selectedNode.data.syncData(selectedNode.id, {
+                            conditionNotifyAgent: e,
+                          });
+                        }
+                      }}
+                    />
+                  </div>
+                </ToolTipWrapper>
               </>
             ) : selectedNode.type === 'NotifyAgent' ? (
               <></>

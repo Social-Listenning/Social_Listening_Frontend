@@ -3,7 +3,6 @@ import { useQueryClient } from 'react-query';
 import { decodeToken } from 'react-jwt';
 import { Checker } from '../../utils/dataChecker';
 import { useSocket } from '../../components/contexts/socket/SocketProvider';
-import PrivateLayout from './PrivateLayout';
 import useEffectOnce from '../../components/hooks/useEffectOnce';
 
 export default function PrivateRoute() {
@@ -29,11 +28,7 @@ export default function PrivateRoute() {
 
   if (isAuth) {
     queryClient.setQueryData('userData', decodedToken);
-    return (
-      <PrivateLayout>
-        <Outlet />
-      </PrivateLayout>
-    );
+    return <Outlet />;
   } else {
     return <Navigate to={{ pathname: '/login' }} />;
   }

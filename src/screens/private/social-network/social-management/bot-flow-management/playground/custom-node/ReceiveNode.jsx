@@ -3,9 +3,16 @@ import {
   PlayCircleOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons';
+import useEffectOnce from '../../../../../../../components/hooks/useEffectOnce';
 
 export default function ReceiveNode(props) {
   const { id, data } = props;
+
+  useEffectOnce(() => {
+    data.syncData(id, {
+      output: { variable: crypto.randomUUID() },
+    });
+  });
 
   return (
     <div className="node-wrapper flex-center">

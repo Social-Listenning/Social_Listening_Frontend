@@ -18,6 +18,7 @@ export default function SentimentAnalysis(props) {
         neutral: `sentiment-output-handle-1`,
         positive: `sentiment-output-handle-2`,
       },
+      output: { variable: crypto.randomUUID() },
     });
   });
 

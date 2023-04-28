@@ -54,6 +54,9 @@ const SocialManagement = lazy(() =>
 const SettingManagement = lazy(() =>
   import('../screens/private/setting/SettingPage')
 );
+const HotQueueMessage = lazy(() =>
+  import('../screens/private/empty-layout/HotQueueMessage')
+);
 // #endregion
 
 // #region error routes
@@ -107,6 +110,11 @@ export const privateRoutes = [
     path: 'setting',
     element: <SettingManagement />,
     permissionRequired: 'table-setting',
+  },
+  {
+    path: 'hotqueue/:id',
+    element: <HotQueueMessage />,
+    noLayout: true,
   },
 ];
 
