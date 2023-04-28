@@ -229,7 +229,7 @@ export default function FlowPlayground(props) {
         variableList={variableList}
         updateVariableList={setVariableList}
       />
-      <VariableMenu variableList={variableList} />
+      {/* <VariableMenu variableList={variableList} /> */}
       <ReactFlow
         snapToGrid
         fitView

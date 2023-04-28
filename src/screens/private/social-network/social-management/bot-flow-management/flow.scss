@@ -1,5 +1,5 @@
 :root {
-  --menu-width: 28rem;
+  --menu-width: 36rem;
 }
 
 .react-flow-container {
@@ -111,9 +111,9 @@
   z-index: 10;
   min-width: var(--menu-width);
   width: var(--menu-width);
-  min-height: 36rem;
+  min-height: 60rem;
   right: 0;
-  top: 8rem;
+  top: 9rem;
   padding: 1rem;
   background-color: var(--gray-layout-color);
   border: var(--border-style);
