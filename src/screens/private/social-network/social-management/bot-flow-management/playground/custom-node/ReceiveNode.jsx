@@ -9,9 +9,11 @@ export default function ReceiveNode(props) {
   const { id, data } = props;
 
   useEffectOnce(() => {
-    data.syncData(id, {
-      output: { variable: crypto.randomUUID() },
-    });
+    if (!data?.output?.variable) {
+      data.syncData(id, {
+        output: { variable: crypto.randomUUID() },
+      });
+    }
   });
 
   return (

@@ -12,14 +12,29 @@ export default function SentimentAnalysis(props) {
   const { id, data } = props;
 
   useEffectOnce(() => {
-    data.syncData(id, {
-      handle: {
-        negative: `sentiment-output-handle-0`,
-        neutral: `sentiment-output-handle-1`,
-        positive: `sentiment-output-handle-2`,
-      },
-      output: { variable: crypto.randomUUID() },
-    });
+    if (!data?.handle) {
+      data.syncData(id, {
+        handle: {
+          negative: `sentiment-output-handle-0`,
+          neutral: `sentiment-output-handle-1`,
+          positive: `sentiment-output-handle-2`,
+        },
+      });
+    }
+    if (!data?.output?.variable) {
+      data.syncData(id, {
+        output: { variable: crypto.randomUUID() },
+      });
+    }
+    if (!data?.sentiment) {
+      data.syncData(id, {
+        sentiment: {
+          negative: `0 - 0.3`,
+          neutral: `0.3 - 0.7`,
+          positive: `0.7 - 1`,
+        },
+      });
+    }
   });
 
   return (
