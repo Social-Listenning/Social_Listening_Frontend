@@ -17,7 +17,6 @@ import SentimentAnalysis from './custom-node/SentimentAnalysis';
 import NotifyAgent from './custom-node/NotifyAgent';
 import WorkflowNav from './WorkflowNav';
 import BotFlowMenu from './BotFlowMenu';
-import VariableMenu from './VariableMenu';
 import useUpdateEffect from '../../../../../../components/hooks/useUpdateEffect';
 
 const nodeTypes = {
@@ -226,10 +225,7 @@ export default function FlowPlayground(props) {
       <BotFlowMenu
         selectedNode={selectedNode}
         goBackMenu={goBackMenu}
-        variableList={variableList}
-        updateVariableList={setVariableList}
       />
-      {/* <VariableMenu variableList={variableList} /> */}
       <ReactFlow
         snapToGrid
         fitView

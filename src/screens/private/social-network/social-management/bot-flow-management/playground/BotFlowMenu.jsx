@@ -41,32 +41,10 @@ const onDragStart = (event, nodeType) => {
 };
 
 export default function BotFlowMenu(props) {
-  const {
-    selectedNode,
-    goBackMenu,
-    variableList = [],
-    updateVariableList,
-  } = props;
+  const { selectedNode, goBackMenu } = props;
   const type = nodeTypes?.filter(
     (item) => item.value === selectedNode?.type
   )[0]?.label;
-
-  const updateUsedVariable = (label) => {
-    updateVariableList((vars) => {
-      vars.map((item) => {
-        // change last variable (if had) to unused
-        if (item.label === selectedNode?.data?.output?.variable) {
-          item.used = false;
-        }
-        // change current variable to used
-        if (item?.label === label) {
-          item.used = true;
-        }
-        return item;
-      });
-      return vars;
-    });
-  };
 
   useUpdateEffect(() => {
     if (selectedNode?.type === 'Receive') {
@@ -80,21 +58,6 @@ export default function BotFlowMenu(props) {
       setRespond(selectedNode?.data?.respond);
     }
   }, [selectedNode]);
-
-  // #region add new variable
-  const addNewId = crypto.randomUUID();
-  const [openAddNew, setOpenAddNew] = useToggle(false);
-  const [addNewVariableForm] = Form.useForm();
-  useUpdateEffect(() => {
-    if (openAddNew) {
-      document.getElementById('add-new-attribute')?.focus();
-    }
-  }, [openAddNew]);
-  const closeAddNewModal = () => {
-    addNewVariableForm.resetFields();
-    setOpenAddNew(false);
-  };
-  // #endregion
 
   // #region sentiment analysis
   const [sentiment, setSentiment] = useState([0.3, 0.7]);
@@ -199,19 +162,14 @@ export default function BotFlowMenu(props) {
                                 index !== 0
                                   ? `${index + 1} sentiments`
                                   : `None`,
-                              value: index + 1,
+                              value: index !== 0 ? index + 1 : -1,
                             };
                           }),
                       ]}
                       onChange={(e) => {
-                        if (e > 1) {
-                          selectedNode.data.syncData(
-                            selectedNode.id,
-                            {
-                              conditionNotifyAgent: e,
-                            }
-                          );
-                        }
+                        selectedNode.data.syncData(selectedNode.id, {
+                          conditionNotifyAgent: e,
+                        });
                       }}
                     />
                   </div>
@@ -239,74 +197,6 @@ export default function BotFlowMenu(props) {
               </>
             ) : null}
           </div>
-
-          {openAddNew && (
-            <Modal
-              open={openAddNew}
-              onCancel={closeAddNewModal}
-              footer={
-                <SaveButton
-                  onClick={() => {
-                    addNewVariableForm.submit();
-                  }}
-                />
-              }
-              centered
-              destroyOnClose
-            >
-              <Title>Add new variable</Title>
-              <Form
-                name="new-variable-form"
-                className="new-variable-form"
-                layout="vertical"
-                autoComplete="off"
-                size="large"
-                form={addNewVariableForm}
-                onFinish={(model) => {
-                  updateVariableList((old) =>
-                    old.concat({
-                      label: model?.variable,
-                      used: false,
-                    })
-                  );
-                  closeAddNewModal();
-                }}
-              >
-                <ToolTipWrapper
-                  tooltip="Only unique variable allowed"
-                  placement="bottom"
-                >
-                  <Form.Item
-                    name="variable"
-                    rules={[
-                      {
-                        required: true,
-                        validator: (_, value) => {
-                          if (!value) {
-                            return Promise.reject(
-                              'Variable is required'
-                            );
-                          } else {
-                            if (
-                              variableList.filter(
-                                (item) => item?.label === value
-                              )?.length
-                            ) {
-                              return Promise.reject(
-                                'Variable must be unique'
-                              );
-                            } else return Promise.resolve();
-                          }
-                        },
-                      },
-                    ]}
-                  >
-                    <Input id="add-new-attribute" />
-                  </Form.Item>
-                </ToolTipWrapper>
-              </Form>
-            </Modal>
-          )}
         </>
       )}
     </div>
