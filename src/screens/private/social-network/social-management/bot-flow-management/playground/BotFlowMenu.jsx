@@ -98,7 +98,7 @@ export default function BotFlowMenu(props) {
 
   // #region sentiment analysis
   const [sentiment, setSentiment] = useState([0.3, 0.7]);
-  useEffectOnce(() => {
+  useUpdateEffect(() => {
     selectedNode?.data?.syncData(selectedNode?.id, {
       sentiment: {
         negative: `0 - ${sentiment[0]}`,
@@ -106,7 +106,7 @@ export default function BotFlowMenu(props) {
         positive: `${sentiment[1]} - 1`,
       },
     });
-  });
+  }, [selectedNode]);
   const handleChangeSentiment = (value) => {
     setSentiment(value);
     selectedNode?.data?.syncData(selectedNode?.id, {
@@ -205,9 +205,12 @@ export default function BotFlowMenu(props) {
                       ]}
                       onChange={(e) => {
                         if (e > 1) {
-                          selectedNode.data.syncData(selectedNode.id, {
-                            conditionNotifyAgent: e,
-                          });
+                          selectedNode.data.syncData(
+                            selectedNode.id,
+                            {
+                              conditionNotifyAgent: e,
+                            }
+                          );
                         }
                       }}
                     />
