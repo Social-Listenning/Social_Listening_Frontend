@@ -10,7 +10,6 @@
   border-radius: 0.8rem;
   -webkit-box-shadow: 0 2px 0.8rem 0 rgba(0, 0, 0, 0.25);
   box-shadow: 0 2px 0.8rem 0 rgba(0, 0, 0, 0.25);
-  padding: 1rem;
   background-color: white;
   min-width: 20rem;
   max-width: 28rem;
@@ -42,6 +41,8 @@
   flex-direction: column;
   align-items: start;
   gap: 0.8rem;
+  padding: 1rem;
+  border-radius: 0.8rem;
 
   .msg-handle {
     top: 2.4rem;
@@ -51,6 +52,7 @@
     font-size: calc(var(--app-font-size) + 0.2rem);
     gap: 0.8rem;
     font-weight: 500;
+    color: var(--primary-color);
   }
 
   --flexible-width: 26rem;
@@ -91,7 +93,7 @@
   background-color: #ebebeb;
   position: absolute;
   width: 100%;
-  z-index: 11;
+  z-index: 10;
   padding: 1.2rem 2rem;
   border: var(--border-style);
 
@@ -163,70 +165,21 @@
         display: flex;
         flex-direction: column;
         color: #666666;
+
+        .negative {
+          color: var(--error-color);
+        }
+
+        .neutral {
+          color: var(--warning-color);
+        }
+
+        .positive {
+          color: var(--success-color);
+        }
       }
     }
   }
-}
-
-.variable-menu {
-  position: absolute;
-  z-index: 10;
-  min-width: var(--menu-width);
-  min-height: 26.4rem;
-  background-color: #fff;
-  top: 46rem;
-  right: 0;
-  border: var(--border-style);
-
-  &.shrink {
-    min-height: 0;
-    height: 3.4rem;
-  }
-
-  .variable-title {
-    padding: 0.4rem;
-    font-size: var(--app-font-size);
-    background-color: var(--gray-layout-color);
-
-    .expand-btn {
-      position: absolute;
-      right: 0.8rem;
-      font-size: 2rem;
-      cursor: pointer;
-    }
-  }
-
-  .variable-list {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    max-height: 22.8rem;
-    overflow-y: scroll;
-
-    .variable-item {
-      padding: 1rem;
-      border-bottom: 1px solid #e7e7e7;
-
-      &:first-child {
-        border-top: 1px solid #e7e7e7;
-      }
-    }
-  }
-}
-
-.new-var-option {
-  color: var(--primary-color);
-  font-weight: 500;
-  justify-content: start;
-  gap: 0.4rem;
-
-  .anticon {
-    font-size: 1.6rem;
-  }
-}
-
-.new-variable-form {
-  margin-top: 1.6rem;
 }
 
 .flow-spinner {

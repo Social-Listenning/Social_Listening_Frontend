@@ -7,6 +7,9 @@ import {
   CheckCircleOutlined,
   BellOutlined,
   MessageOutlined,
+  CloseOutlined,
+  ReloadOutlined,
+  FullscreenOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from 'react-query';
@@ -28,6 +31,7 @@ import ToolTipWrapper from '../../components/shared/antd/ToolTipWrapper';
 import ClassicDropdown from '../../components/shared/antd/Dropdown/Classic';
 import BasicAvatar from '../../components/shared/antd/BasicAvatar';
 import PieChartResult from '../../components/shared/antd/Chart/PieChartResult';
+import IconButton from '../../components/shared/element/Button/IconButton';
 import '../route.scss';
 
 const { Header, Content, Sider } = Layout;
@@ -187,15 +191,8 @@ export default function PrivateLayout(props) {
   }, [socket]);
   // #endregion
 
-  // #region get default data
-  // get all setting and save it to local host
-  // const getSetting = useRef(
-  //   userData.permissions.includes('table-setting')
-  // );
-  // const { data: settingData } = useGetAllSetting(getSetting.current);
-  // getSetting.current = false;
-  // localStorage.setItem('allSetting', JSON.stringify(settingData));
-
+  // #region hotqueue
+  const [hotQueue, setHotQueue] = useState(false);
   // #endregion
 
   async function handleMenuHeader(e) {
@@ -361,11 +358,45 @@ export default function PrivateLayout(props) {
       )}
 
       <div className="user-util">
-        <Button shape="circle" type="primary">
+        <Button
+          shape="circle"
+          type="primary"
+          onClick={() => setHotQueue(!hotQueue)}
+        >
           <MessageOutlined />
         </Button>
-        {/* <iframe class="chat-iframe" /> */}
       </div>
+
+      {hotQueue && (
+        <div className="hotqueue-iframe-container">
+          <div className="hotqueue-toolbar">
+            <ToolTipWrapper tooltip="Full screen mode">
+              <IconButton
+                icon={<FullscreenOutlined />}
+                onClick={() => {
+                  window.open('/hotqueue/1', '_blank');
+                }}
+              />
+            </ToolTipWrapper>
+
+            <ToolTipWrapper tooltip="Reload the hotqueue">
+              <IconButton icon={<ReloadOutlined />} />
+            </ToolTipWrapper>
+
+            <ToolTipWrapper tooltip="Close hotqueue popup">
+              <IconButton
+                icon={<CloseOutlined />}
+                onClick={() => setHotQueue(false)}
+              />
+            </ToolTipWrapper>
+          </div>
+          <iframe
+            class="hotqueue-iframe full-width"
+            src="/hotqueue/1"
+            scrolling="no"
+          />
+        </div>
+      )}
     </Layout>
   );
 }

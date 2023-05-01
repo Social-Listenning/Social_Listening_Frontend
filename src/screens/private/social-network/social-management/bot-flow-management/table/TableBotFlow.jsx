@@ -2,10 +2,11 @@ import { useRef } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { CheckOutlined, PoweroffOutlined } from '@ant-design/icons';
 import { changeStatusBotFlow } from '../../../socialNetworkService';
-import { defaultAction } from '../../../../../../constants/table/action';
 import { notifyService } from '../../../../../../services/notifyService';
-import AdminTable from '../../../../../../components/shared/antd/Table/Table';
+import { defaultAction } from '../../../../../../constants/table/action';
 import environment from '../../../../../../constants/environment/environment.dev';
+import AdminTable from '../../../../../../components/shared/antd/Table/Table';
+import ToolTipWrapper from '../../../../../../components/shared/antd/ToolTipWrapper';
 import BooleanRow from '../../../../../../components/shared/element/BooleanRow';
 import DateTimeFormat from '../../../../../../components/shared/element/DateTimeFormat';
 import AddEditBotFlow from './AddEditBotFlow';
@@ -23,14 +24,16 @@ export default function TableBotFlow({ pageId, getCurrentFlow }) {
       fixed: true,
       render: (record, value) => {
         return (
-          <b
-            className="pointer"
-            onClick={() => {
-              getCurrentFlow(value);
-            }}
-          >
-            {record}
-          </b>
+          <ToolTipWrapper tooltip="Click to edit flow">
+            <b
+              className="pointer"
+              onClick={() => {
+                getCurrentFlow(value);
+              }}
+            >
+              {record}
+            </b>
+          </ToolTipWrapper>
         );
       },
     },
@@ -58,6 +61,9 @@ export default function TableBotFlow({ pageId, getCurrentFlow }) {
       onCell: () => ({
         className: 'text-center',
       }),
+      filter: {
+        filterType: 'DateTime',
+      },
     },
   ];
 
@@ -124,7 +130,7 @@ export default function TableBotFlow({ pageId, getCurrentFlow }) {
       disableSelect
       apiGetData={`${environment.workflow}`}
       apiGetBody={{ tabId: pageId }}
-      apiDeleteOne={`${environment.workflow}`}
+      apiDeleteOne={`${environment.workflow}/remove`}
       keyProps="id"
       columns={columns}
       permission={permission}

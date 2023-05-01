@@ -14,6 +14,7 @@ const dateTimeType = [
   'Is Before',
   'Is After Or Equal To',
   'Is After',
+  'Between'
 ];
 
 const defaultWithoutEmpty = ['Contains', 'Does Not Contains'];

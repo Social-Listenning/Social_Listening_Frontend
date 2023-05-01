@@ -108,7 +108,7 @@ export default function HotQueueMessage() {
         <SearchBar className="search-user" />
         <Divider />
         <ul className="hotqueue-list">
-          {Array(30)
+          {Array(20)
             .fill()
             .map((item, index) => (
               <li
@@ -139,13 +139,13 @@ export default function HotQueueMessage() {
             ))}
         </ul>
       </Sider>
-      <Layout>
+      <Layout className="full-height-screen">
         <Header className="hotqueue-header">
           <b className="full-height flex-center name">Đức BCN</b>
-          <div className="header-utils full-height flex-center">
+          {/* <div className="header-utils full-height flex-center">
             <IconButton icon={<ReloadOutlined />} />
             <IconButton icon={<CloseOutlined />} />
-          </div>
+          </div> */}
         </Header>
         <Content>
           <div
@@ -172,7 +172,7 @@ export default function HotQueueMessage() {
                       : 'flex-start',
                   }}
                 >
-                  {!item.isSent  && isFinal && <BasicAvatar />}
+                  {!item.isSent && isFinal && <BasicAvatar />}
                   <div
                     className="conservation-block"
                     style={{

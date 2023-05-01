@@ -14,6 +14,7 @@
       flex-direction: column;
       gap: 1.2rem;
       padding: 0.8rem 0;
+      height: 100vh;
 
       #title {
         padding: var(--padding-sider);
@@ -42,10 +43,10 @@
       }
 
       .hotqueue-list {
-        margin: 0;
+        margin: -1.2rem 0;
         padding: 0;
         list-style: none;
-        max-height: 80rem;
+        max-height: 89%;
         overflow-y: scroll;
 
         .hotqueue-block-container {
@@ -107,7 +108,7 @@
 
     .hotqueue-conservation {
       padding: 1.2rem 0;
-      max-height: 82.4rem;
+      max-height: 93%;
       overflow-y: scroll;
 
       .conservation-container {

@@ -97,6 +97,34 @@
       font-size: 2rem;
     }
   }
+
+  .hotqueue-iframe-container {
+    position: absolute;
+    right: 54px;
+    z-index: 10;
+    border: var(--border-style);
+    border-top: 0;
+    background-color: #fff;
+    min-width: 70%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+
+    .hotqueue-toolbar {
+      background-color: var(--gray-layout-color);
+      border-bottom: var(--border-style);
+      padding: 0.4rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.4rem;
+    }
+
+    .hotqueue-iframe {
+      flex: 1;
+      border: 0;
+    }
+  }
 }
 
 .public-layout {

@@ -1,27 +1,16 @@
 import { useState } from 'react';
-import { Form, Input, Modal, Slider } from 'antd';
+import { Input, Slider } from 'antd';
 import {
   NotificationOutlined,
   ExperimentOutlined,
-  PlayCircleOutlined,
   MessageOutlined,
   LeftOutlined,
-  PlusOutlined,
 } from '@ant-design/icons';
-import useToggle from '../../../../../../components/hooks/useToggle';
-import useEffectOnce from '../../../../../../components/hooks/useEffectOnce';
 import useUpdateEffect from '../../../../../../components/hooks/useUpdateEffect';
 import ClassicSelect from '../../../../../../components/shared/antd/Select/Classic';
-import SaveButton from '../../../../../../components/shared/element/Button/SaveButton';
-import Title from '../../../../../../components/shared/element/Title';
 import ToolTipWrapper from '../../../../../../components/shared/antd/ToolTipWrapper';
 
 const nodeTypes = [
-  {
-    icon: <PlayCircleOutlined />,
-    label: 'Receive Message',
-    value: 'Receive',
-  },
   {
     icon: <ExperimentOutlined />,
     label: 'Sentiment Analysis',
@@ -46,6 +35,15 @@ export default function BotFlowMenu(props) {
     (item) => item.value === selectedNode?.type
   )[0]?.label;
 
+  let hasMenu = true;
+  if (
+    !selectedNode ||
+    selectedNode?.type === 'Receive' ||
+    selectedNode?.type === 'NotifyAgent'
+  ) {
+    hasMenu = false;
+  }
+
   useUpdateEffect(() => {
     if (selectedNode?.type === 'Receive') {
     } else if (selectedNode?.type === 'SentimentAnalysis') {
@@ -61,15 +59,6 @@ export default function BotFlowMenu(props) {
 
   // #region sentiment analysis
   const [sentiment, setSentiment] = useState([0.3, 0.7]);
-  useUpdateEffect(() => {
-    selectedNode?.data?.syncData(selectedNode?.id, {
-      sentiment: {
-        negative: `0 - ${sentiment[0]}`,
-        neutral: `${sentiment[0]} - ${sentiment[1]}`,
-        positive: `${sentiment[1]} - 1`,
-      },
-    });
-  }, [selectedNode]);
   const handleChangeSentiment = (value) => {
     setSentiment(value);
     selectedNode?.data?.syncData(selectedNode?.id, {
@@ -94,7 +83,7 @@ export default function BotFlowMenu(props) {
 
   return (
     <div className="flow-menu">
-      {!selectedNode ? (
+      {!hasMenu ? (
         <>
           <ul className="flow-item-wrapper flex-center">
             {nodeTypes?.map((item, index) => (
@@ -119,9 +108,7 @@ export default function BotFlowMenu(props) {
             <b>{type}</b>
           </div>
           <div className="flow-body">
-            {selectedNode.type === 'Receive' ? (
-              <></>
-            ) : selectedNode.type === 'SentimentAnalysis' ? (
+            {selectedNode.type === 'SentimentAnalysis' ? (
               <>
                 <div className="flow-node-data">
                   <span>Select the sentiment range</span>
@@ -134,11 +121,15 @@ export default function BotFlowMenu(props) {
                     onChange={handleChangeSentiment}
                   />
                   <div className="sentiment-display">
-                    <span>Negative: 0 - {sentiment[0]}</span>
-                    <span>
+                    <span className="negative">
+                      Negative: 0 - {sentiment[0]}
+                    </span>
+                    <span className="neutral">
                       Neutral: {sentiment[0]} - {sentiment[1]}
                     </span>
-                    <span>Positive: {sentiment[1]} - 1</span>
+                    <span className="positive">
+                      Positive: {sentiment[1]} - 1
+                    </span>
                   </div>
                 </div>
                 <ToolTipWrapper
@@ -152,7 +143,7 @@ export default function BotFlowMenu(props) {
                     <ClassicSelect
                       filterLabel
                       placeHolder={null}
-                      defaultValue={1}
+                      defaultValue={-1}
                       options={[
                         ...Array(5)
                           .fill()
@@ -175,14 +166,12 @@ export default function BotFlowMenu(props) {
                   </div>
                 </ToolTipWrapper>
               </>
-            ) : selectedNode.type === 'NotifyAgent' ? (
-              <></>
             ) : selectedNode.type === 'Respond' ? (
               <>
-                <div className="flow-node-data">
+                {/* <div className="flow-node-data">
                   <span>Intent</span>
                   <ClassicSelect filterLabel placeHolder={null} />
-                </div>
+                </div> */}
                 <div className="flow-node-data">
                   <span>Response option</span>
                   <Input.TextArea

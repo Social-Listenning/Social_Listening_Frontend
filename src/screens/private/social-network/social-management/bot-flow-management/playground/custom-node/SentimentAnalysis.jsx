@@ -9,7 +9,7 @@ import useEffectOnce from '../../../../../../../components/hooks/useEffectOnce';
 const listSentiment = ['Negative', 'Neutral', 'Positive'];
 
 export default function SentimentAnalysis(props) {
-  const { id, data } = props;
+  const { id, data, isConnectable } = props;
 
   useEffectOnce(() => {
     if (!data?.handle) {
@@ -38,7 +38,15 @@ export default function SentimentAnalysis(props) {
   });
 
   return (
-    <div className="node-wrapper flex-center">
+    <div
+      className="node-wrapper flex-center"
+      style={{
+        backgroundColor:
+          data?.selectedNode?.id === id
+            ? 'var(--gray-layout-color)'
+            : '#fff',
+      }}
+    >
       <Handle
         className="msg-handle"
         id="sentiment-input-handle"
@@ -58,6 +66,7 @@ export default function SentimentAnalysis(props) {
               className="resp-handle"
               type="source"
               position="right"
+              isConnectable={isConnectable}
             />
           </div>
         ))}

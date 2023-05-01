@@ -108,12 +108,18 @@ export default function UserManagement(props) {
       render: (record) => {
         return <DateTimeFormat dateTime={record} />;
       },
+      filter: {
+        filterType: 'DateTime',
+      },
     },
     {
       title: 'Date Modified',
       dataIndex: 'updatedAt',
       render: (record) => {
         return <DateTimeFormat dateTime={record} />;
+      },
+      filter: {
+        filterType: 'DateTime',
       },
     },
   ];

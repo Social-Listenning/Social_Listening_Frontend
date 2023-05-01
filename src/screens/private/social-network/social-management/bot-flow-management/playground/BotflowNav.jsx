@@ -1,7 +1,7 @@
 import SaveButton from '../../../../../../components/shared/element/Button/SaveButton';
 import ExitButton from '../../../../../../components/shared/element/Button/ExitButton';
 
-export default function WorkflowNav(props) {
+export default function BotflowNav(props) {
   const { flowDetail, updateFlow, loadingUpdate, exit } = props;
 
   return (

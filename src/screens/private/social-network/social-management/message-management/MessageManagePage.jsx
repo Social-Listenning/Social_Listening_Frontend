@@ -20,6 +20,18 @@ export default function MessageManagePage(props) {
 
   const columns = [
     {
+      title: 'Social Type',
+      dataIndex: 'sender.type',
+    },
+    {
+      title: 'Senders Name',
+      dataIndex: 'sender.fullName',
+    },
+    {
+      title: 'Senders Avatar',
+      dataIndex: 'sender.avatarUrl',
+    },
+    {
       title: 'Message',
       dataIndex: 'message',
       onCell: (record, _) => {
@@ -58,6 +70,9 @@ export default function MessageManagePage(props) {
       onCell: () => ({
         className: 'text-center',
       }),
+      filter: {
+        filterType: 'DateTime',
+      },
     },
   ];
 
