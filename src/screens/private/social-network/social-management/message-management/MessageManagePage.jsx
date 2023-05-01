@@ -6,6 +6,7 @@ import MessageTypeContainer from './message-type/MessageTypeContainer';
 import environment from '../../../../../constants/environment/environment.dev';
 import Hint from '../../../../../components/shared/element/Hint';
 import LoadingWrapper from '../../../../../components/shared/antd/LoadingWrapper';
+import BasicAvatar from '../../../../../components/shared/antd/BasicAvatar';
 
 export default function MessageManagePage(props) {
   const { pageId, socialPage } = props;
@@ -30,6 +31,11 @@ export default function MessageManagePage(props) {
     {
       title: 'Senders Avatar',
       dataIndex: 'sender.avatarUrl',
+      render: (text, record) => {
+        return (
+          <BasicAvatar src={text} name={record['sender.fullName']} />
+        );
+      },
     },
     {
       title: 'Message',
@@ -50,11 +56,6 @@ export default function MessageManagePage(props) {
         );
       },
     },
-    // {
-    // 	title: "Sender",
-    // 	dataIndex: "sender",
-    // 	width: 100,
-    // },
     {
       title: 'Type',
       dataIndex: 'type',
