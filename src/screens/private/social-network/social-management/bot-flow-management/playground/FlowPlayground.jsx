@@ -15,9 +15,8 @@ import ReceiveNode from './custom-node/ReceiveNode';
 import RespondNode from './custom-node/RespondNode';
 import SentimentAnalysis from './custom-node/SentimentAnalysis';
 import NotifyAgent from './custom-node/NotifyAgent';
-import WorkflowNav from './WorkflowNav';
+import BotflowNav from './BotflowNav';
 import BotFlowMenu from './BotFlowMenu';
-import VariableMenu from './VariableMenu';
 import useUpdateEffect from '../../../../../../components/hooks/useUpdateEffect';
 
 const nodeTypes = {
@@ -37,18 +36,26 @@ export default function FlowPlayground(props) {
   if (flowDetail?.extendData) {
     extendData.current = JSON.parse(flowDetail.extendData);
   }
-  console.log(extendData.current);
+
   const reactFlowWrapper = useRef(null);
   const edgeUpdateSuccessful = useRef(true);
   const isDeleteNode = useRef(false);
   const [nodes, setNodes, onNodesChange] = useNodesState(
-    extendData.current?.nodes
+    extendData.current?.nodes?.length > 0
+      ? extendData.current?.nodes
+      : [
+          {
+            id: crypto.randomUUID(),
+            type: 'Receive',
+            position: {
+              x: 10,
+              y: 50,
+            },
+          },
+        ]
   );
   const [edges, setEdges, onEdgesChange] = useEdgesState(
     extendData.current?.edges
-  );
-  const [variableList, setVariableList] = useState(
-    extendData.current?.variables
   );
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [selectedNode, setSelectedNode] = useState(null);
@@ -133,10 +140,6 @@ export default function FlowPlayground(props) {
           id: crypto.randomUUID(),
           type,
           position,
-          data: {
-            syncData: syncDataFromNode,
-            deleteNode: deleteNodeById,
-          },
         })
       );
     },
@@ -172,6 +175,39 @@ export default function FlowPlayground(props) {
     });
   };
 
+  const disableSourceHandle = () => {
+    if (edges?.length > 0) {
+      edges.forEach((eds) => {
+        const sourceNode = nodes.filter(
+          (nds) => nds.id === eds.source
+        )[0];
+
+        setNodes((nds) => {
+          let availableNode = nds?.filter(
+            (nd) => nd?.id === sourceNode?.id
+          )[0];
+          availableNode.connectable = false;
+          return nds;
+        });
+      });
+    } else {
+      setNodes((nds) => {
+        nds.map((node) => {
+          node.connectable = true;
+          return node;
+        });
+        return nds;
+      });
+    }
+
+    // update the node already in the flow
+    onNodesChange(
+      nodes.map((nds) => {
+        return { item: nds, type: 'reset' };
+      })
+    );
+  };
+
   useUpdateEffect(() => {
     // delete node also delete the selected one
     if (isDeleteNode.current) {
@@ -183,6 +219,8 @@ export default function FlowPlayground(props) {
   useUpdateEffect(() => {
     // update variable for input handle when connected 2 nodes
     updateVariableInputNode();
+    // disable all the target handle if it connected
+    disableSourceHandle();
   }, [edges]);
 
   const goBackToTable = () => {
@@ -217,7 +255,7 @@ export default function FlowPlayground(props) {
 
   return (
     <div className="react-flow-container" ref={reactFlowWrapper}>
-      <WorkflowNav
+      <BotflowNav
         flowDetail={flowDetail}
         updateFlow={updateBotflow}
         loadingUpdate={useUpdateBotFlow.isLoading}
@@ -226,10 +264,7 @@ export default function FlowPlayground(props) {
       <BotFlowMenu
         selectedNode={selectedNode}
         goBackMenu={goBackMenu}
-        variableList={variableList}
-        updateVariableList={setVariableList}
       />
-      {/* <VariableMenu variableList={variableList} /> */}
       <ReactFlow
         snapToGrid
         fitView
@@ -238,6 +273,7 @@ export default function FlowPlayground(props) {
             ...node.data,
             syncData: syncDataFromNode,
             deleteNode: deleteNodeById,
+            selectedNode: selectedNode,
           };
           return node;
         })}
@@ -252,7 +288,11 @@ export default function FlowPlayground(props) {
         onNodeClick={(e) => {
           const id = e.currentTarget.dataset.id;
           e.currentTarget.onkeydown = function (x) {
-            if (x.key === 'Delete') {
+            if (
+              x.key === 'Delete' &&
+              nodes.filter((nds) => nds.id === id)[0].type !==
+                'Receive'
+            ) {
               deleteNodeById(id);
             }
           };

@@ -4,13 +4,16 @@ import {
   CaretUpOutlined,
   CaretDownOutlined,
 } from '@ant-design/icons';
-import useUpdateEffect from '../../../../hooks/useUpdateEffect';
 import { FilterType } from '../../../../../constants/table/filter';
+import { Checker } from '../../../../../utils/dataChecker';
+import useUpdateEffect from '../../../../hooks/useUpdateEffect';
 import ClassicDropdown from '../../Dropdown/Classic';
 import ClassicSelect from '../../Select/Classic';
 import BooleanSelect from '../../Select/Boolean';
 import FloatInput from '../../../element/FloatingInput/FloatInput';
 import ToolTipWrapper from '../../ToolTipWrapper';
+import DateTimePicker from '../../DateTimePicker/DateTimePicker';
+import DateRangePicker from '../../DateTimePicker/DateRangePicker';
 
 export default function TableHeader(props) {
   const {
@@ -26,6 +29,7 @@ export default function TableHeader(props) {
   } = props;
 
   let [value, setValue] = useState(defaultFilter);
+  let [dateRangeFilter, setDateRangeFilter] = useState(false);
   let listFilter = FilterType.Default;
   let inputHeader = (
     <FloatInput
@@ -65,6 +69,12 @@ export default function TableHeader(props) {
           options={filter.options}
           handleSelect={handleSelect}
         />
+      );
+    } else if (filter.filterType === 'DateTime') {
+      inputHeader = !dateRangeFilter ? (
+        <DateTimePicker id={title} onChange={handleSelect} />
+      ) : (
+        <DateRangePicker id={title} onChange={handleSelect} />
       );
     }
   }
@@ -124,6 +134,15 @@ export default function TableHeader(props) {
   function handleFilter(e) {
     if (filterOperator.current !== listFilter[e.key]) {
       filterOperator.current = listFilter[e.key];
+
+      if (filter && filter?.filterType === 'DateTime') {
+        if (listFilter[e.key] === 'Between') {
+          setDateRangeFilter(true);
+        } else {
+          setDateRangeFilter(false);
+        }
+      }
+
       setSelectedKey(
         listFilter
           .findIndex((x) => x === filterOperator.current)
@@ -134,7 +153,7 @@ export default function TableHeader(props) {
   }
 
   function formatFilter() {
-    if (value !== null && value !== '') {
+    if (!Checker.isNullOrEmpty(value)) {
       updateFilter((old) => {
         let index = old.findIndex((x) => x?.props === propsName);
         if (index >= 0) {

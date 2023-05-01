@@ -1,27 +1,16 @@
 import { useState } from 'react';
-import { Form, Input, Modal, Slider } from 'antd';
+import { Input, Slider } from 'antd';
 import {
   NotificationOutlined,
   ExperimentOutlined,
-  PlayCircleOutlined,
   MessageOutlined,
   LeftOutlined,
-  PlusOutlined,
 } from '@ant-design/icons';
-import useToggle from '../../../../../../components/hooks/useToggle';
-import useEffectOnce from '../../../../../../components/hooks/useEffectOnce';
 import useUpdateEffect from '../../../../../../components/hooks/useUpdateEffect';
 import ClassicSelect from '../../../../../../components/shared/antd/Select/Classic';
-import SaveButton from '../../../../../../components/shared/element/Button/SaveButton';
-import Title from '../../../../../../components/shared/element/Title';
 import ToolTipWrapper from '../../../../../../components/shared/antd/ToolTipWrapper';
 
 const nodeTypes = [
-  {
-    icon: <PlayCircleOutlined />,
-    label: 'Receive Message',
-    value: 'Receive',
-  },
   {
     icon: <ExperimentOutlined />,
     label: 'Sentiment Analysis',
@@ -41,32 +30,19 @@ const onDragStart = (event, nodeType) => {
 };
 
 export default function BotFlowMenu(props) {
-  const {
-    selectedNode,
-    goBackMenu,
-    variableList = [],
-    updateVariableList,
-  } = props;
+  const { selectedNode, goBackMenu } = props;
   const type = nodeTypes?.filter(
     (item) => item.value === selectedNode?.type
   )[0]?.label;
 
-  const updateUsedVariable = (label) => {
-    updateVariableList((vars) => {
-      vars.map((item) => {
-        // change last variable (if had) to unused
-        if (item.label === selectedNode?.data?.output?.variable) {
-          item.used = false;
-        }
-        // change current variable to used
-        if (item?.label === label) {
-          item.used = true;
-        }
-        return item;
-      });
-      return vars;
-    });
-  };
+  let hasMenu = true;
+  if (
+    !selectedNode ||
+    selectedNode?.type === 'Receive' ||
+    selectedNode?.type === 'NotifyAgent'
+  ) {
+    hasMenu = false;
+  }
 
   useUpdateEffect(() => {
     if (selectedNode?.type === 'Receive') {
@@ -81,32 +57,8 @@ export default function BotFlowMenu(props) {
     }
   }, [selectedNode]);
 
-  // #region add new variable
-  const addNewId = crypto.randomUUID();
-  const [openAddNew, setOpenAddNew] = useToggle(false);
-  const [addNewVariableForm] = Form.useForm();
-  useUpdateEffect(() => {
-    if (openAddNew) {
-      document.getElementById('add-new-attribute')?.focus();
-    }
-  }, [openAddNew]);
-  const closeAddNewModal = () => {
-    addNewVariableForm.resetFields();
-    setOpenAddNew(false);
-  };
-  // #endregion
-
   // #region sentiment analysis
   const [sentiment, setSentiment] = useState([0.3, 0.7]);
-  useUpdateEffect(() => {
-    selectedNode?.data?.syncData(selectedNode?.id, {
-      sentiment: {
-        negative: `0 - ${sentiment[0]}`,
-        neutral: `${sentiment[0]} - ${sentiment[1]}`,
-        positive: `${sentiment[1]} - 1`,
-      },
-    });
-  }, [selectedNode]);
   const handleChangeSentiment = (value) => {
     setSentiment(value);
     selectedNode?.data?.syncData(selectedNode?.id, {
@@ -131,7 +83,7 @@ export default function BotFlowMenu(props) {
 
   return (
     <div className="flow-menu">
-      {!selectedNode ? (
+      {!hasMenu ? (
         <>
           <ul className="flow-item-wrapper flex-center">
             {nodeTypes?.map((item, index) => (
@@ -156,9 +108,7 @@ export default function BotFlowMenu(props) {
             <b>{type}</b>
           </div>
           <div className="flow-body">
-            {selectedNode.type === 'Receive' ? (
-              <></>
-            ) : selectedNode.type === 'SentimentAnalysis' ? (
+            {selectedNode.type === 'SentimentAnalysis' ? (
               <>
                 <div className="flow-node-data">
                   <span>Select the sentiment range</span>
@@ -171,11 +121,15 @@ export default function BotFlowMenu(props) {
                     onChange={handleChangeSentiment}
                   />
                   <div className="sentiment-display">
-                    <span>Negative: 0 - {sentiment[0]}</span>
-                    <span>
+                    <span className="negative">
+                      Negative: 0 - {sentiment[0]}
+                    </span>
+                    <span className="neutral">
                       Neutral: {sentiment[0]} - {sentiment[1]}
                     </span>
-                    <span>Positive: {sentiment[1]} - 1</span>
+                    <span className="positive">
+                      Positive: {sentiment[1]} - 1
+                    </span>
                   </div>
                 </div>
                 <ToolTipWrapper
@@ -189,7 +143,7 @@ export default function BotFlowMenu(props) {
                     <ClassicSelect
                       filterLabel
                       placeHolder={null}
-                      defaultValue={1}
+                      defaultValue={-1}
                       options={[
                         ...Array(5)
                           .fill()
@@ -199,32 +153,25 @@ export default function BotFlowMenu(props) {
                                 index !== 0
                                   ? `${index + 1} sentiments`
                                   : `None`,
-                              value: index + 1,
+                              value: index !== 0 ? index + 1 : -1,
                             };
                           }),
                       ]}
                       onChange={(e) => {
-                        if (e > 1) {
-                          selectedNode.data.syncData(
-                            selectedNode.id,
-                            {
-                              conditionNotifyAgent: e,
-                            }
-                          );
-                        }
+                        selectedNode.data.syncData(selectedNode.id, {
+                          conditionNotifyAgent: e,
+                        });
                       }}
                     />
                   </div>
                 </ToolTipWrapper>
               </>
-            ) : selectedNode.type === 'NotifyAgent' ? (
-              <></>
             ) : selectedNode.type === 'Respond' ? (
               <>
-                <div className="flow-node-data">
+                {/* <div className="flow-node-data">
                   <span>Intent</span>
                   <ClassicSelect filterLabel placeHolder={null} />
-                </div>
+                </div> */}
                 <div className="flow-node-data">
                   <span>Response option</span>
                   <Input.TextArea
@@ -239,74 +186,6 @@ export default function BotFlowMenu(props) {
               </>
             ) : null}
           </div>
-
-          {openAddNew && (
-            <Modal
-              open={openAddNew}
-              onCancel={closeAddNewModal}
-              footer={
-                <SaveButton
-                  onClick={() => {
-                    addNewVariableForm.submit();
-                  }}
-                />
-              }
-              centered
-              destroyOnClose
-            >
-              <Title>Add new variable</Title>
-              <Form
-                name="new-variable-form"
-                className="new-variable-form"
-                layout="vertical"
-                autoComplete="off"
-                size="large"
-                form={addNewVariableForm}
-                onFinish={(model) => {
-                  updateVariableList((old) =>
-                    old.concat({
-                      label: model?.variable,
-                      used: false,
-                    })
-                  );
-                  closeAddNewModal();
-                }}
-              >
-                <ToolTipWrapper
-                  tooltip="Only unique variable allowed"
-                  placement="bottom"
-                >
-                  <Form.Item
-                    name="variable"
-                    rules={[
-                      {
-                        required: true,
-                        validator: (_, value) => {
-                          if (!value) {
-                            return Promise.reject(
-                              'Variable is required'
-                            );
-                          } else {
-                            if (
-                              variableList.filter(
-                                (item) => item?.label === value
-                              )?.length
-                            ) {
-                              return Promise.reject(
-                                'Variable must be unique'
-                              );
-                            } else return Promise.resolve();
-                          }
-                        },
-                      },
-                    ]}
-                  >
-                    <Input id="add-new-attribute" />
-                  </Form.Item>
-                </ToolTipWrapper>
-              </Form>
-            </Modal>
-          )}
         </>
       )}
     </div>

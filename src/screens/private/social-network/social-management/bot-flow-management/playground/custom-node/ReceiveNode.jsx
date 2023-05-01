@@ -1,12 +1,9 @@
 import { Handle } from 'reactflow';
-import {
-  PlayCircleOutlined,
-  CloseCircleOutlined,
-} from '@ant-design/icons';
+import { PlayCircleOutlined } from '@ant-design/icons';
 import useEffectOnce from '../../../../../../../components/hooks/useEffectOnce';
 
 export default function ReceiveNode(props) {
-  const { id, data } = props;
+  const { id, data, isConnectable } = props;
 
   useEffectOnce(() => {
     if (!data?.output?.variable) {
@@ -26,13 +23,7 @@ export default function ReceiveNode(props) {
         id="receive-output-handle"
         type="source"
         position="right"
-      />
-      <CloseCircleOutlined
-        className="node-close-btn"
-        onClick={(e) => {
-          e.stopPropagation();
-          data.deleteNode(id);
-        }}
+        isConnectable={isConnectable}
       />
     </div>
   );

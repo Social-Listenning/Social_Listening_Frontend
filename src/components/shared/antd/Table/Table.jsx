@@ -173,7 +173,14 @@ export default function AdminTable(props) {
       const key = row[keyProps]; // get value with object key
 
       try {
-        apiService.post(`${apiDeleteOne}/${key}`).then((resp) => {
+        let formatEndpoint = apiDeleteOne;
+        if (apiDeleteOne?.includes('key')) {
+          formatEndpoint = formatEndpoint?.replace('key', key);
+        } else {
+          formatEndpoint = `${apiDeleteOne}/${key}`;
+        }
+        
+        apiService.post(formatEndpoint).then((resp) => {
           if (resp?.result) {
             notifyService.showSucsessMessage({
               description: 'Delete successfully',
