@@ -111,6 +111,9 @@ export default function UserManagement(props) {
       filter: {
         filterType: 'DateTime',
       },
+			onCell: () => ({
+				className: "text-center",
+			}),
     },
     {
       title: 'Date Modified',
@@ -121,6 +124,9 @@ export default function UserManagement(props) {
       filter: {
         filterType: 'DateTime',
       },
+			onCell: () => ({
+				className: "text-center",
+			}),
     },
   ];
 

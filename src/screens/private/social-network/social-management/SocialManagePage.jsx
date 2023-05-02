@@ -86,7 +86,7 @@ export default function SocialMangePage() {
     <Tabs
       // centered
       className="social-tab"
-      defaultActiveKey={location.state?.tab ?? 4}
+      defaultActiveKey={location.state?.tab ?? 2}
       items={items}
     />
   );
