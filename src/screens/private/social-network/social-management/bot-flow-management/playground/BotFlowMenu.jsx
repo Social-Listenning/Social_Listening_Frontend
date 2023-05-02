@@ -108,7 +108,7 @@ export default function BotFlowMenu(props) {
             <b>{type}</b>
           </div>
           <div className="flow-body">
-            {selectedNode.type === 'SentimentAnalysis' ? (
+            {selectedNode?.type === 'SentimentAnalysis' ? (
               <>
                 <div className="flow-node-data">
                   <span>Select the sentiment range</span>
@@ -166,7 +166,7 @@ export default function BotFlowMenu(props) {
                   </div>
                 </ToolTipWrapper>
               </>
-            ) : selectedNode.type === 'Respond' ? (
+            ) : selectedNode?.type === 'Respond' ? (
               <>
                 {/* <div className="flow-node-data">
                   <span>Intent</span>
