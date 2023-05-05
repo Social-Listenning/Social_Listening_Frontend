@@ -168,10 +168,10 @@ export default function BotFlowMenu(props) {
               </>
             ) : selectedNode?.type === 'Respond' ? (
               <>
-                {/* <div className="flow-node-data">
+                <div className="flow-node-data">
                   <span>Intent</span>
                   <ClassicSelect filterLabel placeHolder={null} />
-                </div> */}
+                </div>
                 <div className="flow-node-data">
                   <span>Response option</span>
                   <Input.TextArea

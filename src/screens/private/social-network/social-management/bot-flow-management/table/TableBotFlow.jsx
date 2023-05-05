@@ -70,6 +70,7 @@ export default function TableBotFlow({ pageId, getCurrentFlow }) {
   const permission = {
     table: 'table-workflow',
     new: 'create-workflow',
+    edit: 'update-workflow',
     delete: 'delete-workflow',
   };
 

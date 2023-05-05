@@ -150,3 +150,74 @@ export const changeStatusBotFlow = async (data) => {
   );
   return resp?.result;
 };
+
+export const createDialogflowBot = async (name) => {
+  const resp = await apiService.post(
+    `${environment.botUrl}/create-agent/${environment.dialogFlowConfig}`,
+    {
+      display_name: name,
+      default_language_code: 'en',
+      time_zone: 'Asia/Bangkok',
+    }
+  );
+  return resp;
+};
+
+export const updateDialogflowBot = async (agent) => {
+  const resp = await apiService.patch(
+    `${environment.botUrl}/update-agent/${environment.dialogFlowConfig}/agents/${agent.id}`,
+    {
+      display_name: agent.name,
+      default_language_code: 'en',
+      time_zone: 'Asia/Bangkok',
+    }
+  );
+  return resp;
+};
+
+export const deleteDialogflowBot = async (agentId) => {
+  const resp = await apiService.delete(
+    `${environment.botUrl}/delete-agent/${environment.dialogFlowConfig}/agents/${agentId}`
+  );
+  return resp;
+};
+
+export const getDialogflowBot = async (id) => {
+  const resp = await apiService.get(
+    `${environment.botUrl}/get-agent/${environment.dialogFlowConfig}/agents/${id}`
+  );
+  return resp;
+};
+
+export const getListDialogflowBot = async () => {
+  const resp = await apiService.get(
+    `${environment.botUrl}/get-list-agent/${environment.dialogFlowConfig}`
+  );
+  return resp;
+};
+
+export const useGetListDialogflowBot = (enabled) => {
+  return useQuery('dialogflowBots', getListDialogflowBot, {
+    enabled: enabled,
+  });
+};
+
+export const getDialogflowIntents = async (id) => {
+  const resp = await apiService.get(
+    `${environment.botUrl}/get-list-intent/${environment.dialogFlowConfig}/agents/${id}`
+  );
+  return resp;
+};
+
+export const useGetDialogflowIntents = (id, enabled) => {
+  return useQuery('botIntents', () => getDialogflowIntents(id), {
+    enabled: enabled,
+  });
+};
+
+export const createDialogflowIntent = async (id) => {
+  const resp = await apiService.get(
+    `${environment.botUrl}/get-list-intent/${environment.dialogFlowConfig}/agents/${id}`
+  );
+  return resp;
+};

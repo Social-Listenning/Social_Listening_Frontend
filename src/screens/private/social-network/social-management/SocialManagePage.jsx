@@ -5,12 +5,14 @@ import {
   CommentOutlined,
   SettingOutlined,
   RobotOutlined,
+  PlayCircleOutlined,
 } from '@ant-design/icons';
 import ElementWithPermission from '../../../../components/shared/element/ElementWithPermission';
 import MessageManagePage from './message-management/MessageManagePage';
 import PostManagePage from './post-management/PostManagePage';
 import SettingManagePage from './setting-mangement/SettingManagePage';
 import BotFlowManagePage from './bot-flow-management/BotFlowManagePage';
+import BotManagePage from './bot-management/BotManagePage';
 import '../socialNetwork.scss';
 
 export default function SocialMangePage() {
@@ -61,9 +63,23 @@ export default function SocialMangePage() {
     },
     {
       key: 4,
-      label: formatTab(<RobotOutlined />, 'Design Bot Flow'),
+      label: formatTab(
+        <PlayCircleOutlined />,
+        'Design Bot Flow',
+        'table-workflow'
+      ),
       children: (
         <BotFlowManagePage
+          pageId={location.state?.socialId}
+          socialPage={location.state?.socialPage}
+        />
+      ),
+    },
+    {
+      key: 5,
+      label: formatTab(<RobotOutlined />, 'Bots', 'table-workflow'),
+      children: (
+        <BotManagePage
           pageId={location.state?.socialId}
           socialPage={location.state?.socialPage}
         />
@@ -86,7 +102,7 @@ export default function SocialMangePage() {
     <Tabs
       // centered
       className="social-tab"
-      defaultActiveKey={location.state?.tab ?? 4}
+      defaultActiveKey={location.state?.tab ?? 5}
       items={items}
     />
   );

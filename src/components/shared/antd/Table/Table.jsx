@@ -39,6 +39,8 @@ export default function AdminTable(props) {
     customToolbar,
     disableSelect = false,
     getSelectedRows,
+    isLoading = false,
+    deleteOneRow,
     ...other
   } = props;
 
@@ -81,7 +83,7 @@ export default function AdminTable(props) {
   const [dataSource, setDataSource] = useState(tableData);
   const [filterType, setFilterType] = useState(defaultFilter);
   const [sorter, setSorter] = useState([]);
-  const [loading, toggleLoading] = useToggle(false); // loading state
+  const [loading, toggleLoading] = useToggle(isLoading); // loading state
   const tableContent = document.querySelector('.ant-table-content'); // table selector (for javascript purpose)
   // get all the props that was nested (example: role.roleName)
   let originPropsNested = columns
@@ -101,6 +103,10 @@ export default function AdminTable(props) {
       setDataSource(tableData);
     }
   }, [tableData]);
+
+  useUpdateEffect(() => {
+    toggleLoading(isLoading);
+  }, [isLoading]);
 
   useUpdateEffect(() => {
     refreshData();
@@ -168,30 +174,36 @@ export default function AdminTable(props) {
   // #endregion
 
   // #region delete one/multiple row(s)
-  function onClickDelete(row) {
-    if (row && apiDeleteOne) {
-      const key = row[keyProps]; // get value with object key
+  async function onClickDelete(row) {
+    if (row) {
+      if (apiDeleteOne) {
+        const key = row[keyProps]; // get value with object key
 
-      try {
-        let formatEndpoint = apiDeleteOne;
-        if (apiDeleteOne?.includes('key')) {
-          formatEndpoint = formatEndpoint?.replace('key', key);
-        } else {
-          formatEndpoint = `${apiDeleteOne}/${key}`;
-        }
-        
-        apiService.post(formatEndpoint).then((resp) => {
-          if (resp?.result) {
-            notifyService.showSucsessMessage({
-              description: 'Delete successfully',
-            });
-            refreshData();
+        try {
+          let formatEndpoint = apiDeleteOne;
+          if (apiDeleteOne?.includes('key')) {
+            formatEndpoint = formatEndpoint?.replace('key', key);
+          } else {
+            formatEndpoint = `${apiDeleteOne}/${key}`;
           }
-        });
-      } catch (ex) {
-        notifyService.showErrorMessage({
-          description: ex.message,
-        });
+
+          apiService.post(formatEndpoint).then((resp) => {
+            if (resp?.result) {
+              notifyService.showSucsessMessage({
+                description: 'Delete successfully',
+              });
+              refreshData();
+            }
+          });
+        } catch (ex) {
+          notifyService.showErrorMessage({
+            description: ex.message,
+          });
+        }
+      }
+      if (deleteOneRow) {
+        await deleteOneRow(row);
+        document.getElementById('refresh-table')?.click();
       }
     }
   }
@@ -323,6 +335,10 @@ export default function AdminTable(props) {
       ...(column.resizeable && { onResize: handleResize(index) }),
     }),
   }));
+
+  useUpdateEffect(() => {
+    document.getElementById('refresh-table')?.click();
+  }, [columns]);
   // #endregion
 
   // #region row selection event

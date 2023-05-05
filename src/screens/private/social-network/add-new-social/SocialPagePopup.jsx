@@ -158,7 +158,7 @@ export default function SocialPagePopup(props) {
                     }
 
                     customHistory.push(
-                      `/social-network/${mappedPage?.id}`,
+                      `/social-network/${mappedPage?.name}`,
                       {
                         socialId: mappedPage?.id,
                         socialPage: pageData,

@@ -70,3 +70,11 @@ export const deactivateUser = async (id) => {
   );
   return resp?.result;
 };
+
+export const getUserNameById = async (id) => {
+  const resp = await apiService.get(`${environment.user}/${id}`);
+  return {
+    id: id,
+    name: resp?.result,
+  };
+};

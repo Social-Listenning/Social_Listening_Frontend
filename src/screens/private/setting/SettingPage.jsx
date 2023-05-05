@@ -13,7 +13,7 @@ export default function SettingPage() {
   const getAllSetting = useRef(true);
   const [_, forceUpdate] = useState(null);
 
-  const { data } = useGetAllSetting(getAllSetting.current);
+  const { data, isFetching } = useGetAllSetting(getAllSetting.current);
   getAllSetting.current = false;
 
   useEffectOnce(() => {
@@ -104,6 +104,7 @@ export default function SettingPage() {
       columns={columns}
       tableData={data}
       permission={permission}
+      isLoading={isFetching}
       disableSelect
     />
   );

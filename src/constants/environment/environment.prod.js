@@ -1,5 +1,6 @@
 const baseUrl = 'http://localhost:3000';
 const webSocket = 'ws://localhost:3000';
+const botUrl = 'http://localhost:8000';
 const facebookGraph = 'https://graph.facebook.com';
 
 const environment = {
@@ -18,6 +19,8 @@ const environment = {
   setting: `${baseUrl}/setting`,
   socialTabSetting: `${baseUrl}/socialTabSeting`,
   workflow: `${baseUrl}/workflow`,
+  botUrl: botUrl,
+  dialogFlowConfig: `projects/boxwood-spirit-385514/locations/us-central1`,
 };
 
 export const gender = [
