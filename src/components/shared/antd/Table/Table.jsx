@@ -41,6 +41,8 @@ export default function AdminTable(props) {
     getSelectedRows,
     isLoading = false,
     deleteOneRow,
+    showToolbar = true,
+    showTableUtils = true,
     ...other
   } = props;
 
@@ -227,6 +229,9 @@ export default function AdminTable(props) {
 
   function selectAction(action) {
     actionType.current = action;
+    if (action === 'Add') {
+      selectedRecord.current = null;
+    }
   }
 
   // #region format action column with permission
@@ -335,10 +340,6 @@ export default function AdminTable(props) {
       ...(column.resizeable && { onResize: handleResize(index) }),
     }),
   }));
-
-  useUpdateEffect(() => {
-    document.getElementById('refresh-table')?.click();
-  }, [columns]);
   // #endregion
 
   // #region row selection event
@@ -361,27 +362,31 @@ export default function AdminTable(props) {
 
   return (
     <ElementWithPermission permission={permission.table}>
-      <TableToolbar
-        permission={permission}
-        selectAction={selectAction}
-        openAddEdit={() => {
-          toggleOpenAddEdit(true);
-        }}
-        apiImport={apiImport}
-        importColumns={importColumns}
-        dumpImportData={dumpImportData}
-        apiExport={apiExport}
-        showDelete={selectedRowKeys?.length > 0}
-        deleteMultiple={onMultipleDelete}
-        customToolbar={customToolbar}
-      />
+      {showToolbar && (
+        <TableToolbar
+          permission={permission}
+          selectAction={selectAction}
+          openAddEdit={() => {
+            toggleOpenAddEdit(true);
+          }}
+          apiImport={apiImport}
+          importColumns={importColumns}
+          dumpImportData={dumpImportData}
+          apiExport={apiExport}
+          showDelete={selectedRowKeys?.length > 0}
+          deleteMultiple={onMultipleDelete}
+          customToolbar={customToolbar}
+        />
+      )}
 
-      <TabelUtils
-        originColumn={columns}
-        columnList={columnUtil.current}
-        updateColumn={handleDisplayColumns}
-        refreshTable={setRefreshFS}
-      />
+      {showTableUtils && (
+        <TabelUtils
+          originColumn={columns}
+          columnList={columnUtil.current}
+          updateColumn={handleDisplayColumns}
+          refreshTable={setRefreshFS}
+        />
+      )}
 
       <LoadingWrapper size="large" loading={loading}>
         <Table

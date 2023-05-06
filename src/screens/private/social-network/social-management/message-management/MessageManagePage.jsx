@@ -106,6 +106,7 @@ export default function MessageManagePage(props) {
 						apiGetData={`${environment.socialMessage}/${pageId}`}
 						columns={columns}
 						permission={permission}
+						showToolbar={false}
 						disableSelect
 						scroll={{
 							x: 1000,

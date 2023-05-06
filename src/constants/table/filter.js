@@ -10,6 +10,7 @@ const numberType = [
 const textType = ['Start With', 'End With'];
 
 const dateTimeType = [
+  'Is Equal To',
   'Is Before Or Equal To',
   'Is Before',
   'Is After Or Equal To',

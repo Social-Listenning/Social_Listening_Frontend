@@ -5,6 +5,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import { notifyService } from '../../../../../services/notifyService';
 import {
   deleteDialogflowBot,
+  deleteDialogflowIntent,
   useGetDialogflowIntents,
   useGetListDialogflowBot,
 } from '../../socialNetworkService';
@@ -28,7 +29,7 @@ export default function BotManagePage({ pageId, socialPage }) {
       dataIndex: 'display_name',
       render: (record, value) => {
         return (
-          <ToolTipWrapper tooltip="Click to edit bot's intent">
+          <ToolTipWrapper tooltip="Click to edit bot intents">
             <b
               className="pointer full-width"
               onClick={(e) => {
@@ -70,6 +71,10 @@ export default function BotManagePage({ pageId, socialPage }) {
       fixed: true,
     },
     {
+      title: 'Description',
+      dataIndex: 'description',
+    },
+    {
       title: 'Fallback',
       dataIndex: 'is_fallback',
       filter: {
@@ -98,6 +103,9 @@ export default function BotManagePage({ pageId, socialPage }) {
       setColumns(botColumns);
     }
   }, [botSelected]);
+  useUpdateEffect(() => {
+    document.getElementById('refresh-table')?.click();
+  }, [columns]);
 
   const { data: botList, isFetching: botFetching } =
     useGetListDialogflowBot(getData.current && !botSelected);
@@ -140,6 +148,16 @@ export default function BotManagePage({ pageId, socialPage }) {
     },
   });
 
+  const useDeleteIntent = useMutation(deleteDialogflowIntent, {
+    onSuccess: (resp) => {
+      if (resp) {
+        notifyService.showSucsessMessage({
+          description: 'Delete intent successfully',
+        });
+      }
+    },
+  });
+
   const onClickDelete = async (row) => {
     let id = null;
     if (row) {
@@ -147,7 +165,14 @@ export default function BotManagePage({ pageId, socialPage }) {
       id = splitName[splitName?.length - 1];
     }
 
-    await useDeleteBot.mutateAsync(id);
+    if (!botSelected) {
+      await useDeleteBot.mutateAsync(id);
+    } else {
+      await useDeleteIntent.mutateAsync({
+        agentId: botSelected,
+        intentId: id,
+      });
+    }
   };
 
   const customToolbar = (
@@ -177,14 +202,19 @@ export default function BotManagePage({ pageId, socialPage }) {
       isLoading={
         !botSelected
           ? botFetching || useDeleteBot.isLoading
-          : intentFetching
+          : intentFetching || useDeleteIntent.isLoading
       }
       permission={permission}
       addEditComponent={
         !botSelected ? (
           <AddEditBot />
         ) : (
-          <AddEditIntent agentId={botSelected} />
+          <AddEditIntent
+            agentId={botSelected}
+            hadFallback={
+              data?.filter((item) => item.is_fallback)?.length > 0
+            }
+          />
         )
       }
       deleteOneRow={onClickDelete}

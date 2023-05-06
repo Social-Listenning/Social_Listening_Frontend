@@ -215,9 +215,25 @@ export const useGetDialogflowIntents = (id, enabled) => {
   });
 };
 
-export const createDialogflowIntent = async (id) => {
-  const resp = await apiService.get(
-    `${environment.botUrl}/get-list-intent/${environment.dialogFlowConfig}/agents/${id}`
+export const createDialogflowIntent = async (data) => {
+  const resp = await apiService.post(
+    `${environment.botUrl}/create-intent/${environment.dialogFlowConfig}/agents/${data.id}`,
+    data.body
+  );
+  return resp;
+};
+
+export const updateDialogflowIntent = async (data) => {
+  const resp = await apiService.patch(
+    `${environment.botUrl}/update-intent/${environment.dialogFlowConfig}/agents/${data.agentId}/intents/${data.intentId}`,
+    data.body
+  );
+  return resp;
+};
+
+export const deleteDialogflowIntent = async (data) => {
+  const resp = await apiService.delete(
+    `${environment.botUrl}/delete-intent/${environment.dialogFlowConfig}/agents/${data.agentId}/intents/${data.intentId}`
   );
   return resp;
 };
