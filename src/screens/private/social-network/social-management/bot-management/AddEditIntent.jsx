@@ -160,7 +160,7 @@ export default function AddEditIntent(props) {
           training_phrases: trainings?.map((item) => {
             return {
               parts: [{ text: item.parts }],
-              // repeat_count: 1,
+              repeat_count: 1,
             };
           }),
         },
@@ -183,7 +183,7 @@ export default function AddEditIntent(props) {
           training_phrases: trainings?.map((item) => {
             return {
               parts: [{ text: item.parts }],
-              // repeat_count: 1,
+              repeat_count: 1,
             };
           }),
         },

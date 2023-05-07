@@ -20,7 +20,7 @@ import './table.scss';
 export default function AdminTable(props) {
   const {
     columns = [],
-    tableData = [],
+    tableData,
     importColumns = columns,
     dumpImportData = [],
     actionList = defaultAction,
@@ -101,7 +101,7 @@ export default function AdminTable(props) {
 
   // make sure when the tableData change table auto update
   useUpdateEffect(() => {
-    if (tableData?.length > 0) {
+    if (tableData) {
       setDataSource(tableData);
     }
   }, [tableData]);

@@ -90,7 +90,8 @@ export default function LoginPage() {
                     // if it not between 8 - 50, check it has value or not
                     // if it has value -> user already input the field
                     if (value?.length > 0) {
-                      errorMsg = 'Password must between 8 - 50';
+                      errorMsg =
+                        'Password must between 8 - 50 letters';
                     }
                     return Promise.reject(errorMsg);
                   },

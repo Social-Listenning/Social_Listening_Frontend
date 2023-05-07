@@ -75,7 +75,7 @@ export default function RegisterPage() {
           </ToolTipWrapper>
 
           <ToolTipWrapper
-            tooltip="Password must between 8 - 50"
+            tooltip="Password must between 8 - 50 letters"
             placement="topRight"
           >
             <Form.Item

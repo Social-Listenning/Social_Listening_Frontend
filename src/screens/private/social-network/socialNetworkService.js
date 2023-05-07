@@ -151,6 +151,7 @@ export const changeStatusBotFlow = async (data) => {
   return resp?.result;
 };
 
+// #region dialogflow bot
 export const createDialogflowBot = async (name) => {
   const resp = await apiService.post(
     `${environment.botUrl}/create-agent/${environment.dialogFlowConfig}`,
@@ -236,4 +237,18 @@ export const deleteDialogflowIntent = async (data) => {
     `${environment.botUrl}/delete-intent/${environment.dialogFlowConfig}/agents/${data.agentId}/intents/${data.intentId}`
   );
   return resp;
+};
+// #endregion
+
+export const getConservation = async (pageId, userId) => {
+  const resp = await apiService.post(
+    `${environment.message}/${pageId}/${userId}`
+  );
+  return resp?.result;
+};
+
+export const useGetConservation = (pageId, enabled = true) => {
+  return useQuery('conservation', () => getMessageDetail(pageId), {
+    enabled: enabled,
+  });
 };

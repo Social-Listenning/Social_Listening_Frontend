@@ -13,6 +13,7 @@ import PostManagePage from './post-management/PostManagePage';
 import SettingManagePage from './setting-mangement/SettingManagePage';
 import BotFlowManagePage from './bot-flow-management/BotFlowManagePage';
 import BotManagePage from './bot-management/BotManagePage';
+import ChatManagePage from './chat-management/ChatManagePage';
 import '../socialNetwork.scss';
 
 export default function SocialMangePage() {
@@ -53,9 +54,9 @@ export default function SocialMangePage() {
     },
     {
       key: 3,
-      label: formatTab(<FormOutlined />, 'Post'),
+      label: formatTab(<FormOutlined />, 'Chat'),
       children: (
-        <PostManagePage
+        <ChatManagePage
           pageId={location.state?.socialId}
           socialPage={location.state?.socialPage}
         />
@@ -101,9 +102,11 @@ export default function SocialMangePage() {
   return (
     <Tabs
       // centered
+      destroyInactiveTabPane
       className="social-tab"
-      defaultActiveKey={location.state?.tab ?? 5}
+      defaultActiveKey={location.state?.tab ?? 4}
       items={items}
+      key={location.state?.socialId}
     />
   );
 }

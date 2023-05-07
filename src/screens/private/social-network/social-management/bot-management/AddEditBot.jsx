@@ -7,9 +7,10 @@ import {
 } from '../../socialNetworkService';
 import useEffectOnce from '../../../../../components/hooks/useEffectOnce';
 import AddEditWrapper from '../../../../../components/shared/antd/Table/Drawer/AddEditWrapper';
+import ToolTipWrapper from '../../../../../components/shared/antd/ToolTipWrapper';
 
 export default function AddEditBot(props) {
-  const { open, onClose, selectedData, action } = props;
+  const { open, onClose, selectedData, action, pageId } = props;
 
   const [addEditBotForm] = Form.useForm();
   const useCreateDialogflowBot = useMutation(createDialogflowBot, {
@@ -35,14 +36,19 @@ export default function AddEditBot(props) {
   });
 
   useEffectOnce(() => {
+    let formatName = selectedData?.display_name;
+    if (formatName?.includes(`-${pageId}`)) {
+      formatName = formatName.substring(0, formatName.length - 37);
+    }
+    
     addEditBotForm.setFieldsValue({
-      name: selectedData?.display_name,
+      name: formatName,
     });
   });
 
   function handleSubmit(value) {
     if (action === 'Add') {
-      useCreateDialogflowBot.mutate(value?.name);
+      useCreateDialogflowBot.mutate(`${value?.name}-${pageId}`);
     } else if (action === 'Edit') {
       let id = null;
       if (selectedData) {
@@ -52,7 +58,7 @@ export default function AddEditBot(props) {
 
       useUpdateDialogflowBot.mutate({
         id: id,
-        name: value?.name,
+        name: `${value?.name}-${pageId}`,
       });
     }
   }
@@ -79,18 +85,27 @@ export default function AddEditBot(props) {
         autoComplete="off"
         onFinish={handleSubmit}
       >
-        <Form.Item
-          label="Name"
-          name="name"
-          rules={[
-            {
-              required: true,
-              message: 'Name is required',
-            },
-          ]}
+        <ToolTipWrapper
+          tooltip="Name must be lower or equal to 150 letters"
+          placement="left"
         >
-          <Input />
-        </Form.Item>
+          <Form.Item
+            label="Name"
+            name="name"
+            rules={[
+              {
+                required: true,
+                message: 'Name is required',
+              },
+              {
+                max: 150,
+                message: 'Name must be lower or equal to 150 letters',
+              },
+            ]}
+          >
+            <Input allowClear />
+          </Form.Item>
+        </ToolTipWrapper>
       </Form>
     </AddEditWrapper>
   );

@@ -28,6 +28,11 @@ export default function BotManagePage({ pageId, socialPage }) {
       title: 'Name',
       dataIndex: 'display_name',
       render: (record, value) => {
+        let formatName = record;
+        if (record?.includes(`-${pageId}`)) {
+          formatName = record.substring(0, record.length - 37);
+        }
+        
         return (
           <ToolTipWrapper tooltip="Click to edit bot intents">
             <b
@@ -42,7 +47,7 @@ export default function BotManagePage({ pageId, socialPage }) {
                 setBotSelected(id);
               }}
             >
-              {record}
+              {formatName}
             </b>
           </ToolTipWrapper>
         );
@@ -117,7 +122,9 @@ export default function BotManagePage({ pageId, socialPage }) {
     );
   getData.current = false;
 
-  let data = botList;
+  let data = botList?.filter((bot) =>
+    bot?.display_name?.includes(`-${pageId}`)
+  );
   if (botSelected) {
     data = intentList;
   }
@@ -207,7 +214,7 @@ export default function BotManagePage({ pageId, socialPage }) {
       permission={permission}
       addEditComponent={
         !botSelected ? (
-          <AddEditBot />
+          <AddEditBot pageId={pageId} />
         ) : (
           <AddEditIntent
             agentId={botSelected}

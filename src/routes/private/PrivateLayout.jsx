@@ -66,13 +66,17 @@ export default function PrivateLayout(props) {
           if (item.key === 'social-network') {
             item.children = [
               ...item.children,
-              ...socialGroups?.map((sg) => {
-                return {
-                  key: `social-network/${sg?.name}`,
-                  label: sg?.name,
-                  id: sg?.id,
-                };
-              }),
+              ...socialGroups
+                ?.filter((sg) =>
+                  item.children.map((x) => x?.id !== sg?.id)
+                )
+                ?.map((sg) => {
+                  return {
+                    key: `social-network/${sg?.name}`,
+                    label: sg?.name,
+                    id: sg?.id,
+                  };
+                }),
             ];
           }
           return item;
@@ -110,7 +114,7 @@ export default function PrivateLayout(props) {
       availableMenu.map((item) => {
         if (item.children?.length > 0) {
           item.children.map((childItem) => {
-            if (childItem?.id) {
+            if (childItem?.id && childItem?.key === e.key) {
               correctSocial = socialGroups.filter(
                 (social) => social?.id === childItem?.id
               )[0];
@@ -266,7 +270,7 @@ export default function PrivateLayout(props) {
           theme="dark"
           mode="inline"
           items={availableMenu}
-          selectedKeys={[path]}
+          selectedKeys={[path?.replace('%20', ' ')]}
           defaultOpenKeys={[openKey ? openKey : 'social-network']}
         />
       </Sider>
@@ -338,7 +342,7 @@ export default function PrivateLayout(props) {
         </Header>
 
         <Content className="private-content">
-          <Title>{listPath?.join(' / ')}</Title>
+          <Title>{listPath?.join(' / ')?.replace('%20', ' ')}</Title>
 
           <div className="body">{props.children}</div>
         </Content>
