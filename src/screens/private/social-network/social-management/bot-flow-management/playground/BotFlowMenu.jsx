@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Input, Slider } from 'antd';
 import {
   NotificationOutlined,
@@ -6,6 +6,10 @@ import {
   MessageOutlined,
   LeftOutlined,
 } from '@ant-design/icons';
+import {
+  useGetDialogflowIntents,
+  useGetListDialogflowBot,
+} from '../../../socialNetworkService';
 import useUpdateEffect from '../../../../../../components/hooks/useUpdateEffect';
 import ClassicSelect from '../../../../../../components/shared/antd/Select/Classic';
 import ToolTipWrapper from '../../../../../../components/shared/antd/ToolTipWrapper';
@@ -30,7 +34,7 @@ const onDragStart = (event, nodeType) => {
 };
 
 export default function BotFlowMenu(props) {
-  const { selectedNode, goBackMenu } = props;
+  const { pageId, selectedNode, goBackMenu } = props;
   const type = nodeTypes?.filter(
     (item) => item.value === selectedNode?.type
   )[0]?.label;
@@ -53,7 +57,19 @@ export default function BotFlowMenu(props) {
         ]
       );
     } else if (selectedNode?.type === 'Respond') {
-      setRespond(selectedNode?.data?.respond);
+      if (selectedNode?.data?.dialogFlow) {
+        const botId = botList?.filter((bot) => {
+          let id = null;
+          if (bot) {
+            const splitName = bot?.name?.split('/');
+            id = splitName[splitName?.length - 1];
+          }
+          return selectedNode[id]
+        });
+        // setBotSelected(selectedNode?.data?.botId);
+        // setIntentSelected(selectedNode?.data?.intentId);
+        // setRespond(selectedNode?.data?.respond);
+      }
     }
   }, [selectedNode]);
 
@@ -72,6 +88,21 @@ export default function BotFlowMenu(props) {
   // #endregion
 
   // #region respond
+  const fetchBotDialogflow = useRef(true);
+  const [botSelected, setBotSelected] = useState(null);
+  const [intentSelected, setIntentSelected] = useState(null);
+  const { data: botList, isFetching: botFetching } =
+    useGetListDialogflowBot(
+      fetchBotDialogflow.current && !botSelected
+    );
+
+  const { data: intentList, isFetching: intentFetching } =
+    useGetDialogflowIntents(
+      botSelected,
+      fetchBotDialogflow.current && botSelected?.length > 0
+    );
+  fetchBotDialogflow.current = false;
+
   const [respond, setRespond] = useState(null);
   const handleRepond = (e) => {
     setRespond(e);
@@ -169,20 +200,128 @@ export default function BotFlowMenu(props) {
             ) : selectedNode?.type === 'Respond' ? (
               <>
                 <div className="flow-node-data">
-                  <span>Intent</span>
-                  <ClassicSelect filterLabel placeHolder={null} />
-                </div>
-                <div className="flow-node-data">
-                  <span>Response option</span>
-                  <Input.TextArea
-                    allowClear
-                    value={respond}
-                    autoSize={{ minRows: 5, maxRows: 5 }}
+                  <span>Bot</span>
+                  <ClassicSelect
+                    filterLabel
+                    placeHolder={null}
+                    loading={botFetching}
+                    options={botList
+                      ?.filter((bot) =>
+                        bot?.display_name?.includes(`-${pageId}`)
+                      )
+                      ?.map((item) => {
+                        let formatName = item?.display_name;
+                        if (formatName?.includes(`-${pageId}`)) {
+                          formatName = formatName.substring(
+                            0,
+                            formatName.length - 37
+                          );
+                        }
+
+                        let id = null;
+                        if (item) {
+                          const splitName = item?.name?.split('/');
+                          id = splitName[splitName?.length - 1];
+                        }
+
+                        return {
+                          label: formatName,
+                          value: id,
+                        };
+                      })}
+                    value={botSelected}
                     onChange={(e) => {
-                      handleRepond(e.currentTarget.value);
+                      fetchBotDialogflow.current = true;
+                      setBotSelected(e);
                     }}
                   />
                 </div>
+                <div className="flow-node-data">
+                  <span>Intent</span>
+                  <ClassicSelect
+                    filterLabel
+                    placeHolder={null}
+                    loading={intentFetching}
+                    options={intentList?.map((item) => {
+                      let id = null;
+                      if (item) {
+                        const splitName = item?.name?.split('/');
+                        id = splitName[splitName?.length - 1];
+                      }
+
+                      return {
+                        label: item?.display_name,
+                        value: id,
+                      };
+                    })}
+                    value={intentSelected}
+                    onChange={(e) => {
+                      setIntentSelected(e);
+                    }}
+                  />
+                </div>
+                <div className="flow-node-data">
+                  <span>Respond option</span>
+                  <ToolTipWrapper
+                    tooltip="Press enter to save your response, press shift enter to move to a new line"
+                    placement="left"
+                  >
+                    <Input.TextArea
+                      allowClear
+                      value={respond}
+                      autoSize={{ minRows: 5, maxRows: 5 }}
+                      onChange={(e) => {
+                        handleRepond(e.currentTarget.value);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          if (e.shiftKey) {
+                            // move to a new line on Shift+Enter
+                            setRespond((prev) => prev + '\n');
+                          } else {
+                            selectedNode?.data?.syncData(
+                              selectedNode?.id,
+                              {
+                                dialogFlow: {
+                                  ...selectedNode.data?.dialogFlow,
+                                  [botSelected]: [
+                                    ...(selectedNode.data
+                                      ?.dialogFlow?.[botSelected] ??
+                                      []),
+                                    {
+                                      intentId: intentSelected,
+                                      repond: respond,
+                                    },
+                                  ],
+                                },
+                              }
+                            );
+                            setRespond(null);
+                          }
+                        }
+                      }}
+                    />
+                  </ToolTipWrapper>
+                </div>
+                {botSelected && selectedNode?.data?.dialogFlow && (
+                  <div className="flow-node-data">
+                    {selectedNode.data.dialogFlow?.[botSelected]?.map(
+                      (item) => {
+                        const intentName = intentList?.filter(
+                          (intent) =>
+                            intent.name?.includes(item.intentId)
+                        )[0]?.display_name;
+
+                        return (
+                          <div>
+                            {intentName}: {item.repond}
+                          </div>
+                        );
+                      }
+                    )}
+                  </div>
+                )}
               </>
             ) : null}
           </div>

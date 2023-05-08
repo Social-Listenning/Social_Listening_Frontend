@@ -9,7 +9,7 @@ import DateRangePicker from '../../../../../components/shared/antd/DateTimePicke
 import ApplyFilterButton from '../../../../../components/shared/element/Button/ApplyFilterButton';
 import PostCard from './PostCard';
 import CommentDetail from './CommentDetail';
-import './post.scss';
+// import './post.scss';
 
 export default function PostManagePage({ pageId, socialPage }) {
   const [rangeFilter, setRangeFilter] = useToggle(false);

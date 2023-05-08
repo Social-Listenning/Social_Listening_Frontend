@@ -229,7 +229,7 @@ export default function FlowPlayground(props) {
   });
   const updateBotflow = () => {
     goBackMenu();
-	
+
     useUpdateBotFlow.mutate({
       id: flowDetail?.id,
       body: {
@@ -255,6 +255,7 @@ export default function FlowPlayground(props) {
         exit={goBackToTable}
       />
       <BotFlowMenu
+        pageId={pageId}
         selectedNode={selectedNode}
         goBackMenu={goBackMenu}
       />
