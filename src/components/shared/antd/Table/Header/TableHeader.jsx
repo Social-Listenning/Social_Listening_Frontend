@@ -167,6 +167,7 @@ export default function TableHeader(props) {
               props: propsName,
               value: value,
               filterOperator: filterOperator.current,
+              filterType: filter?.filterType ?? 'Default'
             },
           ];
         }
