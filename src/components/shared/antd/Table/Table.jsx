@@ -35,7 +35,7 @@ export default function AdminTable(props) {
     scroll,
     permission = {},
     handleActionClick,
-    defaultFilter = [],
+    defaultFilter = null,
     customToolbar,
     disableSelect = false,
     getSelectedRows,
@@ -83,7 +83,7 @@ export default function AdminTable(props) {
 
   // #region handle filter, sorter, refresh data
   const [dataSource, setDataSource] = useState(tableData);
-  const [filterType, setFilterType] = useState(defaultFilter);
+  const [filterType, setFilterType] = useState(defaultFilter ?? []);
   const [sorter, setSorter] = useState([]);
   const [loading, toggleLoading] = useToggle(isLoading); // loading state
   const tableContent = document.querySelector('.ant-table-content'); // table selector (for javascript purpose)
@@ -305,7 +305,7 @@ export default function AdminTable(props) {
               updateSorter={setSorter}
               updateFilter={setFilterType}
               refreshFilterSorter={refreshFS}
-              defaultFilter={defaultFilter.filter(
+              defaultFilter={defaultFilter?.filter(
                 (item) => item.props === col.dataIndex
               )}
             />

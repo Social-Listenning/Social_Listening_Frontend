@@ -612,9 +612,15 @@
         }
       }
 
+      .intent-list-container {
+        max-height: 20.4rem;
+        min-height: 8rem;
+        overflow-y:  scroll;
+      }
+
       .intent-tag {
         font-weight: 400;
-        font-size: var(--app-font-size);
+        font-size: 1.4rem;
         cursor: pointer;
         padding: 0.4rem;
         margin-top: 0.8rem;

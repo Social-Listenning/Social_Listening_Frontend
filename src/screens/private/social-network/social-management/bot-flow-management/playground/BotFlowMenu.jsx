@@ -118,6 +118,7 @@ export default function BotFlowMenu(props) {
         ],
       },
     });
+    setRespond(null);
   };
   useUpdateEffect(() => {
     const resp = selectedNode.data.dialogFlow?.[botSelected]?.filter(
@@ -303,7 +304,6 @@ export default function BotFlowMenu(props) {
                             setRespond((prev) => prev + '\n');
                           } else {
                             updateDialogflow(intentSelected, respond);
-                            setRespond(null);
                           }
                         }
                       }}
@@ -311,50 +311,61 @@ export default function BotFlowMenu(props) {
                   </ToolTipWrapper>
                 </div>
                 {botSelected && (
-                  <LoadingWrapper loading={intentFetching}>
-                    <div className="flow-node-data">
-                      <div>Intent will reply</div>
-                      {intentList?.map((item, index) => {
-                        let id = null;
-                        if (item) {
-                          const splitName = item?.name?.split('/');
-                          id = splitName[splitName?.length - 1];
-                        }
-
-                        let resp = selectedNode?.data?.dialogFlow?.[
-                          botSelected
-                        ]?.filter(
-                          (intent) => intent?.intentId === id
-                        )[0]?.respond;
-
-                        return (
-                          <Tag
-                            className="intent-tag"
-                            key={index}
-                            color={
-                              id === intentSelected
-                                ? resp
-                                  ? 'var(--primary-color)'
-                                  : '#ff0000'
-                                : resp
-                                ? 'blue'
-                                : 'red'
-                            }
-                            closable
-                            onClick={() => {
-                              setIntentSelected(id);
-                            }}
-                            onClose={(e) => {
-                              e.preventDefault();
-                              updateDialogflow(id, '');
-                            }}
-                          >
-                            {item?.display_name}
-                          </Tag>
-                        );
-                      })}
+                  <div className="flow-node-data">
+                    <div>
+                      Intent statistics (
+                      <span style={{ color: 'blue' }}>blue</span>{' '}
+                      means had respond,{' '}
+                      <span style={{ color: 'red' }}>red</span> means
+                      no respond)
                     </div>
-                  </LoadingWrapper>
+                    <LoadingWrapper
+                      loading={intentFetching}
+                      size="large"
+                    >
+                      <div className="intent-list-container">
+                        {intentList?.map((item, index) => {
+                          let id = null;
+                          if (item) {
+                            const splitName = item?.name?.split('/');
+                            id = splitName[splitName?.length - 1];
+                          }
+
+                          let resp = selectedNode?.data?.dialogFlow?.[
+                            botSelected
+                          ]?.filter(
+                            (intent) => intent?.intentId === id
+                          )[0]?.respond;
+
+                          return (
+                            <Tag
+                              className="intent-tag"
+                              key={index}
+                              color={
+                                id === intentSelected
+                                  ? resp
+                                    ? 'var(--primary-color)'
+                                    : '#ff0000'
+                                  : resp
+                                  ? 'blue'
+                                  : 'red'
+                              }
+                              closable
+                              onClick={() => {
+                                setIntentSelected(id);
+                              }}
+                              onClose={(e) => {
+                                e.preventDefault();
+                                updateDialogflow(id, '');
+                              }}
+                            >
+                              {item?.display_name}
+                            </Tag>
+                          );
+                        })}
+                      </div>
+                    </LoadingWrapper>
+                  </div>
                 )}
               </>
             ) : null}

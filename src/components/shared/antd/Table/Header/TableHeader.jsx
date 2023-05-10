@@ -72,9 +72,17 @@ export default function TableHeader(props) {
       );
     } else if (filter.filterType === 'DateTime') {
       inputHeader = !dateRangeFilter ? (
-        <DateTimePicker id={title} onChange={handleSelect} />
+        <DateTimePicker
+          value={value}
+          id={title}
+          onChange={handleSelect}
+        />
       ) : (
-        <DateRangePicker id={title} onChange={handleSelect} />
+        <DateRangePicker
+          value={value}
+          id={title}
+          onChange={handleSelect}
+        />
       );
     }
   }
@@ -135,19 +143,22 @@ export default function TableHeader(props) {
     if (filterOperator.current !== listFilter[e.key]) {
       filterOperator.current = listFilter[e.key];
 
+      setSelectedKey(
+        listFilter
+          .findIndex((x) => x === filterOperator.current)
+          ?.toString()
+      );
+
       if (filter && filter?.filterType === 'DateTime') {
         if (listFilter[e.key] === 'Between') {
           setDateRangeFilter(true);
         } else {
           setDateRangeFilter(false);
         }
+        setValue(null);
+        return;
       }
 
-      setSelectedKey(
-        listFilter
-          .findIndex((x) => x === filterOperator.current)
-          ?.toString()
-      );
       formatFilter();
     }
   }
@@ -167,7 +178,7 @@ export default function TableHeader(props) {
               props: propsName,
               value: value,
               filterOperator: filterOperator.current,
-              filterType: filter?.filterType ?? 'Default'
+              filterType: filter?.filterType ?? 'Default',
             },
           ];
         }
