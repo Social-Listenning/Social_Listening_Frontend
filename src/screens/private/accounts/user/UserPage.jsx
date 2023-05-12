@@ -19,7 +19,7 @@ import AssignUserModal from './AssignUserModal';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
 
 export default function UserManagement(props) {
-  const { defaultFilter = [] } = props;
+  const { defaultFilter } = props;
 
   const queryClient = useQueryClient();
   const userData = queryClient.getQueryData('userData');
@@ -150,11 +150,6 @@ export default function UserManagement(props) {
       dataIndex: 'password',
       required: true,
     },
-    // {
-    //   title: 'Role',
-    //   dataIndex: 'roleName',
-    //   required: true,
-    // },
     {
       title: 'Full Name',
       dataIndex: 'fullName',
@@ -173,27 +168,22 @@ export default function UserManagement(props) {
     {
       email: 'user1@gmail.com',
       password: 'secret-password',
-      // roleName: 'MANAGER',
     },
     {
       email: 'user2@gmail.com',
       password: 'secret-password',
-      // roleName: 'MANAGER',
     },
     {
       email: 'user3@gmail.com',
       password: 'secret-password',
-      // roleName: 'SUPPORTER',
     },
     {
       email: 'user4@gmail.com',
       password: 'secret-password',
-      // roleName: 'SUPPORTER',
     },
     {
       email: 'user5@gmail.com',
       password: 'secret-password',
-      // roleName: 'MANAGER',
     },
   ];
 

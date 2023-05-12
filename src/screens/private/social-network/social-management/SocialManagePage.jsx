@@ -6,14 +6,14 @@ import {
   SettingOutlined,
   RobotOutlined,
   PlayCircleOutlined,
+  TeamOutlined,
 } from '@ant-design/icons';
 import ElementWithPermission from '../../../../components/shared/element/ElementWithPermission';
 import MessageManagePage from './message-management/MessageManagePage';
-import PostManagePage from './post-management/PostManagePage';
 import SettingManagePage from './setting-mangement/SettingManagePage';
 import BotFlowManagePage from './bot-flow-management/BotFlowManagePage';
 import BotManagePage from './bot-management/BotManagePage';
-import ChatManagePage from './chat-management/ChatManagePage';
+import MemberManagePage from './member-management/MemberManagePage';
 import '../socialNetwork.scss';
 
 export default function SocialMangePage() {
@@ -37,33 +37,30 @@ export default function SocialMangePage() {
   }
 
   const items = [
-    // {
-    //   key: 1,
-    //   label: formatTab(<TeamOutlined />, 'Member'),
-    //   children: `Content of Tab Pane 1`,
-    // },
     {
-      key: 2,
-      label: formatTab(<CommentOutlined />, 'Message'),
+      key: 1,
+      label: formatTab(<CommentOutlined />, 'Comment'),
       children: (
         <MessageManagePage
           pageId={location.state?.socialId}
           socialPage={location.state?.socialPage}
+          type="comment"
+        />
+      ),
+    },
+    {
+      key: 2,
+      label: formatTab(<FormOutlined />, 'Chat'),
+      children: (
+        <MessageManagePage
+          pageId={location.state?.socialId}
+          socialPage={location.state?.socialPage}
+          type="message"
         />
       ),
     },
     {
       key: 3,
-      label: formatTab(<FormOutlined />, 'Chat'),
-      children: (
-        <ChatManagePage
-          pageId={location.state?.socialId}
-          socialPage={location.state?.socialPage}
-        />
-      ),
-    },
-    {
-      key: 4,
       label: formatTab(
         <PlayCircleOutlined />,
         'Design Bot Flow',
@@ -77,10 +74,20 @@ export default function SocialMangePage() {
       ),
     },
     {
-      key: 5,
+      key: 4,
       label: formatTab(<RobotOutlined />, 'Bots', 'table-workflow'),
       children: (
         <BotManagePage
+          pageId={location.state?.socialId}
+          socialPage={location.state?.socialPage}
+        />
+      ),
+    },
+    {
+      key: 5,
+      label: formatTab(<TeamOutlined />, 'Member'),
+      children: (
+        <MemberManagePage
           pageId={location.state?.socialId}
           socialPage={location.state?.socialPage}
         />

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Card } from 'antd';
-import { PlusOutlined, FacebookFilled } from '@ant-design/icons';
+import { PlusOutlined, FacebookOutlined, WhatsAppOutlined } from '@ant-design/icons';
 import { useMutation } from 'react-query';
 import { notifyService } from '../../../../services/notifyService';
 import { getSettingByKeyAndGroup } from '../../setting/settingService';
@@ -11,7 +11,8 @@ import SocialPagePopup from './SocialPagePopup';
 import ClassicDropdown from '../../../../components/shared/antd/Dropdown/Classic';
 
 const socialList = [
-  { icon: <FacebookFilled />, label: 'Connect Fanpage' },
+  { icon: <FacebookOutlined />, label: 'Connect Fanpage' },
+  { icon: <WhatsAppOutlined />, label: 'Whatapps' },
 ];
 
 export default function AddNewPage(props) {

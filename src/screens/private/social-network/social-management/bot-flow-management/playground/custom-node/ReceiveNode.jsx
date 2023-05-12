@@ -17,7 +17,7 @@ export default function ReceiveNode(props) {
     <div className="node-wrapper flex-center">
       <div className="node-title flex-center">
         <PlayCircleOutlined />
-        Receive message
+        Receive {data?.type}
       </div>
       <Handle
         id="receive-output-handle"

@@ -30,7 +30,7 @@ export const subscribeFacebookPage = async (data) => {
     `${environment.facebookGraph}/${data?.pageId}/subscribed_apps?access_token=${data?.accessToken}`,
     {
       access_token: data?.accessToken,
-      subscribed_fields: 'feed',
+      subscribed_fields: ['feed', 'messages']
     }
   );
   return resp;
@@ -247,8 +247,24 @@ export const getConservation = async (pageId, userId) => {
   return resp?.result;
 };
 
-export const useGetConservation = (pageId, enabled = true) => {
-  return useQuery('conservation', () => getMessageDetail(pageId), {
-    enabled: enabled,
-  });
+export const useGetConservation = (
+  pageId,
+  userId,
+  enabled = true
+) => {
+  return useQuery(
+    'conservation',
+    () => getMessageDetail(pageId, userId),
+    {
+      enabled: enabled,
+    }
+  );
+};
+
+export const saveConservationMessage = async (data) => {
+  const resp = await apiService.post(
+    `${environment.message}/save`,
+    data
+  );
+  return resp?.result;
 };

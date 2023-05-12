@@ -258,6 +258,7 @@ export default function FlowPlayground(props) {
         pageId={pageId}
         selectedNode={selectedNode}
         goBackMenu={goBackMenu}
+        flowDetail={flowDetail}
       />
       <ReactFlow
         snapToGrid

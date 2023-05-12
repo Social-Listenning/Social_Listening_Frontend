@@ -8,7 +8,7 @@ import AdminTable from '../../../../components/shared/antd/Table/Table';
 import AddEditPermissions from './AddEditPermissions';
 
 export default function PermissionManangement(props) {
-  const { defaultFilter = [] } = props;
+  const { defaultFilter } = props;
 
   const columns = [
     {

@@ -53,6 +53,27 @@ export default function TableBotFlow({ pageId, getCurrentFlow }) {
       resizeable: false,
     },
     {
+      title: 'Type',
+      dataIndex: 'type',
+      sort: false,
+      filter: {
+        filterType: 'Dropdown',
+        options: [
+          {
+            label: 'Comment',
+            value: 'Comment',
+          },
+          {
+            label: 'Message',
+            value: 'Message',
+          },
+        ],
+      },
+      onCell: () => ({
+        className: 'text-center',
+      }),
+    },
+    {
       title: 'Date Created',
       dataIndex: 'createAt',
       render: (record) => {

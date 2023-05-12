@@ -35,7 +35,7 @@ const onDragStart = (event, nodeType) => {
 };
 
 export default function BotFlowMenu(props) {
-  const { pageId, selectedNode, goBackMenu } = props;
+  const { pageId, selectedNode, goBackMenu, flowDetail } = props;
   const type = nodeTypes?.filter(
     (item) => item.value === selectedNode?.type
   )[0]?.label;

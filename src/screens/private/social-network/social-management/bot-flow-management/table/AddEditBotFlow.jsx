@@ -7,6 +7,7 @@ import {
 import { notifyService } from '../../../../../../services/notifyService';
 import useEffectOnce from '../../../../../../components/hooks/useEffectOnce';
 import AddEditWrapper from '../../../../../../components/shared/antd/Table/Drawer/AddEditWrapper';
+import ClassicSelect from '../../../../../../components/shared/antd/Select/Classic';
 
 export default function AddEditBotFlow(props) {
   const {
@@ -45,6 +46,7 @@ export default function AddEditBotFlow(props) {
   useEffectOnce(() => {
     addEditWorkflowForm.setFieldsValue({
       name: selectedData?.name,
+      type: selectedData?.type
     });
   });
 
@@ -52,6 +54,7 @@ export default function AddEditBotFlow(props) {
     if (action === 'Add') {
       useCreateBotFlow.mutate({
         name: value?.name,
+        type: value?.type,
         tabId: pageId,
         data: {
           nodes: [
@@ -62,6 +65,9 @@ export default function AddEditBotFlow(props) {
                 x: 10,
                 y: 50,
               },
+              data: {
+                type: value?.type
+              }
             },
           ],
           edges: [],
@@ -73,11 +79,19 @@ export default function AddEditBotFlow(props) {
       if (selectedData?.extendData) {
         extendData = JSON.parse(selectedData.extendData);
       }
+      
+      extendData.nodes = extendData.nodes.map(nd => {
+        if(nd.type === 'Receive') {
+          nd.data.type = value?.type
+        }
+        return nd;
+      })
 
       useUpdateBotFlow.mutate({
         id: selectedData?.id,
         body: {
           name: value?.name,
+          type: value?.type,
           tabId: pageId,
           data: extendData,
         },
@@ -117,6 +131,30 @@ export default function AddEditBotFlow(props) {
           ]}
         >
           <Input />
+        </Form.Item>
+
+        <Form.Item
+          label="Type"
+          name="type"
+          rules={[
+            {
+              required: true,
+              message: 'Type is required',
+            },
+          ]}
+        >
+          <ClassicSelect
+            options={[
+              {
+                label: 'Comment',
+                value: 'Comment',
+              },
+              {
+                label: 'Message',
+                value: 'Message',
+              },
+            ]}
+          />
         </Form.Item>
       </Form>
     </AddEditWrapper>
