@@ -73,7 +73,6 @@ export default function MessageManagePage(props) {
               name={record['sender.fullName']}
             />
             <span className="sender-name limit-line">
-              {record?.from !== record?.sender?.id && 'Bot: '}
               {record['sender.fullName']}
             </span>
           </div>
@@ -96,7 +95,10 @@ export default function MessageManagePage(props) {
         return (
           <ToolTipWrapper tooltip="Click to view full details">
             <div className="pointer limit-line">
-              <b>{record}</b>
+              <b>
+                {record?.from !== record?.sender?.id && 'Bot: '}
+                {record}
+              </b>
             </div>
           </ToolTipWrapper>
         );
@@ -171,7 +173,7 @@ export default function MessageManagePage(props) {
                 messageDetail={
                   type === 'comment'
                     ? commentDetail
-                    : messageDetail?.data
+                    : messageDetail?.data?.reverse()
                 }
               />
             </LoadingWrapper>

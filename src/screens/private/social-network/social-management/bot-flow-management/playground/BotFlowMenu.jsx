@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Input, Slider, Tag } from 'antd';
+import { Input, Slider, Switch, Tag } from 'antd';
 import {
   NotificationOutlined,
   ExperimentOutlined,
@@ -58,6 +58,11 @@ export default function BotFlowMenu(props) {
         ]
       );
     } else if (selectedNode?.type === 'Respond') {
+      if (selectedNode?.data?.notifyAgent) {
+        selectedNode?.data?.syncData(selectedNode?.id, {
+          notifyAgent: true,
+        });
+      }
     }
   }, [selectedNode]);
 
@@ -310,9 +315,21 @@ export default function BotFlowMenu(props) {
                     />
                   </ToolTipWrapper>
                 </div>
+                <div className="flow-node-data">
+                  <span>Notify agent if not know intent</span>
+                  <Switch
+                    className="notify-agent-switch"
+                    checked={selectedNode?.data?.notifyAgent}
+                    onChange={(e) => {
+                      selectedNode?.data.syncData(selectedNode?.id, {
+                        notifyAgent: e,
+                      });
+                    }}
+                  />
+                </div>
                 {botSelected && (
                   <div className="flow-node-data">
-                    <div>
+                    <div className="intent-statistics">
                       Intent statistics (
                       <span style={{ color: 'blue' }}>blue</span>{' '}
                       means had respond,{' '}

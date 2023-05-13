@@ -16,7 +16,7 @@ import AddEditWrapper from '../../../../components/shared/antd/Table/Drawer/AddE
 import ClassicSelect from '../../../../components/shared/antd/Select/Classic';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
 
-export default function AddEditAdminAccount(props) {
+export default function AddEditUser(props) {
   const { open, onClose, selectedData, action } = props;
 
   const [addEditUserForm] = Form.useForm();

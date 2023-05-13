@@ -609,8 +609,16 @@
         }
       }
 
+      .notify-agent-switch {
+        margin-left: 1rem;
+      }
+
+      .intent-statistics {
+        font-weight: 400;
+      }
+
       .intent-list-container {
-        max-height: 20.4rem;
+        max-height: 16.8rem;
         min-height: 8rem;
         overflow-y:  scroll;
       }

@@ -14,7 +14,7 @@ import BooleanRow from '../../../../components/shared/element/BooleanRow';
 import DateTimeFormat from '../../../../components/shared/element/DateTimeFormat';
 import AssignButton from '../../../../components/shared/element/Button/AssignButton';
 import ElementWithPermission from '../../../../components/shared/element/ElementWithPermission';
-import AddEditAdminAccount from './AddEditUser';
+import AddEditUser from './AddEditUser';
 import AssignUserModal from './AssignUserModal';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
 
@@ -272,7 +272,7 @@ export default function UserManagement(props) {
         columns={columns}
         importColumns={importColumns}
         dumpImportData={dumpImportData}
-        addEditComponent={<AddEditAdminAccount />}
+        addEditComponent={<AddEditUser />}
         permission={permission}
         defaultFilter={defaultFilter}
         customToolbar={customToolbar}

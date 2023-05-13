@@ -1,5 +1,8 @@
 import React from 'react';
 import { RoleChip } from '../../../../../components/shared/element/Chip';
+import { role } from '../../../../../constants/environment/environment.dev';
+import environment from '../../../../../constants/environment/environment.dev';
+import BooleanRow from '../../../../../components/shared/element/BooleanRow';
 import DateTimeFormat from '../../../../../components/shared/element/DateTimeFormat';
 import AdminTable from '../../../../../components/shared/antd/Table/Table';
 
@@ -7,60 +10,60 @@ export default function MemberManagePage({ pageId, socialPage }) {
   const columns = [
     {
       title: 'Email',
-      dataIndex: 'email',
+      dataIndex: 'user.email',
       required: true,
       fixed: true,
     },
-    // {
-    //   title: 'Active',
-    //   dataIndex: 'isActive',
-    //   filter: {
-    //     filterType: 'Boolean',
-    //   },
-    //   render: (record) => {
-    //     return <BooleanRow active={record} />;
-    //   },
-    //   onCell: () => ({
-    //     className: 'text-center',
-    //   }),
-    //   sort: false,
-    //   resizeable: false,
-    //   width: 100,
-    // },
-    // {
-    //   title: 'Role',
-    //   dataIndex: 'role.roleName',
-    //   sort: false,
-    //   filter: {
-    //     filterType: 'Dropdown',
-    //     options: formatRole,
-    //   },
-    //   render: (record) => {
-    //     return <RoleChip currentRole={record} />;
-    //   },
-    //   onCell: () => ({
-    //     className: 'text-center',
-    //   }),
-    // },
+    {
+      title: 'Active',
+      dataIndex: 'user.isActive',
+      filter: {
+        filterType: 'Boolean',
+      },
+      render: (record) => {
+        return <BooleanRow active={record} />;
+      },
+      onCell: () => ({
+        className: 'text-center',
+      }),
+      sort: false,
+      resizeable: false,
+      width: 100,
+    },
+    {
+      title: 'Role',
+      dataIndex: 'role.roleName',
+      sort: false,
+      filter: {
+        filterType: 'Dropdown',
+        options: role?.filter((item) => item.label !== 'Admin'),
+      },
+      render: (record) => {
+        return <RoleChip currentRole={record} />;
+      },
+      onCell: () => ({
+        className: 'text-center',
+      }),
+    },
     {
       title: 'User Name',
-      dataIndex: 'userName',
+      dataIndex: 'user.userName',
     },
     {
       title: 'Gender',
-      dataIndex: 'gender',
+      dataIndex: 'user.gender',
     },
     {
       title: 'Full Name',
-      dataIndex: 'fullName',
+      dataIndex: 'user.fullName',
     },
     {
       title: 'Phone',
-      dataIndex: 'phoneNumber',
+      dataIndex: 'user.phoneNumber',
     },
     {
       title: 'Date Created',
-      dataIndex: 'createdAt',
+      dataIndex: 'user.createdAt',
       render: (record) => {
         return <DateTimeFormat dateTime={record} />;
       },
@@ -73,7 +76,7 @@ export default function MemberManagePage({ pageId, socialPage }) {
     },
     {
       title: 'Date Modified',
-      dataIndex: 'updatedAt',
+      dataIndex: 'user.updatedAt',
       render: (record) => {
         return <DateTimeFormat dateTime={record} />;
       },
@@ -90,5 +93,12 @@ export default function MemberManagePage({ pageId, socialPage }) {
     table: 'table-user',
   };
 
-  return <AdminTable columns={columns} permission={permission} />;
+  return (
+    <AdminTable
+      apiGetData={`${environment.user}/tab/${pageId}`}
+      columns={columns}
+      permission={permission}
+      scroll={{ x: 2000 }}
+    />
+  );
 }
