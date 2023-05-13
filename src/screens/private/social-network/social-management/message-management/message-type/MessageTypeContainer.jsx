@@ -5,7 +5,7 @@ import { useMutation } from 'react-query';
 import { useGetDecodedToken } from '../../../../../../routes/private/privateService';
 import {
   replyFbMessage,
-  saveMessageToSystem,
+  saveCommentToSystem,
 } from '../../../socialNetworkService';
 import { getUserNameById } from '../../../../accounts/accountService';
 import { notifyService } from '../../../../../../services/notifyService';
@@ -22,12 +22,13 @@ const listAction = ['Reply'];
 
 export default function MessageTypeContainer(props) {
   const { messageSelected, messageDetail, type, socialPage } = props;
+
   const messageContainer = useRef(null);
   const [reply, setReply] = useState(null);
   const [messageReplied, setMessageReplied] = useState(null);
   const [showRecommend, toggleShowRecommend] = useToggle(false);
   const [messageList, setMessageList] = useState(
-    messageDetail?.message
+    type === 'Message' ? messageDetail : messageDetail?.message
   );
   const agentList = useRef([]);
   const { data } = useGetDecodedToken();
@@ -67,19 +68,25 @@ export default function MessageTypeContainer(props) {
   }, [showRecommend]);
 
   useUpdateEffect(() => {
-    setMessageReplied(null);
-    document.getElementById('respond-input')?.focus();
+    if (type !== 'Message') {
+      setMessageReplied(null);
+      document.getElementById('respond-input')?.focus();
 
-    if (messageDetail?.message?.length > 0) {
-      getUserName(messageDetail.message);
-      setMessageList(messageDetail.message);
+      if (messageDetail?.message?.length > 0) {
+        getUserName(messageDetail.message);
+        setMessageList(messageDetail.message);
+      }
+    } else {
+      if (messageDetail?.length > 0) {
+        setMessageList(messageDetail);
+      }
     }
-  }, [messageDetail?.message]);
+  }, [messageDetail]);
 
   const useReplyFbMessage = useMutation(replyFbMessage, {
     onSuccess: (resp) => {
       if (resp) {
-        useSaveMessageToSystem.mutate({
+        useSaveCommentToSystem.mutate({
           networkId: socialPage?.id,
           message: reply,
           sender: socialPage?.name,
@@ -95,7 +102,7 @@ export default function MessageTypeContainer(props) {
     },
   });
 
-  const useSaveMessageToSystem = useMutation(saveMessageToSystem, {
+  const useSaveCommentToSystem = useMutation(saveCommentToSystem, {
     onSuccess: (resp) => {
       if (resp) {
         setReply(null);
@@ -133,8 +140,8 @@ export default function MessageTypeContainer(props) {
           pageData={socialPage}
           postData={messageDetail?.post}
         />
-      ) : type === 'Chat' ? (
-        <ChatHeader userData={messageDetail?.user} />
+      ) : type === 'Message' ? (
+        <ChatHeader userData={messageSelected?.sender} />
       ) : (
         <>{/* bot type */}</>
       )}
@@ -156,26 +163,44 @@ export default function MessageTypeContainer(props) {
             <div
               key={item?.id ?? index}
               className={`${
-                item?.type !== 'Comment' ? 'page-respond ' : ''
+                type !== 'Message'
+                  ? item?.type !== 'Comment'
+                    ? 'page-respond '
+                    : ''
+                  : item?.sender?.senderId === socialPage?.id
+                  ? 'page-respond '
+                  : ''
               }message-item`}
             >
               <BasicAvatar
                 src={
-                  item?.type !== 'Comment'
+                  type !== 'Message'
+                    ? item?.type !== 'Comment'
+                      ? socialPage?.pictureUrl
+                      : item?.sender?.avatarUrl
+                    : item?.sender?.senderId === socialPage?.id
                     ? socialPage?.pictureUrl
                     : item?.sender?.avatarUrl
                 }
               />
               <Tag
                 color={
-                  item?.type !== 'Comment' && 'var(--primary-color)'
+                  type !== 'Message'
+                    ? item?.type !== 'Comment' &&
+                      'var(--primary-color)'
+                    : item?.sender?.senderId === socialPage?.id &&
+                      'var(--primary-color)'
                 }
                 className="message-chip-container"
               >
                 <div className="message-chip-user flex-center">
                   <b>
-                    {item?.type !== 'Comment'
-                      ? `${socialPage?.name} (${userReply})`
+                    {type !== 'Message'
+                      ? item?.type !== 'Comment'
+                        ? `${socialPage?.name} (${userReply})`
+                        : `${item?.sender?.fullName}`
+                      : item?.sender?.senderId === socialPage?.id
+                      ? `${socialPage?.name}`
                       : `${item?.sender?.fullName}`}
                   </b>
                   <span className="message-date">{dateSent}</span>
@@ -258,7 +283,7 @@ export default function MessageTypeContainer(props) {
             }}
             disabled={
               useReplyFbMessage.isLoading ||
-              useSaveMessageToSystem.isLoading
+              useSaveCommentToSystem.isLoading
             }
           />
           <IconButton
@@ -266,7 +291,7 @@ export default function MessageTypeContainer(props) {
             type="link"
             loading={
               useReplyFbMessage.isLoading ||
-              useSaveMessageToSystem.isLoading
+              useSaveCommentToSystem.isLoading
             }
             disabled={!reply}
             onClick={() => {

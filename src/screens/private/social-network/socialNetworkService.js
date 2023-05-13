@@ -30,7 +30,7 @@ export const subscribeFacebookPage = async (data) => {
     `${environment.facebookGraph}/${data?.pageId}/subscribed_apps?access_token=${data?.accessToken}`,
     {
       access_token: data?.accessToken,
-      subscribed_fields: ['feed', 'messages']
+      subscribed_fields: ['feed', 'messages'],
     }
   );
   return resp;
@@ -106,7 +106,7 @@ export const updateSocialSetting = async (data) => {
   return resp?.result;
 };
 
-export const saveMessageToSystem = async (data) => {
+export const saveCommentToSystem = async (data) => {
   const resp = await apiService.post(
     `${environment.socialMessage}/save`,
     data
@@ -240,28 +240,45 @@ export const deleteDialogflowIntent = async (data) => {
 };
 // #endregion
 
-export const getConservation = async (pageId, userId) => {
+export const getAllConversation = async (pageId) => {
   const resp = await apiService.post(
-    `${environment.message}/${pageId}/${userId}`
+    `${environment.message}/${pageId}/conversations`
   );
   return resp?.result;
 };
 
-export const useGetConservation = (
-  pageId,
-  userId,
-  enabled = true
-) => {
+export const useGetAllConversation = (pageId, enabled = true) => {
   return useQuery(
-    'conservation',
-    () => getMessageDetail(pageId, userId),
+    'allConversation',
+    () => getAllConversation(pageId),
     {
       enabled: enabled,
     }
   );
 };
 
-export const saveConservationMessage = async (data) => {
+export const getConversationWithUserId = async (data) => {
+  const resp = await apiService.post(
+    `${environment.message}/${data.pageId}/conversations/${data.userId}`,
+    data.body
+  );
+  return resp?.result;
+};
+
+export const useGetConversationWithUserId = (
+  data,
+  enabled = true
+) => {
+  return useQuery(
+    'conversation',
+    () => getConversationWithUserId(data),
+    {
+      enabled: enabled,
+    }
+  );
+};
+
+export const saveConversationMessage = async (data) => {
   const resp = await apiService.post(
     `${environment.message}/save`,
     data

@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import {
-  useGetConservation,
+  useGetAllConversation,
+  useGetConversationWithUserId,
   useGetMessageDetail,
 } from '../../socialNetworkService';
 import DateTimeFormat from '../../../../../components/shared/element/DateTimeFormat';
@@ -11,9 +12,29 @@ import Hint from '../../../../../components/shared/element/Hint';
 import LoadingWrapper from '../../../../../components/shared/antd/LoadingWrapper';
 import BasicAvatar from '../../../../../components/shared/antd/BasicAvatar';
 import ToolTipWrapper from '../../../../../components/shared/antd/ToolTipWrapper';
+import useEffectOnce from '../../../../../components/hooks/useEffectOnce';
 
 export default function MessageManagePage(props) {
   const { pageId, socialPage, type } = props;
+
+  const getAllConversation = useRef(true);
+  const [_, forceUpdate] = useState(null);
+  const {
+    data: allConversation,
+    isFetching: allConversationFetching,
+  } = useGetAllConversation(
+    pageId,
+    type === 'message' && getAllConversation.current
+  );
+  getAllConversation.current = false;
+  useEffectOnce(() => {
+    document
+      .getElementById('refresh-table')
+      ?.addEventListener('click', (e) => {
+        getAllConversation.current = true;
+        forceUpdate(e);
+      });
+  });
 
   const [msgSelected, setMsgSelected] = useState(null);
   const getDetail = useRef(false);
@@ -23,9 +44,19 @@ export default function MessageManagePage(props) {
       getDetail.current && type === 'comment'
     );
   const { data: messageDetail, isFetching: isMessageFetching } =
-    useGetConservation(
-      pageId,
-      msgSelected?.sender?.id,
+    useGetConversationWithUserId(
+      {
+        pageId: pageId,
+        userId: msgSelected?.sender?.id,
+        body: {
+          orders: [],
+          filter: [],
+          size: 10000,
+          pageNumber: 1,
+          totalElement: 0,
+          // offset: 0
+        },
+      },
       getDetail.current && type === 'message'
     );
   getDetail.current = false;
@@ -42,6 +73,7 @@ export default function MessageManagePage(props) {
               name={record['sender.fullName']}
             />
             <span className="sender-name limit-line">
+              {record?.from !== record?.sender?.id && 'Bot: '}
               {record['sender.fullName']}
             </span>
           </div>
@@ -55,8 +87,8 @@ export default function MessageManagePage(props) {
       onCell: (record, _) => {
         return {
           onClick: () => {
-            setMsgSelected(record);
             getDetail.current = true;
+            setMsgSelected({ ...record });
           },
         };
       },
@@ -72,7 +104,7 @@ export default function MessageManagePage(props) {
     },
     {
       title: 'Date Sent',
-      dataIndex: 'createdAt',
+      dataIndex: 'lastSent',
       width: 200,
       render: (record) => {
         return <DateTimeFormat dateTime={record} />;
@@ -107,12 +139,16 @@ export default function MessageManagePage(props) {
             apiGetData={
               type === 'comment'
                 ? `${environment.socialMessage}/${pageId}`
-                : `${environment.message}/${pageId}/conservations`
+                : null
             }
             columns={columns}
             permission={permission}
             showToolbar={false}
             disableSelect
+            {...(type === 'message' && {
+              tableData: allConversation,
+              isLoading: allConversationFetching,
+            })}
             scroll={{
               x: 1000,
             }}
@@ -130,10 +166,12 @@ export default function MessageManagePage(props) {
             >
               <MessageTypeContainer
                 messageSelected={msgSelected}
-                type={msgSelected?.type}
+                type={msgSelected?.type ?? 'Message'}
                 socialPage={socialPage}
                 messageDetail={
-                  type === 'comment' ? commentDetail : messageDetail
+                  type === 'comment'
+                    ? commentDetail
+                    : messageDetail?.data
                 }
               />
             </LoadingWrapper>

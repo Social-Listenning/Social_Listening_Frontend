@@ -1,5 +1,6 @@
 :root {
   --split-screen-height: calc(100vh - 20.8rem);
+  --menu-width: 36rem;
 }
 
 .social-network {
@@ -431,10 +432,6 @@
   }
 }
 
-:root {
-  --menu-width: 36rem;
-}
-
 .react-flow-container {
   height: var(--split-screen-height);
 }
@@ -638,5 +635,22 @@
 
   .anticon {
     scale: 6;
+  }
+}
+
+.chat-header {
+  justify-content: space-between;
+
+  .chat-info {
+    gap: 0.8rem;
+
+    .chat-user-date {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .chat-user {
+        font-size: var(--app-font-size);
+      }
+    }
   }
 }

@@ -203,9 +203,7 @@ export default function BotManagePage({ pageId, socialPage }) {
   return (
     <AdminTable
       columns={columns}
-      tableData={data?.map((item, index) => {
-        return { ...item, key: index };
-      })}
+      tableData={data}
       isLoading={
         !botSelected
           ? botFetching || useDeleteBot.isLoading

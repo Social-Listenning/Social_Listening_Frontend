@@ -99,10 +99,23 @@ export default function AdminTable(props) {
     }
   });
 
+  function formatData(data) {
+    for (let prop of originPropsNested) {
+      data.map((x) => {
+        let dataNested = prop
+          .split('.')
+          .reduce((obj, propertyName) => obj[propertyName], x);
+        x[prop] = dataNested;
+        return x;
+      });
+    }
+    setDataSource(data);
+  }
+
   // make sure when the tableData change table auto update
   useUpdateEffect(() => {
     if (tableData) {
-      setDataSource(tableData);
+      formatData(tableData);
     }
   }, [tableData]);
 
@@ -145,26 +158,7 @@ export default function AdminTable(props) {
           })
           .then((resp) => {
             if (resp?.result?.data) {
-              for (let prop of originPropsNested) {
-                resp.result.data.map((x) => {
-                  let dataNested = prop
-                    .split('.')
-                    .reduce(
-                      (obj, propertyName) => obj[propertyName],
-                      x
-                    );
-                  x[prop] = dataNested;
-                  return x;
-                });
-              }
-              setDataSource(
-                resp.result.data.map((x, index) => {
-                  return {
-                    ...x,
-                    key: index,
-                  };
-                })
-              );
+              formatData(resp.result.data);
             }
           });
       } catch (ex) {
@@ -393,7 +387,12 @@ export default function AdminTable(props) {
           id="admin-table"
           size="small"
           columns={resizeColumns}
-          dataSource={dataSource}
+          dataSource={dataSource?.map((x, index) => {
+            return {
+              ...x,
+              key: x.key ?? index,
+            };
+          })}
           scroll={scroll}
           components={{
             header: {

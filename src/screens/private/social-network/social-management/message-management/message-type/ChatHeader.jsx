@@ -5,18 +5,22 @@ import IconMoreButton from '../../../../../../components/shared/element/Button/I
 
 export default function ChatHeader({ userData }) {
   return (
-    <div className="post-section flex-center">
-      <div className="post-header flex-center">
-        <div className="post-info flex-center">
-          <div className="post-avt-holder">
+    <div className="chat-section">
+      <div className="chat-header flex-center">
+        <div className="chat-info flex-center">
+          <div className="chat-avt-holder">
             {userData?.isActive && (
-              <Badge status="success" className="post-avt-status" />
+              <Badge status="success" className="chat-avt-status" />
             )}
-            <BasicAvatar size={40} />
+            <BasicAvatar
+              size={40}
+              src={userData?.avatarUrl}
+              name={userData?.fullName}
+            />
           </div>
-          <div className="post-user-date flex-center">
-            <b className="post-user">{userData?.name}</b>
-            <span className="message-date">Active now</span>
+          <div className="chat-user-date flex-center">
+            <b className="chat-user">{userData?.fullName}</b>
+            {/* <span className="message-date">Active now</span> */}
           </div>
         </div>
         {/* <ClassicDropdown

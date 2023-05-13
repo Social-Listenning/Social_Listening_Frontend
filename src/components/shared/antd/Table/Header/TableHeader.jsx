@@ -27,8 +27,12 @@ export default function TableHeader(props) {
     refreshFilterSorter,
     defaultFilter = null,
   } = props;
-
-  let [value, setValue] = useState(defaultFilter);
+  
+  let [value, setValue] = useState(
+    defaultFilter?.filter((item) => item.props === propsName)?.length
+      ? defaultFilter
+      : null
+  );
   let [dateRangeFilter, setDateRangeFilter] = useState(false);
   let listFilter = FilterType.Default;
   let inputHeader = (
