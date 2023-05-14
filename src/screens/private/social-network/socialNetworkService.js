@@ -66,6 +66,14 @@ export const extendFbToken = async (data) => {
   );
   return resp?.data;
 };
+
+export const replyFbChat = async (data) => {
+  const resp = await axios.post(
+    `${environment.facebookGraph}/me/messages?access_token=${data?.accessToken}`,
+    data.body
+  );
+  return resp?.data;
+};
 // #endregion
 
 export const getMessageDetail = async (messageId) => {

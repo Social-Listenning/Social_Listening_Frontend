@@ -27,7 +27,7 @@ export default function TableHeader(props) {
     refreshFilterSorter,
     defaultFilter = null,
   } = props;
-  
+
   let [value, setValue] = useState(
     defaultFilter?.filter((item) => item.props === propsName)?.length
       ? defaultFilter
@@ -77,12 +77,14 @@ export default function TableHeader(props) {
     } else if (filter.filterType === 'DateTime') {
       inputHeader = !dateRangeFilter ? (
         <DateTimePicker
+          placeholder={title}
           value={value}
           id={title}
           onChange={handleSelect}
         />
       ) : (
         <DateRangePicker
+          placeholder={title}
           value={value}
           id={title}
           onChange={handleSelect}

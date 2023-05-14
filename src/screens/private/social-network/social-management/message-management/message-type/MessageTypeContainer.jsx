@@ -4,8 +4,10 @@ import { SendOutlined, CloseOutlined } from '@ant-design/icons';
 import { useMutation } from 'react-query';
 import { useGetDecodedToken } from '../../../../../../routes/private/privateService';
 import {
+  replyFbChat,
   replyFbMessage,
   saveCommentToSystem,
+  saveConversationMessage,
 } from '../../../socialNetworkService';
 import { getUserNameById } from '../../../../accounts/accountService';
 import { notifyService } from '../../../../../../services/notifyService';
@@ -83,6 +85,13 @@ export default function MessageTypeContainer(props) {
     }
   }, [messageDetail]);
 
+  useUpdateEffect(() => {
+    if (messageContainer.current) {
+      messageContainer.current.scrollTop =
+        messageContainer.current.scrollHeight;
+    }
+  }, [messageDetail, messageList, messageReplied]);
+
   const useReplyFbMessage = useMutation(replyFbMessage, {
     onSuccess: (resp) => {
       if (resp) {
@@ -132,6 +141,79 @@ export default function MessageTypeContainer(props) {
       }
     },
   });
+
+  const useReplyFbChat = useMutation(replyFbChat, {
+    onSuccess: (resp) => {
+      if (resp) {
+        useSaveChatToSystem.mutate({
+          message: reply,
+          recipient: {
+            id: messageReplied?.sender?.senderId,
+            name: messageReplied?.sender?.fullName,
+            avatar: messageReplied?.sender?.avatarUrl,
+          },
+          sender: {
+            id: socialPage?.id,
+            name: socialPage?.name,
+            avatar: socialPage?.pictureUrl,
+          },
+          messageId: resp.message_id,
+          networkId: socialPage?.id,
+          createdAt: new Date(),
+          // repliedMessageId: resp.message_id,
+        });
+      }
+    },
+  });
+
+  const useSaveChatToSystem = useMutation(saveConversationMessage, {
+    onSuccess: (resp) => {
+      if (resp) {
+        setReply(null);
+        setMessageReplied(null);
+        setMessageList((old) => [
+          ...old,
+          {
+            createdAt: resp.createdAt,
+            message: resp?.message,
+            sender: {
+              avatarUrl: socialPage?.pictureUrl,
+              fullName: socialPage?.name,
+              senderId: socialPage?.id,
+              id: resp?.senderId,
+            },
+          },
+        ]);
+
+        notifyService.showSucsessMessage({
+          description: 'Reply successfully',
+        });
+      }
+    },
+  });
+
+  const handleSubmitMessage = () => {
+    if (reply) {
+      if (type !== 'Message') {
+        useReplyFbMessage.mutate({
+          cmtId:
+            messageReplied?.messageId ?? messageSelected?.messageId,
+          accessToken: socialPage?.accessToken,
+          message: reply,
+        });
+      } else {
+        useReplyFbChat.mutate({
+          accessToken: socialPage?.accessToken,
+          body: {
+            recipient: {
+              id: messageSelected?.sender?.senderId,
+            },
+            message: { text: reply },
+          },
+        });
+      }
+    }
+  };
 
   return (
     <>
@@ -282,29 +364,36 @@ export default function MessageTypeContainer(props) {
               setReply(e.currentTarget.value);
             }}
             disabled={
-              useReplyFbMessage.isLoading ||
-              useSaveCommentToSystem.isLoading
+              type !== 'Message'
+                ? useReplyFbMessage.isLoading ||
+                  useSaveCommentToSystem.isLoading
+                : useReplyFbChat.isLoading ||
+                  useSaveChatToSystem.isLoading
             }
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                if (e.shiftKey) {
+                  // move to a new line on Shift+Enter
+                  setReply((prev) => prev + '\n');
+                } else {
+                  handleSubmitMessage();
+                }
+              }
+            }}
           />
           <IconButton
             icon={<SendOutlined className="respond-icon" />}
             type="link"
             loading={
-              useReplyFbMessage.isLoading ||
-              useSaveCommentToSystem.isLoading
+              type !== 'Message'
+                ? useReplyFbMessage.isLoading ||
+                  useSaveCommentToSystem.isLoading
+                : useReplyFbChat.isLoading ||
+                  useSaveChatToSystem.isLoading
             }
             disabled={!reply}
-            onClick={() => {
-              if (reply) {
-                useReplyFbMessage.mutate({
-                  cmtId:
-                    messageReplied?.messageId ??
-                    messageSelected?.messageId,
-                  accessToken: socialPage?.accessToken,
-                  message: reply,
-                });
-              }
-            }}
+            onClick={handleSubmitMessage}
           />
         </div>
       </div>
