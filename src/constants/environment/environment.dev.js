@@ -21,7 +21,6 @@ const environment = {
   workflow: `${baseUrl}/workflow`,
   message: `${baseUrl}/message`,
   botUrl: botUrl,
-  dialogFlowConfig: `projects/boxwood-spirit-385514/locations/global`,
 };
 
 export const gender = [

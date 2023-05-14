@@ -160,9 +160,9 @@ export const changeStatusBotFlow = async (data) => {
 };
 
 // #region dialogflow bot
-export const createDialogflowBot = async (name) => {
+export const createDialogflowBot = async (dialogflowConfig, name) => {
   const resp = await apiService.post(
-    `${environment.botUrl}/create-agent/${environment.dialogFlowConfig}`,
+    `${environment.botUrl}/create-agent/${dialogflowConfig}`,
     {
       display_name: name,
       default_language_code: 'en',
@@ -174,7 +174,7 @@ export const createDialogflowBot = async (name) => {
 
 export const updateDialogflowBot = async (agent) => {
   const resp = await apiService.patch(
-    `${environment.botUrl}/update-agent/${environment.dialogFlowConfig}/agents/${agent.id}`,
+    `${environment.botUrl}/update-agent/${agent.dialogflowConfig}/agents/${agent.id}`,
     {
       display_name: agent.name,
       default_language_code: 'en',
@@ -184,49 +184,60 @@ export const updateDialogflowBot = async (agent) => {
   return resp;
 };
 
-export const deleteDialogflowBot = async (agentId) => {
+export const deleteDialogflowBot = async (
+  dialogflowConfig,
+  agentId
+) => {
   const resp = await apiService.delete(
-    `${environment.botUrl}/delete-agent/${environment.dialogFlowConfig}/agents/${agentId}`
+    `${environment.botUrl}/delete-agent/${dialogflowConfig}/agents/${agentId}`
   );
   return resp;
 };
 
-export const getDialogflowBot = async (id) => {
+export const getListDialogflowBot = async (dialogflowConfig) => {
   const resp = await apiService.get(
-    `${environment.botUrl}/get-agent/${environment.dialogFlowConfig}/agents/${id}`
+    `${environment.botUrl}/get-list-agent/${dialogflowConfig}`
   );
   return resp;
 };
 
-export const getListDialogflowBot = async () => {
+export const useGetListDialogflowBot = (
+  dialogflowConfig,
+  enabled
+) => {
+  return useQuery(
+    'dialogflowBots',
+    () => getListDialogflowBot(dialogflowConfig),
+    {
+      enabled: enabled,
+    }
+  );
+};
+
+export const getDialogflowIntents = async (dialogflowConfig, id) => {
   const resp = await apiService.get(
-    `${environment.botUrl}/get-list-agent/${environment.dialogFlowConfig}`
+    `${environment.botUrl}/get-list-intent/${dialogflowConfig}/agents/${id}`
   );
   return resp;
 };
 
-export const useGetListDialogflowBot = (enabled) => {
-  return useQuery('dialogflowBots', getListDialogflowBot, {
-    enabled: enabled,
-  });
-};
-
-export const getDialogflowIntents = async (id) => {
-  const resp = await apiService.get(
-    `${environment.botUrl}/get-list-intent/${environment.dialogFlowConfig}/agents/${id}`
+export const useGetDialogflowIntents = (
+  dialogflowConfig,
+  id,
+  enabled
+) => {
+  return useQuery(
+    'botIntents',
+    () => getDialogflowIntents(dialogflowConfig, id),
+    {
+      enabled: enabled,
+    }
   );
-  return resp;
-};
-
-export const useGetDialogflowIntents = (id, enabled) => {
-  return useQuery('botIntents', () => getDialogflowIntents(id), {
-    enabled: enabled,
-  });
 };
 
 export const createDialogflowIntent = async (data) => {
   const resp = await apiService.post(
-    `${environment.botUrl}/create-intent/${environment.dialogFlowConfig}/agents/${data.id}`,
+    `${environment.botUrl}/create-intent/${data.dialogflowConfig}/agents/${data.id}`,
     data.body
   );
   return resp;
@@ -234,7 +245,7 @@ export const createDialogflowIntent = async (data) => {
 
 export const updateDialogflowIntent = async (data) => {
   const resp = await apiService.patch(
-    `${environment.botUrl}/update-intent/${environment.dialogFlowConfig}/agents/${data.agentId}/intents/${data.intentId}`,
+    `${environment.botUrl}/update-intent/${data.dialogflowConfig}/agents/${data.agentId}/intents/${data.intentId}`,
     data.body
   );
   return resp;
@@ -242,7 +253,7 @@ export const updateDialogflowIntent = async (data) => {
 
 export const deleteDialogflowIntent = async (data) => {
   const resp = await apiService.delete(
-    `${environment.botUrl}/delete-intent/${environment.dialogFlowConfig}/agents/${data.agentId}/intents/${data.intentId}`
+    `${environment.botUrl}/delete-intent/${data.dialogflowConfig}/agents/${data.agentId}/intents/${data.intentId}`
   );
   return resp;
 };

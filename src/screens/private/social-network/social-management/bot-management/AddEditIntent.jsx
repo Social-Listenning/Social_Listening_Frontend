@@ -27,6 +27,7 @@ export default function AddEditIntent(props) {
     action,
     agentId,
     hadFallback = false,
+    dialogflowConfig,
   } = props;
 
   const [addEditIntentForm] = Form.useForm();
@@ -151,6 +152,7 @@ export default function AddEditIntent(props) {
   function handleSubmit(value) {
     if (action === 'Add') {
       useCreateIntent.mutate({
+        dialogflowConfig: dialogflowConfig,
         id: agentId,
         body: {
           display_name: value?.name,
@@ -173,6 +175,7 @@ export default function AddEditIntent(props) {
       }
 
       useUpdateIntent.mutate({
+        dialogflowConfig: dialogflowConfig,
         agentId: agentId,
         intentId: id,
         body: {

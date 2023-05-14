@@ -9,16 +9,18 @@ import {
   useGetDialogflowIntents,
   useGetListDialogflowBot,
 } from '../../socialNetworkService';
+import { useDialogflow } from '../../../../../components/contexts/dialogflow/DialogflowProvider';
 import useEffectOnce from '../../../../../components/hooks/useEffectOnce';
 import useUpdateEffect from '../../../../../components/hooks/useUpdateEffect';
 import ToolTipWrapper from '../../../../../components/shared/antd/ToolTipWrapper';
 import AdminTable from '../../../../../components/shared/antd/Table/Table';
 import BooleanRow from '../../../../../components/shared/element/BooleanRow';
-import ElementWithPermission from '../../../../../components/shared/element/ElementWithPermission';
 import AddEditBot from './AddEditBot';
 import AddEditIntent from './AddEditIntent';
 
 export default function BotManagePage({ pageId, socialPage }) {
+  const { dialogflowConfig } = useDialogflow();
+
   const getData = useRef(true);
   const [_, forceUpdate] = useState(null);
   const [botSelected, setBotSelected] = useState(null);
@@ -32,7 +34,7 @@ export default function BotManagePage({ pageId, socialPage }) {
         if (record?.includes(`-${pageId}`)) {
           formatName = record.substring(0, record.length - 37);
         }
-        
+
         return (
           <ToolTipWrapper tooltip="Click to edit bot intents">
             <b
@@ -113,10 +115,14 @@ export default function BotManagePage({ pageId, socialPage }) {
   }, [columns]);
 
   const { data: botList, isFetching: botFetching } =
-    useGetListDialogflowBot(getData.current && !botSelected);
+    useGetListDialogflowBot(
+      dialogflowConfig,
+      getData.current && !botSelected
+    );
 
   const { data: intentList, isFetching: intentFetching } =
     useGetDialogflowIntents(
+      dialogflowConfig,
       botSelected,
       getData.current && botSelected?.length > 0
     );
@@ -173,9 +179,10 @@ export default function BotManagePage({ pageId, socialPage }) {
     }
 
     if (!botSelected) {
-      await useDeleteBot.mutateAsync(id);
+      await useDeleteBot.mutateAsync(dialogflowConfig, id);
     } else {
       await useDeleteIntent.mutateAsync({
+        dialogflowConfig: dialogflowConfig,
         agentId: botSelected,
         intentId: id,
       });
@@ -212,10 +219,14 @@ export default function BotManagePage({ pageId, socialPage }) {
       permission={permission}
       addEditComponent={
         !botSelected ? (
-          <AddEditBot pageId={pageId} />
+          <AddEditBot
+            pageId={pageId}
+            dialogflowConfig={dialogflowConfig}
+          />
         ) : (
           <AddEditIntent
             agentId={botSelected}
+            dialogflowConfig={dialogflowConfig}
             hadFallback={
               data?.filter((item) => item.is_fallback)?.length > 0
             }

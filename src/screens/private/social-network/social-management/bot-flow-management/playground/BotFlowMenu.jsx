@@ -10,6 +10,7 @@ import {
   useGetDialogflowIntents,
   useGetListDialogflowBot,
 } from '../../../socialNetworkService';
+import { useDialogflow } from '../../../../../../components/contexts/dialogflow/DialogflowProvider';
 import useUpdateEffect from '../../../../../../components/hooks/useUpdateEffect';
 import ClassicSelect from '../../../../../../components/shared/antd/Select/Classic';
 import ToolTipWrapper from '../../../../../../components/shared/antd/ToolTipWrapper';
@@ -36,6 +37,8 @@ const onDragStart = (event, nodeType) => {
 
 export default function BotFlowMenu(props) {
   const { pageId, selectedNode, goBackMenu, flowDetail } = props;
+  const { dialogflowConfig } = useDialogflow();
+
   const type = nodeTypes?.filter(
     (item) => item.value === selectedNode?.type
   )[0]?.label;
@@ -86,11 +89,13 @@ export default function BotFlowMenu(props) {
   const [intentSelected, setIntentSelected] = useState(null);
   const { data: botList, isFetching: botFetching } =
     useGetListDialogflowBot(
+      dialogflowConfig,
       fetchBotDialogflow.current && !botSelected
     );
 
   const { data: intentList, isFetching: intentFetching } =
     useGetDialogflowIntents(
+      dialogflowConfig,
       botSelected,
       fetchBotDialogflow.current && botSelected?.length > 0
     );

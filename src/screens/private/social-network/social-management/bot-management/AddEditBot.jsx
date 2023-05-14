@@ -10,7 +10,14 @@ import AddEditWrapper from '../../../../../components/shared/antd/Table/Drawer/A
 import ToolTipWrapper from '../../../../../components/shared/antd/ToolTipWrapper';
 
 export default function AddEditBot(props) {
-  const { open, onClose, selectedData, action, pageId } = props;
+  const {
+    open,
+    onClose,
+    selectedData,
+    action,
+    pageId,
+    dialogflowConfig,
+  } = props;
 
   const [addEditBotForm] = Form.useForm();
   const useCreateDialogflowBot = useMutation(createDialogflowBot, {
@@ -40,7 +47,7 @@ export default function AddEditBot(props) {
     if (formatName?.includes(`-${pageId}`)) {
       formatName = formatName.substring(0, formatName.length - 37);
     }
-    
+
     addEditBotForm.setFieldsValue({
       name: formatName,
     });
@@ -48,7 +55,10 @@ export default function AddEditBot(props) {
 
   function handleSubmit(value) {
     if (action === 'Add') {
-      useCreateDialogflowBot.mutate(`${value?.name}-${pageId}`);
+      useCreateDialogflowBot.mutate(
+        dialogflowConfig,
+        `${value?.name}-${pageId}`
+      );
     } else if (action === 'Edit') {
       let id = null;
       if (selectedData) {
@@ -57,6 +67,7 @@ export default function AddEditBot(props) {
       }
 
       useUpdateDialogflowBot.mutate({
+        dialogflowConfig: dialogflowConfig,
         id: id,
         name: `${value?.name}-${pageId}`,
       });

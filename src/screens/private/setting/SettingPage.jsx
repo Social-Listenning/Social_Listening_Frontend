@@ -8,12 +8,17 @@ import useEffectOnce from '../../../components/hooks/useEffectOnce';
 import AdminTable from '../../../components/shared/antd/Table/Table';
 import ElementWithPermission from '../../../components/shared/element/ElementWithPermission';
 import ToolTipWrapper from '../../../components/shared/antd/ToolTipWrapper';
+import { useDialogflow } from '../../../components/contexts/dialogflow/DialogflowProvider';
 
 export default function SettingPage() {
+  const { updateDialogflowConfig } = useDialogflow();
+
   const getAllSetting = useRef(true);
   const [_, forceUpdate] = useState(null);
 
-  const { data, isFetching } = useGetAllSetting(getAllSetting.current);
+  const { data, isFetching } = useGetAllSetting(
+    getAllSetting.current
+  );
   getAllSetting.current = false;
 
   useEffectOnce(() => {
@@ -56,6 +61,15 @@ export default function SettingPage() {
             record.value !==
             document.getElementById(record?.id)?.value
           ) {
+            if (
+              record?.group === 'GOOGLE_API' &&
+              record?.key === 'DIALOGFLOW_KEY'
+            ) {
+              updateDialogflowConfig(
+                document.getElementById(record?.id)?.value
+              );
+            }
+
             useUpdateSetting.mutate({
               key: record?.key,
               group: record?.group,
