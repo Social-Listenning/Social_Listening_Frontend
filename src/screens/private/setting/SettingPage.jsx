@@ -33,6 +33,8 @@ export default function SettingPage() {
   const useUpdateSetting = useMutation(updateSetting, {
     onSuccess: (resp) => {
       if (resp) {
+        getAllSetting.current = true;
+        
         notifyService.showSucsessMessage({
           description: 'Save setting successfully',
         });

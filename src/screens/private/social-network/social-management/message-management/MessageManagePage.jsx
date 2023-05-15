@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 import {
-  useGetAllConversation,
   useGetConversationWithUserId,
   useGetMessageDetail,
 } from '../../socialNetworkService';
@@ -12,29 +11,9 @@ import Hint from '../../../../../components/shared/element/Hint';
 import LoadingWrapper from '../../../../../components/shared/antd/LoadingWrapper';
 import BasicAvatar from '../../../../../components/shared/antd/BasicAvatar';
 import ToolTipWrapper from '../../../../../components/shared/antd/ToolTipWrapper';
-import useEffectOnce from '../../../../../components/hooks/useEffectOnce';
 
 export default function MessageManagePage(props) {
   const { pageId, socialPage, type } = props;
-
-  const getAllConversation = useRef(true);
-  const [_, forceUpdate] = useState(null);
-  const {
-    data: allConversation,
-    isFetching: allConversationFetching,
-  } = useGetAllConversation(
-    pageId,
-    type === 'message' && getAllConversation.current
-  );
-  getAllConversation.current = false;
-  useEffectOnce(() => {
-    document
-      .getElementById('refresh-table')
-      ?.addEventListener('click', (e) => {
-        getAllConversation.current = true;
-        forceUpdate(e);
-      });
-  });
 
   const [msgSelected, setMsgSelected] = useState(null);
   const getDetail = useRef(false);
@@ -141,16 +120,12 @@ export default function MessageManagePage(props) {
             apiGetData={
               type === 'comment'
                 ? `${environment.socialMessage}/${pageId}`
-                : null
+                : `${environment.message}/${pageId}/conversations`
             }
             columns={columns}
             permission={permission}
             showToolbar={false}
             disableSelect
-            {...(type === 'message' && {
-              tableData: allConversation,
-              isLoading: allConversationFetching,
-            })}
             scroll={{
               x: 1000,
             }}

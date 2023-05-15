@@ -101,7 +101,7 @@ export default function AdminTable(props) {
 
   function formatData(data) {
     for (let prop of originPropsNested) {
-      data.map((x) => {
+      data?.map((x) => {
         let dataNested = prop
           .split('.')
           .reduce((obj, propertyName) => obj[propertyName], x);

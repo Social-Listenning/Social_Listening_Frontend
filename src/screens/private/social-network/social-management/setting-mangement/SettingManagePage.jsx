@@ -31,6 +31,8 @@ export default function SettingManagePage({ pageId }) {
   const useUpdateSetting = useMutation(updateSocialSetting, {
     onSuccess: (resp) => {
       if (resp) {
+        getAllSetting.current = true;
+        
         notifyService.showSucsessMessage({
           description: 'Save setting successfully',
         });

@@ -259,23 +259,6 @@ export const deleteDialogflowIntent = async (data) => {
 };
 // #endregion
 
-export const getAllConversation = async (pageId) => {
-  const resp = await apiService.post(
-    `${environment.message}/${pageId}/conversations`
-  );
-  return resp?.result;
-};
-
-export const useGetAllConversation = (pageId, enabled = true) => {
-  return useQuery(
-    'allConversation',
-    () => getAllConversation(pageId),
-    {
-      enabled: enabled,
-    }
-  );
-};
-
 export const getConversationWithUserId = async (data) => {
   const resp = await apiService.post(
     `${environment.message}/${data.pageId}/conversations/${data.userId}`,
