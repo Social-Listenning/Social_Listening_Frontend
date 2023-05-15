@@ -159,7 +159,7 @@ export default function PrivateLayout(props) {
   const [openChart, setOpenChart] = useToggle(false);
   const title = useRef(null);
   const resultChart = useRef(null);
-  function openChartResult(notificationId) {
+  function openChartResult(notificationId) {console.log('a')
     setOpenChart(true);
     socket.emit('clickNotification', notificationId);
   }
@@ -179,7 +179,10 @@ export default function PrivateLayout(props) {
             description: (
               <div
                 className="pointer"
-                onClick={openChartResult(payload.id?.toString())}
+                onClick={(e) => {
+                  e.preventDefault();
+                  openChartResult(payload.id?.toString())
+                }}
               >
                 {payload.body}
               </div>
@@ -306,11 +309,11 @@ export default function PrivateLayout(props) {
                           label: `All`,
                           children: menu,
                         },
-                        // {
-                        //   key: 2,
-                        //   label: `Unread`,
-                        //   children: menu,
-                        // },
+                        {
+                          key: 2,
+                          label: `Unread`,
+                          children: menu,
+                        },
                       ]}
                     />
                   </div>

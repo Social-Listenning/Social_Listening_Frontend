@@ -84,7 +84,7 @@ export default function TableHeader(props) {
         />
       ) : (
         <DateRangePicker
-          placeholder={title}
+          placeholder={[`${title} Start`, `${title} End`]}
           value={value}
           id={title}
           onChange={handleSelect}

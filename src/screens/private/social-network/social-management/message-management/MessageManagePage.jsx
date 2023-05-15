@@ -106,7 +106,7 @@ export default function MessageManagePage(props) {
     },
     {
       title: 'Date Sent',
-      dataIndex: 'lastSent',
+      dataIndex: type === 'message' ? 'lastSent' : 'createdAt',
       width: 200,
       render: (record) => {
         return <DateTimeFormat dateTime={record} />;
