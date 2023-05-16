@@ -103,6 +103,7 @@ export default function BotManagePage({ pageId, socialPage }) {
     },
   ];
   const [columns, setColumns] = useState(botColumns);
+
   useUpdateEffect(() => {
     if (botSelected) {
       setColumns(intentColumns);
@@ -110,6 +111,7 @@ export default function BotManagePage({ pageId, socialPage }) {
       setColumns(botColumns);
     }
   }, [botSelected]);
+
   useUpdateEffect(() => {
     document.getElementById('refresh-table')?.click();
   }, [columns]);
@@ -135,14 +137,23 @@ export default function BotManagePage({ pageId, socialPage }) {
     data = intentList;
   }
 
-  useEffectOnce(() => {
-    document
-      .getElementById('refresh-table')
-      ?.addEventListener('click', (e) => {
-        getData.current = true;
-        forceUpdate(e);
-      });
-  });
+  const handleRefreshTable = (e) => {
+    getData.current = true;
+    forceUpdate(e);
+  };
+
+  useEffectOnce(
+    () => {
+      document
+        .getElementById('refresh-table')
+        ?.addEventListener('click', handleRefreshTable);
+    },
+    () => {
+      document
+        .getElementById('refresh-table')
+        ?.removeEventListener('click', handleRefreshTable);
+    }
+  );
 
   const permission = {
     table: 'table-workflow',

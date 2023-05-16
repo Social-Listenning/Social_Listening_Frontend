@@ -138,6 +138,11 @@ export default function AdminTable(props) {
     // scroll back to 0
     tableContent?.scroll(0, 0);
 
+    // go back to first page
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+    }
+
     // remove the action and record
     if (actionType.current) {
       actionType.current = null;
@@ -336,7 +341,7 @@ export default function AdminTable(props) {
   }));
   // #endregion
 
-  // #region row selection event
+  // #region row selection event && paging
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   const rowSelection = {
@@ -352,6 +357,8 @@ export default function AdminTable(props) {
       setSelectedRowKeys(newSelectedRowKeys);
     },
   };
+
+  const [currentPage, setCurrentPage] = useState(1);
   // #endregion
 
   return (
@@ -400,6 +407,23 @@ export default function AdminTable(props) {
             },
           }}
           {...(!disableSelect && { rowSelection: rowSelection })}
+          pagination={{
+            simple: true,
+            showTotal: (total) => {
+              return (
+                <span className="table-total-items">
+                  {selectedRowKeys?.length > 0 && (
+                    <span>{selectedRowKeys.length} selected / </span>
+                  )}
+                  {total} item(s)
+                </span>
+              );
+            },
+            onChange: (page) => {
+              setCurrentPage(page);
+            },
+            current: currentPage,
+          }}
           {...other}
         />
       </LoadingWrapper>

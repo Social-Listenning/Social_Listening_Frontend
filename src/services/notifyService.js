@@ -1,5 +1,10 @@
 import { notification } from 'antd';
-import { HourglassOutlined } from '@ant-design/icons';
+import {
+  HourglassOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  InfoCircleOutlined,
+} from '@ant-design/icons';
 
 notification.config({
   maxCount: 5,
@@ -11,6 +16,7 @@ const showSucsessMessage = (config) => {
   const { title, description, ...other } = config;
 
   notification.open({
+    icon: <CheckCircleOutlined />,
     message: title ?? 'Success',
     description: description,
     style: {
@@ -24,6 +30,7 @@ const showErrorMessage = (config) => {
   const { title, description, ...other } = config;
 
   notification.open({
+    icon: <CloseCircleOutlined />,
     message: title ?? 'Error',
     description: description,
     style: {
@@ -37,9 +44,11 @@ const showWarningMessage = (config) => {
   const { title, description, isProcessing, ...other } = config;
 
   notification.open({
-    ...(isProcessing && {
-      icon: <HourglassOutlined />,
-    }),
+    icon: isProcessing ? (
+      <InfoCircleOutlined />
+    ) : (
+      <HourglassOutlined />
+    ),
     message: isProcessing
       ? title ?? 'Processing...'
       : title ?? 'Warning',

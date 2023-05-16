@@ -1,12 +1,9 @@
 import { useRef } from 'react';
 import { Layout, Divider, Input } from 'antd';
 import {
-  CloseOutlined,
-  ReloadOutlined,
   SendOutlined,
 } from '@ant-design/icons';
 import useEffectOnce from '../../../components/hooks/useEffectOnce';
-import useUpdateEffect from '../../../components/hooks/useUpdateEffect';
 import SearchBar from '../../../components/shared/antd/AutoComplete/SearchBar';
 import BasicAvatar from '../../../components/shared/antd/BasicAvatar';
 import IconButton from '../../../components/shared/element/Button/IconButton';

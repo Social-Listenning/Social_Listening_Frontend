@@ -19,20 +19,29 @@ export default function SettingManagePage({ pageId }) {
   const { data } = useGetTabSetting(pageId, getAllSetting.current);
   getAllSetting.current = false;
 
-  useEffectOnce(() => {
-    document
-      .getElementById('refresh-table')
-      ?.addEventListener('click', (e) => {
-        getAllSetting.current = true;
-        forceUpdate(e);
-      });
-  });
+  const handleRefreshTable = (e) => {
+    getAllSetting.current = true;
+    forceUpdate(e);
+  };
+
+  useEffectOnce(
+    () => {
+      document
+        .getElementById('refresh-table')
+        ?.addEventListener('click', handleRefreshTable);
+    },
+    () => {
+      document
+        .getElementById('refresh-table')
+        ?.removeEventListener('click', handleRefreshTable);
+    }
+  );
 
   const useUpdateSetting = useMutation(updateSocialSetting, {
     onSuccess: (resp) => {
       if (resp) {
         getAllSetting.current = true;
-        
+
         notifyService.showSucsessMessage({
           description: 'Save setting successfully',
         });

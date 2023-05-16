@@ -7,8 +7,6 @@ const numberType = [
   'Is Not Equal To',
 ];
 
-const textType = ['Start With', 'End With'];
-
 const dateTimeType = [
   'Is Equal To',,
   'Is Before Or Equal To',
@@ -30,9 +28,9 @@ const equalType = ['Is Equal To', 'Is Not Equal To'];
 
 export const FilterType = {
   Number: numberType,
-  Text: textType,
   DateTime: dateTimeType,
   Default: defaultType,
+  DefaultWithoutEmpty: defaultWithoutEmpty,
   Dropdown: defaultWithoutEmpty,
   Boolean: equalType,
 };

@@ -21,20 +21,29 @@ export default function SettingPage() {
   );
   getAllSetting.current = false;
 
-  useEffectOnce(() => {
-    document
-      .getElementById('refresh-table')
-      ?.addEventListener('click', (e) => {
-        getAllSetting.current = true;
-        forceUpdate(e);
-      });
-  });
+  const handleRefreshTable = (e) => {
+    getAllSetting.current = true;
+    forceUpdate(e);
+  };
+
+  useEffectOnce(
+    () => {
+      document
+        .getElementById('refresh-table')
+        ?.addEventListener('click', handleRefreshTable);
+    },
+    () => {
+      document
+        .getElementById('refresh-table')
+        ?.removeEventListener('click', handleRefreshTable);
+    }
+  );
 
   const useUpdateSetting = useMutation(updateSetting, {
     onSuccess: (resp) => {
       if (resp) {
         getAllSetting.current = true;
-        
+
         notifyService.showSucsessMessage({
           description: 'Save setting successfully',
         });
@@ -46,10 +55,18 @@ export default function SettingPage() {
     {
       title: 'Key',
       dataIndex: 'key',
+      sort: false,
+      filter: {
+        filterType: 'DefaultWithoutEmpty',
+      },
     },
     {
       title: 'Group',
       dataIndex: 'group',
+      sort: false,
+      filter: {
+        filterType: 'DefaultWithoutEmpty',
+      },
     },
     {
       title: 'Value',

@@ -4,7 +4,6 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   DownOutlined,
-  CheckCircleOutlined,
   BellOutlined,
   MessageOutlined,
   CloseOutlined,
@@ -22,7 +21,6 @@ import { menuUserHeader } from '../../constants/menu/header';
 import { useSocket } from '../../components/contexts/socket/SocketProvider';
 import { getAllNotification } from './privateService';
 import { useGetSocialGroups } from '../../screens/private/social-network/socialNetworkService';
-import { useGetAllSetting } from '../../screens/private/setting/settingService';
 import useEffectOnce from '../../components/hooks/useEffectOnce';
 import useUpdateEffect from '../../components/hooks/useUpdateEffect';
 import useToggle from '../../components/hooks/useToggle';
@@ -159,7 +157,7 @@ export default function PrivateLayout(props) {
   const [openChart, setOpenChart] = useToggle(false);
   const title = useRef(null);
   const resultChart = useRef(null);
-  function openChartResult(notificationId) {console.log('a')
+  function openChartResult(notificationId) {
     setOpenChart(true);
     socket.emit('clickNotification', notificationId);
   }
@@ -167,32 +165,39 @@ export default function PrivateLayout(props) {
   useUpdateEffect(() => {
     socket.on('sendNotification', (payload) => {
       if (payload) {
+        // push receive back to server
+        socket.emit('receiveNotification', payload.id?.toString());
+
+        // get data from socket
         title.current = payload.title;
         if (payload.extendData) {
           resultChart.current = JSON.parse(payload.extendData);
         }
 
-        setTimeout(() => {
-          notifyService.showSucsessMessage({
-            icon: <CheckCircleOutlined />,
-            title: payload.title,
-            description: (
-              <div
-                className="pointer"
-                onClick={(e) => {
-                  e.preventDefault();
-                  openChartResult(payload.id?.toString())
-                }}
-              >
-                {payload.body}
-              </div>
-            ),
-            duration: 0,
-          });
-        }, 1000);
+        // notify success for the import
+        notifyService.showSucsessMessage({
+          title: payload.title,
+          description: (
+            <div
+              className="pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                openChartResult(payload.id?.toString());
+              }}
+            >
+              {payload.body}
+            </div>
+          ),
+          duration: 0,
+        });
 
-        // push receive back to server
-        socket.emit('receiveNotification', payload.id?.toString());
+        // open the chart
+        openChartResult(payload.id?.toString());
+
+        // refresh the user table
+        if (path === 'account/user') {
+          document.getElementById('refresh-table')?.click();
+        }
       }
     });
   }, [socket]);
@@ -200,6 +205,17 @@ export default function PrivateLayout(props) {
 
   // #region hotqueue
   const [hotQueue, setHotQueue] = useState(false);
+
+  useUpdateEffect(() => {
+    socket.on('notifyAgent', (payload) => {
+      if (payload) {
+        const iframe = document.getElementById('hotqueue-iframe');
+        iframe.contentWindow.postMessage(payload, '*'); // Replace '*' with the target origin if necessary
+
+        setHotQueue(true);
+      }
+    });
+  }, [socket]);
   // #endregion
 
   async function handleMenuHeader(e) {
@@ -398,7 +414,8 @@ export default function PrivateLayout(props) {
             </ToolTipWrapper>
           </div>
           <iframe
-            class="hotqueue-iframe full-width"
+            id="hotqueue-iframe"
+            className="hotqueue-iframe full-width"
             src="/hotqueue/1"
             scrolling="no"
           />
