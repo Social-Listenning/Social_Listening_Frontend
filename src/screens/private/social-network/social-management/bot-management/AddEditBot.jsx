@@ -55,10 +55,10 @@ export default function AddEditBot(props) {
 
   function handleSubmit(value) {
     if (action === 'Add') {
-      useCreateDialogflowBot.mutate(
-        dialogflowConfig,
-        `${value?.name}-${pageId}`
-      );
+      useCreateDialogflowBot.mutate({
+        dialogflowConfig: dialogflowConfig,
+        name: `${value?.name}-${pageId}`,
+      });
     } else if (action === 'Edit') {
       let id = null;
       if (selectedData) {

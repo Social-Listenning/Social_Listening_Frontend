@@ -160,7 +160,10 @@ export const changeStatusBotFlow = async (data) => {
 };
 
 // #region dialogflow bot
-export const createDialogflowBot = async (dialogflowConfig, name) => {
+export const createDialogflowBot = async ({
+  dialogflowConfig,
+  name,
+}) => {
   const resp = await apiService.post(
     `${environment.botUrl}/create-agent/${dialogflowConfig}`,
     {
@@ -184,10 +187,10 @@ export const updateDialogflowBot = async (agent) => {
   return resp;
 };
 
-export const deleteDialogflowBot = async (
+export const deleteDialogflowBot = async ({
   dialogflowConfig,
-  agentId
-) => {
+  agentId,
+}) => {
   const resp = await apiService.delete(
     `${environment.botUrl}/delete-agent/${dialogflowConfig}/agents/${agentId}`
   );

@@ -190,7 +190,10 @@ export default function BotManagePage({ pageId, socialPage }) {
     }
 
     if (!botSelected) {
-      await useDeleteBot.mutateAsync(dialogflowConfig, id);
+      await useDeleteBot.mutateAsync({
+        dialogflowConfig: dialogflowConfig,
+        agentId: id,
+      });
     } else {
       await useDeleteIntent.mutateAsync({
         dialogflowConfig: dialogflowConfig,
