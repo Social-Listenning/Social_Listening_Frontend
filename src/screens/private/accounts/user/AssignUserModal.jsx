@@ -1,14 +1,20 @@
+import { useRef } from 'react';
 import { Form, Modal } from 'antd';
 import { Link } from 'react-router-dom';
 import { useMutation } from 'react-query';
+import { assignUser } from '../accountService';
+import { notifyService } from '../../../../services/notifyService';
+import { useGetSocialGroups } from '../../social-network/socialNetworkService';
 import ClassicSelect from '../../../../components/shared/antd/Select/Classic';
 import Hint from '../../../../components/shared/element/Hint';
 import Title from '../../../../components/shared/element/Title';
-import { assignUser } from '../accountService';
-import { notifyService } from '../../../../services/notifyService';
 
 export default function AssignUserModal(props) {
-  const { open, close, userList = [], socialList = [] } = props;
+  const { open, close, userList = [] } = props;
+
+  const firstRender = useRef(true);
+  const { data: socialList } = useGetSocialGroups(firstRender.current);
+  firstRender.current = false;
 
   const [assignUserForm] = Form.useForm();
   const useAssignUser = useMutation(assignUser, {
@@ -86,7 +92,7 @@ export default function AssignUserModal(props) {
             <span>
               If you don't see the page you want, please connect the
               page to the system first by clicking{' '}
-              <Link to="/social-network">here</Link>.
+              <Link to="/social-network/pages-management">here</Link>.
             </span>
           </>
         }

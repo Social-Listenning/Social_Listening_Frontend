@@ -10,6 +10,7 @@ export default function ModalDetail(props) {
       props: 'role.roleName',
       value: [role],
       filterOperator: 'Contains',
+      filterType: 'Dropdown'
     },
   ];
 

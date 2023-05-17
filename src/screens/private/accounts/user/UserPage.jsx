@@ -1,7 +1,6 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { PoweroffOutlined, CheckOutlined } from '@ant-design/icons';
 import { useQueryClient, useMutation } from 'react-query';
-import { useGetSocialGroups } from '../../../../screens/private/social-network/socialNetworkService';
 import { role } from '../../../../constants/environment/environment.dev';
 import { RoleChip } from '../../../../components/shared/element/Chip';
 import { defaultAction } from '../../../../constants/table/action';
@@ -23,10 +22,6 @@ export default function UserManagement(props) {
 
   const queryClient = useQueryClient();
   const userData = queryClient.getQueryData('userData');
-
-  const firstRender = useRef(true);
-  const { data } = useGetSocialGroups(firstRender.current);
-  firstRender.current = false;
 
   const [selectedRows, setSelectedRows] = useState([]);
   function getSelectedRows(rows) {
@@ -289,7 +284,6 @@ export default function UserManagement(props) {
             toggleOpenAssign(false);
           }}
           userList={selectedRows}
-          socialList={data}
         />
       )}
     </>

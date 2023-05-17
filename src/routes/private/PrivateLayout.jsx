@@ -204,18 +204,41 @@ export default function PrivateLayout(props) {
   // #endregion
 
   // #region hotqueue
+  const hotQueueIframe = useRef(null);
+  const notifyAgentPayload = useRef(null);
   const [hotQueue, setHotQueue] = useState(false);
 
+  const sendDataToIframe = () => {
+    if (hotQueueIframe.current) {
+      hotQueueIframe.current?.contentWindow?.postMessage(
+        notifyAgentPayload.current,
+        '*'
+      );
+    }
+  };
   useUpdateEffect(() => {
     socket.on('notifyAgent', (payload) => {
       if (payload) {
-        const iframe = document.getElementById('hotqueue-iframe');
-        iframe.contentWindow.postMessage(payload, '*'); // Replace '*' with the target origin if necessary
-
+        notifyAgentPayload.current = payload;
+        sendDataToIframe();
         setHotQueue(true);
       }
     });
   }, [socket]);
+
+  const sendData = (event) => {
+    if (event.data?.rendered) {
+      sendDataToIframe();
+    }
+  };
+  useEffectOnce(
+    () => {
+      window.addEventListener('message', sendData);
+    },
+    () => {
+      window.removeEventListener('message', sendData);
+    }
+  );
   // #endregion
 
   async function handleMenuHeader(e) {
@@ -414,7 +437,7 @@ export default function PrivateLayout(props) {
             </ToolTipWrapper>
           </div>
           <iframe
-            id="hotqueue-iframe"
+            ref={hotQueueIframe}
             className="hotqueue-iframe full-width"
             src="/hotqueue/1"
             scrolling="no"

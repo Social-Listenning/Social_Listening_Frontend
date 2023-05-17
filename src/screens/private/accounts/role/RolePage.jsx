@@ -7,7 +7,11 @@ import ModalDetail from './ModalDetail';
 import './rolePage.scss';
 
 export default function RolePage() {
-  const { data } = useGetAllRole();
+  
+  const getRole = useRef(true);
+  const { data } = useGetAllRole(getRole.current);
+  getRole.current = false
+
   const [openModal, toggleOpenModal] = useToggle(false);
   const type = useRef(null);
   const role = useRef(null);

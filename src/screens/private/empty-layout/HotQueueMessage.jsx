@@ -1,8 +1,6 @@
 import { useRef } from 'react';
 import { Layout, Divider, Input } from 'antd';
-import {
-  SendOutlined,
-} from '@ant-design/icons';
+import { SendOutlined } from '@ant-design/icons';
 import useEffectOnce from '../../../components/hooks/useEffectOnce';
 import SearchBar from '../../../components/shared/antd/AutoComplete/SearchBar';
 import BasicAvatar from '../../../components/shared/antd/BasicAvatar';
@@ -14,14 +12,40 @@ const { Header, Sider, Content } = Layout;
 export default function HotQueueMessage() {
   const messageContainer = useRef(null);
 
-  useEffectOnce(() => {
-    if (messageContainer.current) {
-      setTimeout(() => {
-        messageContainer.current.scrollTop =
-          messageContainer.current.scrollHeight;
-      }, 1);
+  const receiveDataFromParent = (payload) => {
+    console.log(payload?.data);
+  };
+
+  useEffectOnce(
+    () => {
+      if (messageContainer.current) {
+        setTimeout(() => {
+          messageContainer.current.scrollTop =
+            messageContainer.current.scrollHeight;
+        }, 1);
+      }
+
+      window.addEventListener(
+        'message',
+        receiveDataFromParent,
+        false
+      );
+
+      window.parent.postMessage(
+        {
+          rendered: true,
+        },
+        '*'
+      );
+    },
+    () => {
+      window.removeEventListener(
+        'message',
+        receiveDataFromParent,
+        false
+      );
     }
-  });
+  );
 
   const mock = [
     {
@@ -99,7 +123,7 @@ export default function HotQueueMessage() {
   ];
 
   return (
-    <Layout className="hotqueue-layout">
+    <Layout id="hotuque-layout" className="hotqueue-layout">
       <Sider width={400}>
         <Title>Hotqueue Message</Title>
         <SearchBar className="search-user" />
