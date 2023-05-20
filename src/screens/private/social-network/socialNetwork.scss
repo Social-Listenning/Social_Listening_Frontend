@@ -360,7 +360,7 @@
       }
 
       .message-chip {
-        --line: 3;
+        white-space: pre-wrap;
       }
     }
   }
@@ -620,7 +620,7 @@
       .intent-list-container {
         max-height: 16.8rem;
         min-height: 8rem;
-        overflow-y:  scroll;
+        overflow-y: scroll;
       }
 
       .intent-tag {

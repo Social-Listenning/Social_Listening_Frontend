@@ -165,12 +165,16 @@ export default function TableHeader(props) {
         return;
       }
 
-      formatFilter();
+      formatFilter(listFilter[e.key]);
     }
   }
 
-  function formatFilter() {
-    if (!Checker.isNullOrEmpty(value)) {
+  function formatFilter(filter) {
+    if (
+      !Checker.isNullOrEmpty(value) ||
+      filter === 'Is Empty' ||
+      filter === 'Is Not Empty'
+    ) {
       updateFilter((old) => {
         let index = old.findIndex((x) => x?.props === propsName);
         if (index >= 0) {
@@ -191,7 +195,15 @@ export default function TableHeader(props) {
       });
     } else {
       updateFilter((old) => {
-        if (old.filter((x) => x?.props === propsName)?.length > 0) {
+        const availableFilter = old.find(
+          (x) => x?.props === propsName
+        );
+
+        if (
+          availableFilter?.propsName ||
+          availableFilter?.filterOperator === 'Is Empty' ||
+          availableFilter?.filterOperator === 'Is Not Empty'
+        ) {
           let removeOldFilter = old.filter(
             (x) => x?.props !== propsName
           );

@@ -408,6 +408,7 @@ export default function AdminTable(props) {
           }}
           {...(!disableSelect && { rowSelection: rowSelection })}
           pagination={{
+            showSizeChanger: false,
             showTotal: (total) => {
               return (
                 <span className="table-total-items">

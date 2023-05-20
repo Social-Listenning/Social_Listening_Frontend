@@ -1,19 +1,28 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Layout, Divider, Input } from 'antd';
 import { SendOutlined } from '@ant-design/icons';
+import { useGetConversationWithUserId } from '../social-network/socialNetworkService';
 import useEffectOnce from '../../../components/hooks/useEffectOnce';
 import SearchBar from '../../../components/shared/antd/AutoComplete/SearchBar';
 import BasicAvatar from '../../../components/shared/antd/BasicAvatar';
 import IconButton from '../../../components/shared/element/Button/IconButton';
 import Title from '../../../components/shared/element/Title';
+import MessageManagePage from '../social-network/social-management/message-management/MessageManagePage';
+import Hint from '../../../components/shared/element/Hint';
 import './emptyLayout.scss';
+import '../social-network/socialNetwork.scss';
 
 const { Header, Sider, Content } = Layout;
 export default function HotQueueMessage() {
   const messageContainer = useRef(null);
+  const [socketData, setSocketData] = useState(null);
+
+  const getDetail = useRef(true);
+  getDetail.current = false;
 
   const receiveDataFromParent = (payload) => {
-    console.log(payload?.data);
+    getDetail.current = true;
+    setSocketData(payload.data);
   };
 
   useEffectOnce(
@@ -22,7 +31,7 @@ export default function HotQueueMessage() {
         setTimeout(() => {
           messageContainer.current.scrollTop =
             messageContainer.current.scrollHeight;
-        }, 1);
+        }, 50);
       }
 
       window.addEventListener(
@@ -123,7 +132,7 @@ export default function HotQueueMessage() {
   ];
 
   return (
-    <Layout id="hotuque-layout" className="hotqueue-layout">
+    <Layout className="hotqueue-layout">
       <Sider width={400}>
         <Title>Hotqueue Message</Title>
         <SearchBar className="search-user" />
@@ -161,76 +170,108 @@ export default function HotQueueMessage() {
         </ul>
       </Sider>
       <Layout className="full-height-screen">
-        <Header className="hotqueue-header">
-          <b className="full-height flex-center name">Đức BCN</b>
-          {/* <div className="header-utils full-height flex-center">
+        {/* <Header className="hotqueue-header">
+          <b className="full-height flex-center name">Đức BCN</b> */}
+        {/* <div className="header-utils full-height flex-center">
             <IconButton icon={<ReloadOutlined />} />
             <IconButton icon={<CloseOutlined />} />
           </div> */}
-        </Header>
-        <Content>
-          <div
-            ref={messageContainer}
-            className="hotqueue-conservation"
-          >
-            {mock.map((item, index) => {
-              let isFinal = false;
-              if (mock[index]?.isSent !== mock[index + 1]?.isSent) {
-                isFinal = true;
-              }
-              let isFirst = false;
-              if (mock[index]?.isSent !== mock[index - 1]?.isSent) {
-                isFirst = true;
-              }
-
-              return (
-                <div
-                  key={index}
-                  className="conservation-container"
-                  style={{
-                    justifyContent: item.isSent
-                      ? 'flex-end'
-                      : 'flex-start',
-                  }}
-                >
-                  {!item.isSent && isFinal && <BasicAvatar />}
+        {/* </Header> */}
+        <Content className="social-tab hotqueue-content">
+          {socketData?.notifyAgentMessage && (
+            <Hint message={socketData.notifyAgentMessage} />
+          )}
+          {socketData && (
+            <>
+              {socketData?.messageType === 'Message' ? (
+                <>
                   <div
-                    className="conservation-block"
-                    style={{
-                      alignItems: item.isSent
-                        ? 'flex-end'
-                        : 'flex-start',
-                      marginLeft: !isFinal ? '4rem' : '0',
-                    }}
+                    ref={messageContainer}
+                    className="hotqueue-conservation"
                   >
-                    <span
-                      style={{
-                        marginLeft: item.isSent ? 'auto' : '0',
-                        display: !isFirst ? 'none' : 'block',
-                      }}
-                    >
-                      28/4 04:35 PM
-                    </span>
-                    <div
-                      className="conservation-text"
-                      style={{
-                        backgroundColor: item.isSent
-                          ? 'var(--primary-color)'
-                          : '#dedede',
-                        color: item.isSent ? '#fff' : '#000',
-                      }}
-                    >
-                      {item.text}
-                    </div>
+                    {mock.map((item, index) => {
+                      let isFinal = false;
+                      if (
+                        mock[index]?.isSent !==
+                        mock[index + 1]?.isSent
+                      ) {
+                        isFinal = true;
+                      }
+                      let isFirst = false;
+                      if (
+                        mock[index]?.isSent !==
+                        mock[index - 1]?.isSent
+                      ) {
+                        isFirst = true;
+                      }
+
+                      return (
+                        <div
+                          key={index}
+                          className="conservation-container"
+                          style={{
+                            justifyContent: item.isSent
+                              ? 'flex-end'
+                              : 'flex-start',
+                          }}
+                        >
+                          {!item.isSent && isFinal && <BasicAvatar />}
+                          <div
+                            className="conservation-block"
+                            style={{
+                              alignItems: item.isSent
+                                ? 'flex-end'
+                                : 'flex-start',
+                              marginLeft: !isFinal ? '4rem' : '0',
+                            }}
+                          >
+                            <span
+                              style={{
+                                marginLeft: item.isSent
+                                  ? 'auto'
+                                  : '0',
+                                display: !isFirst ? 'none' : 'block',
+                              }}
+                            >
+                              28/4 04:35 PM
+                            </span>
+                            <div
+                              className="conservation-text"
+                              style={{
+                                backgroundColor: item.isSent
+                                  ? 'var(--primary-color)'
+                                  : '#dedede',
+                                color: item.isSent ? '#fff' : '#000',
+                              }}
+                            >
+                              {item.text}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                </div>
-              );
-            })}
-          </div>
-          <div className="hotqueue-footer">
-            <Input allowClear className="hotqueue-respond" />
-            <IconButton icon={<SendOutlined />} />
-          </div>
+                  <div className="hotqueue-footer">
+                    <Input allowClear className="hotqueue-respond" />
+                    <IconButton icon={<SendOutlined />} />
+                  </div>
+                </>
+              ) : (
+                <MessageManagePage
+                  pageId={socketData?.tabId}
+                  socialPage={socketData?.socialPage}
+                  type={socketData?.messageType}
+                  messageData={{
+                    id: socketData?.messageId,
+                    type: socketData?.messageType,
+                  }}
+                  showTable={false}
+                  showHint={false}
+                  getMessageDetail={true}
+                />
+              )}
+            </>
+          )}
         </Content>
       </Layout>
     </Layout>

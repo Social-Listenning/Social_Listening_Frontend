@@ -124,16 +124,6 @@ export default function MessageTypeContainer(props) {
             message: reply,
           },
         ]);
-        setMessageList((old) => {
-          return [
-            ...old,
-            {
-              createdAt: new Date(),
-              type: `Agent#${data?.id}`,
-              message: reply,
-            },
-          ];
-        });
 
         notifyService.showSucsessMessage({
           description: 'Reply successfully',
@@ -171,19 +161,6 @@ export default function MessageTypeContainer(props) {
       if (resp) {
         setReply(null);
         setMessageReplied(null);
-        setMessageList((old) => [
-          ...old,
-          {
-            createdAt: resp.createdAt,
-            message: resp?.message,
-            sender: {
-              avatarUrl: socialPage?.pictureUrl,
-              fullName: socialPage?.name,
-              senderId: socialPage?.id,
-              id: resp?.senderId,
-            },
-          },
-        ]);
 
         notifyService.showSucsessMessage({
           description: 'Reply successfully',
@@ -287,7 +264,7 @@ export default function MessageTypeContainer(props) {
                   </b>
                   <span className="message-date">{dateSent}</span>
                 </div>
-                <span className="message-chip limit-line">
+                <span className="message-chip">
                   {item?.message}
                 </span>
               </Tag>

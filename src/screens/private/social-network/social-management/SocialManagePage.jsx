@@ -44,7 +44,7 @@ export default function SocialMangePage() {
         <MessageManagePage
           pageId={location.state?.socialId}
           socialPage={location.state?.socialPage}
-          type="comment"
+          type="Comment"
         />
       ),
     },
@@ -55,7 +55,7 @@ export default function SocialMangePage() {
         <MessageManagePage
           pageId={location.state?.socialId}
           socialPage={location.state?.socialPage}
-          type="message"
+          type="Message"
         />
       ),
     },

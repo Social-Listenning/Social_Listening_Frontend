@@ -216,21 +216,37 @@ export default function PrivateLayout(props) {
       );
     }
   };
+
   useUpdateEffect(() => {
     socket.on('notifyAgent', (payload) => {
-      if (payload) {
-        notifyAgentPayload.current = payload;
+      if (payload && socialGroups?.length > 0) {
+        const socialPage = socialGroups.find(
+          (item) => item.id === payload.tabId
+        );
+
+        let pageData = null;
+        if (socialPage?.SocialNetwork?.extendData) {
+          pageData = JSON.parse(
+            socialPage?.SocialNetwork?.extendData
+          );
+        }
+
+        notifyAgentPayload.current = {
+          ...payload,
+          socialPage: pageData,
+        };
         sendDataToIframe();
         setHotQueue(true);
       }
     });
-  }, [socket]);
+  }, [socket, socialGroups]);
 
   const sendData = (event) => {
     if (event.data?.rendered) {
       sendDataToIframe();
     }
   };
+
   useEffectOnce(
     () => {
       window.addEventListener('message', sendData);
@@ -439,7 +455,7 @@ export default function PrivateLayout(props) {
           <iframe
             ref={hotQueueIframe}
             className="hotqueue-iframe full-width"
-            src="/hotqueue/1"
+            src={`/hotqueue/${notifyAgentPayload.current?.messageId}`}
             scrolling="no"
           />
         </div>

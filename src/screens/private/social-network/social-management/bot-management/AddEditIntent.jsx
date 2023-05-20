@@ -344,6 +344,7 @@ export default function AddEditIntent(props) {
         ]}
         dataSource={trainings}
         pagination={{
+          showSizeChanger: false,
           pageSize: 5,
         }}
         showHeader={false}

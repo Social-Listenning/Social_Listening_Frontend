@@ -3,6 +3,9 @@ import {
   useGetConversationWithUserId,
   useGetMessageDetail,
 } from '../../socialNetworkService';
+import { useSocket } from '../../../../../components/contexts/socket/SocketProvider';
+import useUpdateEffect from '../../../../../components/hooks/useUpdateEffect';
+import useEffectOnce from '../../../../../components/hooks/useEffectOnce';
 import DateTimeFormat from '../../../../../components/shared/element/DateTimeFormat';
 import AdminTable from '../../../../../components/shared/antd/Table/Table';
 import MessageTypeContainer from './message-type/MessageTypeContainer';
@@ -13,14 +16,24 @@ import BasicAvatar from '../../../../../components/shared/antd/BasicAvatar';
 import ToolTipWrapper from '../../../../../components/shared/antd/ToolTipWrapper';
 
 export default function MessageManagePage(props) {
-  const { pageId, socialPage, type } = props;
+  const {
+    pageId,
+    socialPage,
+    type,
+    showTable = true,
+    showHint = true,
+    messageData,
+    getMessageDetail = false,
+  } = props;
+  const { socket } = useSocket();
 
-  const [msgSelected, setMsgSelected] = useState(null);
-  const getDetail = useRef(false);
+  const [msgSelected, setMsgSelected] = useState(messageData);
+  const getDetail = useRef(getMessageDetail);
+
   const { data: commentDetail, isFetching: isCommentFetching } =
     useGetMessageDetail(
       msgSelected?.id,
-      getDetail.current && type === 'comment'
+      getDetail.current && type === 'Comment'
     );
   const { data: messageDetail, isFetching: isMessageFetching } =
     useGetConversationWithUserId(
@@ -36,15 +49,20 @@ export default function MessageManagePage(props) {
           // offset: 0
         },
       },
-      getDetail.current && type === 'message'
+      getDetail.current && type === 'Message'
     );
   getDetail.current = false;
+
+  const messageDetailList =
+    type === 'Comment'
+      ? commentDetail
+      : messageDetail?.data?.slice().reverse();
 
   const columns = [
     {
       title: 'Sender',
       dataIndex: 'sender.fullName',
-      render: (text, record) => {
+      render: (_, record) => {
         return (
           <div className="sender-header flex-center">
             <BasicAvatar
@@ -62,21 +80,21 @@ export default function MessageManagePage(props) {
     {
       title: 'Message',
       dataIndex: 'message',
-      onCell: (record, _) => {
-        return {
-          onClick: () => {
-            getDetail.current = true;
-            setMsgSelected({ ...record });
-          },
-        };
-      },
-      render: (record) => {
+      render: (text, record) => {
         return (
           <ToolTipWrapper tooltip="Click to view full details">
-            <div className="pointer limit-line">
+            <div
+              className="pointer limit-line"
+              onClick={() => {
+                getDetail.current = true;
+                setMsgSelected({ ...record });
+              }}
+            >
               <b>
-                {record?.from !== record?.sender?.id && 'Bot: '}
-                {record}
+                {type === 'Message' &&
+                  record?.from !== record?.sender?.id &&
+                  `${socialPage?.name}: `}
+                {text}
               </b>
             </div>
           </ToolTipWrapper>
@@ -85,7 +103,7 @@ export default function MessageManagePage(props) {
     },
     {
       title: 'Date Sent',
-      dataIndex: type === 'message' ? 'lastSent' : 'createdAt',
+      dataIndex: type === 'Message' ? 'lastSent' : 'createdAt',
       width: 200,
       render: (record) => {
         return <DateTimeFormat dateTime={record} />;
@@ -103,40 +121,71 @@ export default function MessageManagePage(props) {
     table: 'table-user',
   };
 
+  const refreshAllData = () => {
+    if (showTable) {
+      // refresh table
+      document.getElementById('refresh-table')?.click();
+    }
+
+    // refresh the message detail
+    if (document.getElementById('message-hint') === null) {
+      getDetail.current = true;
+      setMsgSelected({ ...msgSelected });
+    }
+  };
+
+  useUpdateEffect(() => {
+    socket.on('messageCome', (payload) => {
+      if (payload) {
+        refreshAllData();
+      }
+    });
+
+    socket.on('commentCome', (payload) => {
+      if (payload) {
+        refreshAllData();
+      }
+    });
+  }, [socket, msgSelected]);
+
   return (
     <>
-      <Hint
-        type="info"
-        message={
-          <span className="message-detail-hint flex-center">
-            We will only get messages from the date you register your
-            social media business to our system.
-          </span>
-        }
-      />
+      {showHint && (
+        <Hint
+          type="info"
+          message={
+            <span className="message-detail-hint flex-center">
+              We will only get messages from the date you register
+              your social media business to our system.
+            </span>
+          }
+        />
+      )}
       <div className="message-container flex-center">
-        <div className="message-table">
-          <AdminTable
-            apiGetData={
-              type === 'comment'
-                ? `${environment.socialMessage}/${pageId}`
-                : `${environment.message}/${pageId}/conversations`
-            }
-            columns={columns}
-            permission={permission}
-            showToolbar={false}
-            disableSelect
-            scroll={{
-              x: 1000,
-            }}
-          />
-        </div>
+        {showTable && (
+          <div className="message-table">
+            <AdminTable
+              apiGetData={
+                type === 'Comment'
+                  ? `${environment.socialMessage}/${pageId}`
+                  : `${environment.message}/${pageId}/conversations`
+              }
+              columns={columns}
+              permission={permission}
+              showToolbar={false}
+              disableSelect
+              scroll={{
+                x: 1000,
+              }}
+            />
+          </div>
+        )}
         <div className="message-detail flex-center">
           {msgSelected ? (
             <LoadingWrapper
               className="message-type-loader"
               loading={
-                type === 'comment'
+                type === 'Comment'
                   ? isCommentFetching
                   : isMessageFetching
               }
@@ -145,15 +194,14 @@ export default function MessageManagePage(props) {
                 messageSelected={msgSelected}
                 type={msgSelected?.type ?? 'Message'}
                 socialPage={socialPage}
-                messageDetail={
-                  type === 'comment'
-                    ? commentDetail
-                    : messageDetail?.data?.reverse()
-                }
+                messageDetail={messageDetailList}
               />
             </LoadingWrapper>
           ) : (
-            <div className="full-height flex-center">
+            <div
+              id="message-hint"
+              className="full-height flex-center"
+            >
               <Hint
                 message={
                   <span className="message-detail-hint flex-center">
