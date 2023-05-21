@@ -245,10 +245,12 @@ export default function PrivateLayout(props) {
 
       if (startHotQueue) {
         socket.emit('startHotQueue', startHotQueue);
+        setStartHotQueue(null);
       }
 
       if (stopHotQueue) {
         socket.emit('stopHotQueue', stopHotQueue);
+        setStopHotQueue(null);
       }
     }
   }, [socket, socialGroups, startHotQueue, stopHotQueue]);
