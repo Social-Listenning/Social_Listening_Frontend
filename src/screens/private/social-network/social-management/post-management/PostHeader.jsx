@@ -1,8 +1,13 @@
+import { Button } from 'antd';
+import { PoweroffOutlined } from '@ant-design/icons';
 import BasicAvatar from '../../../../../components/shared/antd/BasicAvatar';
-import IconMoreButton from '../../../../../components/shared/element/Button/IconMoreButton';
-import ClassicDropdown from '../../../../../components/shared/antd/Dropdown/Classic';
 
-export default function PostHeader({ pageData, postData }) {
+export default function PostHeader({
+  hotQueueData,
+  pageData,
+  postData,
+  showStop,
+}) {
   const dateSent = new Date(postData?.createdAt)?.toLocaleString();
   return (
     <div className="post-header-container flex-center">
@@ -18,13 +23,18 @@ export default function PostHeader({ pageData, postData }) {
             <span className="message-date">{dateSent}</span>
           </div>
         </div>
-        <ClassicDropdown
-          clickTrigger
-          className="post-util"
-          list={['Edit', 'Delete']}
-        >
-          <IconMoreButton />
-        </ClassicDropdown>
+        {showStop && (
+          <Button
+            type="primary"
+            danger
+            icon={<PoweroffOutlined />}
+            onClick={() => {
+              window.parent.postMessage(hotQueueData, '*');
+            }}
+          >
+            Stop supporting
+          </Button>
+        )}
       </div>
       <div className="post-detail">
         <span className="limit-line">{postData?.message}</span>

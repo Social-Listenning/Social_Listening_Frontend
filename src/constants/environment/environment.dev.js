@@ -21,6 +21,7 @@ const environment = {
   workflow: `${baseUrl}/workflow`,
   message: `${baseUrl}/message`,
   botUrl: botUrl,
+  hotQueue: `${baseUrl}/hotqueue`,
 };
 
 export const gender = [

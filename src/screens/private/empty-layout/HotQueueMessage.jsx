@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { Layout, Divider, Input } from 'antd';
-import { SendOutlined } from '@ant-design/icons';
+import { SendOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useGetConversationWithUserId } from '../social-network/socialNetworkService';
 import useEffectOnce from '../../../components/hooks/useEffectOnce';
 import SearchBar from '../../../components/shared/antd/AutoComplete/SearchBar';
@@ -16,13 +16,21 @@ const { Header, Sider, Content } = Layout;
 export default function HotQueueMessage() {
   const messageContainer = useRef(null);
   const [socketData, setSocketData] = useState(null);
-
-  const getDetail = useRef(true);
-  getDetail.current = false;
+  const [userSupportedList, setUserSupportedList] = useState([]);
 
   const receiveDataFromParent = (payload) => {
-    getDetail.current = true;
-    setSocketData(payload.data);
+    if (payload.data) {
+      if (payload.data.messageSupport) {
+        setUserSupportedList((old) => [
+          ...old.filter(
+            (item) => !item.includes(payload.data.messageSupport)
+          ),
+          `Agent#${payload.data.messageSupport}`,
+        ]);
+      } else {
+        setSocketData(payload.data);
+      }
+    }
   };
 
   useEffectOnce(
@@ -34,17 +42,17 @@ export default function HotQueueMessage() {
         }, 50);
       }
 
-      window.addEventListener(
-        'message',
-        receiveDataFromParent,
-        false
-      );
-
       window.parent.postMessage(
         {
           rendered: true,
         },
         '*'
+      );
+
+      window.addEventListener(
+        'message',
+        receiveDataFromParent,
+        false
       );
     },
     () => {
@@ -131,6 +139,25 @@ export default function HotQueueMessage() {
     },
   ];
 
+  let hotQueueMessage;
+  if (socketData?.notifyAgentMessage) {
+    switch (socketData.notifyAgentMessage) {
+      case 'Workflow':
+        hotQueueMessage = 'This message is notified by your workflow';
+        break;
+      case 'Sentiment':
+        hotQueueMessage =
+          'This message is notified by too many sentiments';
+        break;
+      case 'Intent':
+        hotQueueMessage =
+          'This message is notified by your bot not found intents';
+        break;
+      default:
+        break;
+    }
+  }
+
   return (
     <Layout className="hotqueue-layout">
       <Sider width={400}>
@@ -145,6 +172,7 @@ export default function HotQueueMessage() {
                 key={index}
                 className="hotqueue-block-container pointer"
               >
+                {/* <InfoCircleOutlined className='lo4'/> */}
                 <BasicAvatar />
                 <div className="hotqueue-block">
                   <b className="hotqueue-user-name limit-line">Đức</b>
@@ -179,9 +207,9 @@ export default function HotQueueMessage() {
         {/* </Header> */}
         <Content className="social-tab hotqueue-content">
           {socketData?.notifyAgentMessage && (
-            <Hint message={socketData.notifyAgentMessage} />
+            <Hint message={hotQueueMessage} type="info" />
           )}
-          {socketData && (
+          {socketData?.messageType && (
             <>
               {socketData?.messageType === 'Message' ? (
                 <>
@@ -268,6 +296,7 @@ export default function HotQueueMessage() {
                   showTable={false}
                   showHint={false}
                   getMessageDetail={true}
+                  userSupportedList={userSupportedList}
                 />
               )}
             </>

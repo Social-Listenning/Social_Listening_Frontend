@@ -1,8 +1,13 @@
 import { useRef, useState } from 'react';
-import { Tag, Input } from 'antd';
-import { SendOutlined, CloseOutlined } from '@ant-design/icons';
+import { Tag, Input, Button } from 'antd';
+import {
+  SendOutlined,
+  CloseOutlined,
+  PlayCircleOutlined,
+} from '@ant-design/icons';
 import { useMutation } from 'react-query';
 import { useGetDecodedToken } from '../../../../../../routes/private/privateService';
+import { useGetHotqueueInfo } from '../../../../empty-layout/hotQueueService';
 import {
   replyFbChat,
   replyFbMessage,
@@ -23,7 +28,15 @@ import ChatHeader from './ChatHeader';
 const listAction = ['Reply'];
 
 export default function MessageTypeContainer(props) {
-  const { messageSelected, messageDetail, type, socialPage } = props;
+  const {
+    pageId,
+    messageSelected,
+    messageDetail,
+    type,
+    socialPage,
+    isHotQueue,
+    userSupportedList = [],
+  } = props;
 
   const messageContainer = useRef(null);
   const [reply, setReply] = useState(null);
@@ -45,19 +58,29 @@ export default function MessageTypeContainer(props) {
       }
     },
   });
-
   const getUserName = (list) => {
-    list?.forEach((msg) => {
-      if (msg?.type?.includes('Agent')) {
-        let agentId = msg.type.substring(6);
+    let agentQueue = [];
 
-        if (
-          agentId &&
-          !agentList.current?.filter((agent) => agent?.id === agentId)
-            ?.length
-        ) {
-          useGetUserNameById.mutate(agentId);
+    list?.forEach((msg) => {
+      let agentId = null;
+      if (typeof msg === Object) {
+        if (msg?.type?.includes('Agent')) {
+          agentId = msg.type.substring(6);
         }
+      } else if (typeof msg === String) {
+        if (msg?.includes('Agent')) {
+          agentId = msg.substring(6);
+        }
+      }
+
+      if (
+        agentId &&
+        !agentList.current?.filter((agent) => agent?.id === agentId)
+          ?.length &&
+        !agentQueue?.includes(agentId)
+      ) {
+        agentQueue.push(agentId);
+        useGetUserNameById.mutate(agentId);
       }
     });
   };
@@ -92,25 +115,36 @@ export default function MessageTypeContainer(props) {
     }
   }, [messageDetail, messageList, messageReplied]);
 
+  const cmtId =
+    messageReplied?.messageId ??
+    messageList?.filter((item) => item?.type === 'Comment')[0]
+      ?.messageId;
   const useReplyFbMessage = useMutation(replyFbMessage, {
     onSuccess: (resp) => {
       if (resp) {
         useSaveCommentToSystem.mutate({
           networkId: socialPage?.id,
           message: reply,
-          sender: socialPage?.name,
+          sender: {
+            id: socialPage?.id,
+            name: socialPage?.name,
+            avatar: socialPage?.pictureUrl,
+          },
           createdAt: new Date(),
           type: `Agent#${data?.id}`,
           parent: messageDetail?.post,
           postId: messageDetail?.post?.postId,
           commentId: resp?.id,
-          parentId:
-            messageReplied?.messageId ?? messageSelected?.messageId,
+          parentId: cmtId,
         });
       }
     },
+    onError: (resp) => {
+      if (resp) {
+        notifyService.showErrorMessage('');
+      }
+    },
   });
-
   const useSaveCommentToSystem = useMutation(saveCommentToSystem, {
     onSuccess: (resp) => {
       if (resp) {
@@ -124,6 +158,19 @@ export default function MessageTypeContainer(props) {
             message: reply,
           },
         ]);
+
+        if (isHotQueue) {
+          setMessageList((old) => {
+            return [
+              ...old,
+              {
+                createdAt: new Date(),
+                type: `Agent#${data?.id}`,
+                message: reply,
+              },
+            ];
+          });
+        }
 
         notifyService.showSucsessMessage({
           description: 'Reply successfully',
@@ -154,8 +201,12 @@ export default function MessageTypeContainer(props) {
         });
       }
     },
+    onError: (resp) => {
+      if (resp) {
+        notifyService.showErrorMessage('');
+      }
+    },
   });
-
   const useSaveChatToSystem = useMutation(saveConversationMessage, {
     onSuccess: (resp) => {
       if (resp) {
@@ -173,8 +224,7 @@ export default function MessageTypeContainer(props) {
     if (reply) {
       if (type !== 'Message') {
         useReplyFbMessage.mutate({
-          cmtId:
-            messageReplied?.messageId ?? messageSelected?.messageId,
+          cmtId: cmtId,
           accessToken: socialPage?.accessToken,
           message: reply,
         });
@@ -192,12 +242,40 @@ export default function MessageTypeContainer(props) {
     }
   };
 
+  const getHotQueueInfo = useRef(true);
+  const { data: hotQueueInfo } = useGetHotqueueInfo(
+    messageList?.find((item) => item?.type === 'Comment')?.sender?.id,
+    isHotQueue && getHotQueueInfo.current && messageList?.length > 0
+  );
+  if (messageList?.length > 0) {
+    getHotQueueInfo.current = false;
+  }
+  console.log(hotQueueInfo);
+  useUpdateEffect(() => {
+    if (userSupportedList?.length > 0) {
+      getHotQueueInfo.current = true;
+      setMessageList([...messageList]);
+      getUserName(userSupportedList);
+    }
+  }, [userSupportedList]);
+
   return (
     <>
       {type === 'Comment' ? (
         <PostHeader
           pageData={socialPage}
           postData={messageDetail?.post}
+          showStop={
+            isHotQueue && hotQueueInfo?.type === 'isSupporting'
+          }
+          hotQueueData={{
+            type: 'stopSupporting',
+            tabId: pageId,
+            userId: data?.id,
+            senderId: messageList?.find(
+              (item) => item?.type === 'Comment'
+            )?.sender?.id,
+          }}
         />
       ) : type === 'Message' ? (
         <ChatHeader userData={messageSelected?.sender} />
@@ -264,11 +342,9 @@ export default function MessageTypeContainer(props) {
                   </b>
                   <span className="message-date">{dateSent}</span>
                 </div>
-                <span className="message-chip">
-                  {item?.message}
-                </span>
+                <span className="message-chip">{item?.message}</span>
               </Tag>
-              {item?.type === 'Comment' && (
+              {!isHotQueue && item?.type === 'Comment' && (
                 <ClassicDropdown
                   clickTrigger
                   list={listAction}
@@ -328,51 +404,75 @@ export default function MessageTypeContainer(props) {
             />
           </div>
         )}
-        <div className="respose-input-container flex-center">
-          <Input.TextArea
-            id="respond-input"
-            allowClear
-            autoSize={{ minRows: 3, maxRows: 3 }}
-            // onFocus={() => {
-            //   toggleShowRecommend(true);
-            // }}
-            value={reply}
-            onChange={(e) => {
-              setReply(e.currentTarget.value);
+        {isHotQueue && hotQueueInfo?.type !== 'isSupporting' && (
+          <Button
+            type="primary"
+            icon={<PlayCircleOutlined />}
+            onClick={() => {
+              window.parent.postMessage(
+                {
+                  type: 'isSupporting',
+                  tabId: pageId,
+                  userId: data?.id,
+                  senderId: messageList?.find(
+                    (item) => item?.type === 'Comment'
+                  )?.sender?.id,
+                },
+                '*'
+              );
             }}
-            disabled={
-              type !== 'Message'
-                ? useReplyFbMessage.isLoading ||
-                  useSaveCommentToSystem.isLoading
-                : useReplyFbChat.isLoading ||
-                  useSaveChatToSystem.isLoading
-            }
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                if (e.shiftKey) {
-                  // move to a new line on Shift+Enter
-                  setReply((prev) => prev + '\n');
-                } else {
-                  handleSubmitMessage();
-                }
+          >
+            Start supporting
+          </Button>
+        )}
+        {(!isHotQueue ||
+          (isHotQueue && hotQueueInfo?.type === 'isSupporting')) && (
+          <div className="respose-input-container flex-center">
+            <Input.TextArea
+              id="respond-input"
+              allowClear
+              autoSize={{ minRows: 3, maxRows: 3 }}
+              // onFocus={() => {
+              //   toggleShowRecommend(true);
+              // }}
+              value={reply}
+              onChange={(e) => {
+                setReply(e.currentTarget.value);
+              }}
+              disabled={
+                type !== 'Message'
+                  ? useReplyFbMessage.isLoading ||
+                    useSaveCommentToSystem.isLoading
+                  : useReplyFbChat.isLoading ||
+                    useSaveChatToSystem.isLoading
               }
-            }}
-          />
-          <IconButton
-            icon={<SendOutlined className="respond-icon" />}
-            type="link"
-            loading={
-              type !== 'Message'
-                ? useReplyFbMessage.isLoading ||
-                  useSaveCommentToSystem.isLoading
-                : useReplyFbChat.isLoading ||
-                  useSaveChatToSystem.isLoading
-            }
-            disabled={!reply}
-            onClick={handleSubmitMessage}
-          />
-        </div>
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  if (e.shiftKey) {
+                    // move to a new line on Shift+Enter
+                    setReply((prev) => prev + '\n');
+                  } else {
+                    handleSubmitMessage();
+                  }
+                }
+              }}
+            />
+            <IconButton
+              icon={<SendOutlined className="respond-icon" />}
+              type="link"
+              loading={
+                type !== 'Message'
+                  ? useReplyFbMessage.isLoading ||
+                    useSaveCommentToSystem.isLoading
+                  : useReplyFbChat.isLoading ||
+                    useSaveChatToSystem.isLoading
+              }
+              disabled={!reply}
+              onClick={handleSubmitMessage}
+            />
+          </div>
+        )}
       </div>
     </>
   );

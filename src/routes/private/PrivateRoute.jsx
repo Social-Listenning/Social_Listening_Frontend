@@ -7,7 +7,6 @@ import useEffectOnce from '../../components/hooks/useEffectOnce';
 
 export default function PrivateRoute() {
   let isAuth = true;
-  const { connect } = useSocket();
   const token = localStorage.getItem('token');
   const queryClient = useQueryClient();
 
@@ -19,12 +18,6 @@ export default function PrivateRoute() {
   if (Checker.isNullOrEmpty(decodedToken)) {
     isAuth = false;
   }
-
-  useEffectOnce(() => {
-    if (isAuth) {
-      connect();
-    }
-  });
 
   if (isAuth) {
     queryClient.setQueryData('userData', decodedToken);

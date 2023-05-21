@@ -37,7 +37,7 @@ export default function PrivateLayout(props) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [collapsed, setCollapsed] = useToggle(false);
-  const { socket, disconnect } = useSocket();
+  const { socket, connect, disconnect } = useSocket();
   const userData = queryClient.getQueryData('userData');
 
   // #region menu sidebar setup
@@ -207,6 +207,8 @@ export default function PrivateLayout(props) {
   const hotQueueIframe = useRef(null);
   const notifyAgentPayload = useRef(null);
   const [hotQueue, setHotQueue] = useState(false);
+  const [startHotQueue, setStartHotQueue] = useState(null);
+  const [stopHotQueue, setStopHotQueue] = useState(null);
 
   const sendDataToIframe = () => {
     if (hotQueueIframe.current) {
@@ -218,32 +220,59 @@ export default function PrivateLayout(props) {
   };
 
   useUpdateEffect(() => {
-    socket.on('notifyAgent', (payload) => {
-      if (payload && socialGroups?.length > 0) {
-        const socialPage = socialGroups.find(
-          (item) => item.id === payload.tabId
-        );
+    if (socket) {
+      socket.on('notifyAgent', (payload) => {
+        if (payload && socialGroups?.length > 0) {
+          const socialPage = socialGroups.find(
+            (item) => item.id === payload.tabId
+          );
 
-        let pageData = null;
-        if (socialPage?.SocialNetwork?.extendData) {
-          pageData = JSON.parse(
-            socialPage?.SocialNetwork?.extendData
+          let pageData = null;
+          if (socialPage?.SocialNetwork?.extendData) {
+            pageData = JSON.parse(
+              socialPage?.SocialNetwork?.extendData
+            );
+          }
+
+          notifyAgentPayload.current = {
+            ...payload,
+            socialPage: pageData,
+          };
+          sendDataToIframe();
+          setHotQueue(true);
+        }
+      });
+
+      if (startHotQueue) {
+        socket.emit('startHotQueue', startHotQueue);
+      }
+
+      if (stopHotQueue) {
+        socket.emit('stopHotQueue', stopHotQueue);
+      }
+    }
+  }, [socket, socialGroups, startHotQueue, stopHotQueue]);
+
+  useUpdateEffect(() => {
+    if (socket) {
+      socket.on('messageSupport', (payload) => {
+        if (payload) {
+          hotQueueIframe.current?.contentWindow?.postMessage(
+            { messageSupport: payload },
+            '*'
           );
         }
-
-        notifyAgentPayload.current = {
-          ...payload,
-          socialPage: pageData,
-        };
-        sendDataToIframe();
-        setHotQueue(true);
-      }
-    });
-  }, [socket, socialGroups]);
+      });
+    }
+  }, [socket]);
 
   const sendData = (event) => {
     if (event.data?.rendered) {
       sendDataToIframe();
+    } else if (event.data?.type === 'isSupporting') {
+      setStartHotQueue(event.data);
+    } else if (event.data?.type === 'stopSupporting') {
+      setStopHotQueue(event.data);
     }
   };
 
@@ -285,26 +314,35 @@ export default function PrivateLayout(props) {
     }
   }
 
-  useEffectOnce(() => {
-    if (!currentPath) {
-      navigate('/home');
+  useEffectOnce(
+    () => {
+      if (!currentPath) {
+        navigate('/home');
+      }
+
+      // connect SOCKET
+      connect();
+
+      // filter the menu sidebar
+      setAvailableMenu(
+        filterMenuSidebar(userData.permissions, userData.role)
+      );
+
+      // get notification
+      useGetAllNotification.mutate({
+        offset: 0,
+        size: 10,
+        pageNumber: 1,
+        totalElement: 10000,
+        orders: [],
+        filter: [],
+      });
+    },
+    () => {
+      // disconnect socket when destroy
+      disconnect();
     }
-
-    // filter the menu sidebar
-    setAvailableMenu(
-      filterMenuSidebar(userData.permissions, userData.role)
-    );
-
-    // get notification
-    useGetAllNotification.mutate({
-      offset: 0,
-      size: 10,
-      pageNumber: 1,
-      totalElement: 10000,
-      orders: [],
-      filter: [],
-    });
-  });
+  );
 
   return (
     <Layout className="private-layout">
@@ -436,7 +474,10 @@ export default function PrivateLayout(props) {
               <IconButton
                 icon={<FullscreenOutlined />}
                 onClick={() => {
-                  window.open('/hotqueue/1', '_blank');
+                  window.open(
+                    `/hotqueue/${notifyAgentPayload.current?.messageId}`,
+                    '_blank'
+                  );
                 }}
               />
             </ToolTipWrapper>
@@ -456,6 +497,7 @@ export default function PrivateLayout(props) {
             ref={hotQueueIframe}
             className="hotqueue-iframe full-width"
             src={`/hotqueue/${notifyAgentPayload.current?.messageId}`}
+            currentsocket={socket}
             scrolling="no"
           />
         </div>

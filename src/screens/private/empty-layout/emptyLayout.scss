@@ -49,6 +49,10 @@
         max-height: 89%;
         overflow-y: scroll;
 
+        .lo4 {
+          color: black;
+        }
+
         .hotqueue-block-container {
           padding: 1.2rem;
           border-radius: 0.6rem;
@@ -159,18 +163,20 @@
   .hotqueue-content {
     margin-top: 0;
     background-color: #fff;
+    border-right: var(--border-style);
 
     .ant-alert {
       margin: var(--padding-layout);
     }
 
     .message-container {
+      padding-top: 0;
 
       .message-detail {
         width: 100%;
 
         .ant-spin-container {
-          height: calc(100vh - 3rem);
+          height: calc(100vh - 9rem);
         }
       }
     }

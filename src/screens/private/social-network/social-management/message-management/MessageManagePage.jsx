@@ -24,6 +24,7 @@ export default function MessageManagePage(props) {
     showHint = true,
     messageData,
     getMessageDetail = false,
+    userSupportedList = [],
   } = props;
   const { socket } = useSocket();
 
@@ -191,10 +192,13 @@ export default function MessageManagePage(props) {
               }
             >
               <MessageTypeContainer
+                pageId={pageId}
                 messageSelected={msgSelected}
                 type={msgSelected?.type ?? 'Message'}
                 socialPage={socialPage}
                 messageDetail={messageDetailList}
+                isHotQueue={!showTable && !showHint}
+                userSupportedList={userSupportedList}
               />
             </LoadingWrapper>
           ) : (

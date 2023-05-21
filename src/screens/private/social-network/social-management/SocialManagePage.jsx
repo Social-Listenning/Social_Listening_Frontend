@@ -111,7 +111,7 @@ export default function SocialMangePage() {
       // centered
       destroyInactiveTabPane
       className="social-tab"
-      defaultActiveKey={location.state?.tab ?? 2}
+      defaultActiveKey={location.state?.tab ?? 1}
       items={items}
       key={location.state?.socialId}
     />

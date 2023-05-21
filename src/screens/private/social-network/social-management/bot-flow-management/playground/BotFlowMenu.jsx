@@ -106,28 +106,30 @@ export default function BotFlowMenu(props) {
     setRespond(e);
   };
   const updateDialogflow = (intentId, respond) => {
-    selectedNode?.data?.syncData(selectedNode?.id, {
-      dialogFlow: {
-        ...selectedNode.data?.dialogFlow,
-        [botSelected]: [
-          ...(selectedNode.data?.dialogFlow?.[botSelected]?.filter(
-            (item) => item?.intentId !== intentId
-          ) ?? []),
-          {
-            intentId: intentId,
-            hasFallback: intentList?.filter((item) => {
-              let id = null;
-              if (item) {
-                const splitName = item?.name?.split('/');
-                id = splitName[splitName?.length - 1];
-              }
-              return id === intentId;
-            })[0]?.is_fallback,
-            respond: respond,
-          },
-        ],
-      },
-    });
+    if (botSelected && intentId) {
+      selectedNode?.data?.syncData(selectedNode?.id, {
+        dialogFlow: {
+          ...selectedNode.data?.dialogFlow,
+          [botSelected]: [
+            ...(selectedNode.data?.dialogFlow?.[botSelected]?.filter(
+              (item) => item?.intentId !== intentId
+            ) ?? []),
+            {
+              intentId: intentId,
+              hasFallback: intentList?.filter((item) => {
+                let id = null;
+                if (item) {
+                  const splitName = item?.name?.split('/');
+                  id = splitName[splitName?.length - 1];
+                }
+                return id === intentId;
+              })[0]?.is_fallback,
+              respond: respond,
+            },
+          ],
+        },
+      });
+    }
     setRespond(null);
   };
   useUpdateEffect(() => {
@@ -260,6 +262,7 @@ export default function BotFlowMenu(props) {
                     onChange={(e) => {
                       fetchBotDialogflow.current = true;
                       setBotSelected(e);
+                      setIntentSelected(null);
                     }}
                   />
                 </div>
