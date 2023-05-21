@@ -112,7 +112,7 @@ export const privateRoutes = [
     permissionRequired: 'table-setting',
   },
   {
-    path: 'hotqueue/:id',
+    path: 'hotqueue',
     element: <HotQueueMessage />,
     noLayout: true,
   },

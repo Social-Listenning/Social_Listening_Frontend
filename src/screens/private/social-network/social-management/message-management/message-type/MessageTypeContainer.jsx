@@ -63,11 +63,11 @@ export default function MessageTypeContainer(props) {
 
     list?.forEach((msg) => {
       let agentId = null;
-      if (typeof msg === Object) {
+      if (typeof msg === 'object') {
         if (msg?.type?.includes('Agent')) {
           agentId = msg.type.substring(6);
         }
-      } else if (typeof msg === String) {
+      } else if (typeof msg === 'string') {
         if (msg?.includes('Agent')) {
           agentId = msg.substring(6);
         }
@@ -103,6 +103,7 @@ export default function MessageTypeContainer(props) {
       }
     } else {
       if (messageDetail?.length > 0) {
+        getUserName(messageDetail);
         setMessageList(messageDetail);
       }
     }
@@ -244,18 +245,21 @@ export default function MessageTypeContainer(props) {
 
   const getHotQueueInfo = useRef(true);
   const { data: hotQueueInfo } = useGetHotqueueInfo(
-    messageList?.find((item) => item?.type === 'Comment')?.sender?.id,
+    {
+      tabid: pageId,
+      senderId: messageList?.find((item) => item?.type === 'Comment')
+        ?.sender?.id,
+    },
     isHotQueue && getHotQueueInfo.current && messageList?.length > 0
   );
   if (messageList?.length > 0) {
     getHotQueueInfo.current = false;
   }
-  console.log(hotQueueInfo);
+
   useUpdateEffect(() => {
     if (userSupportedList?.length > 0) {
       getHotQueueInfo.current = true;
       setMessageList([...messageList]);
-      getUserName(userSupportedList);
     }
   }, [userSupportedList]);
 
@@ -417,6 +421,7 @@ export default function MessageTypeContainer(props) {
                   senderId: messageList?.find(
                     (item) => item?.type === 'Comment'
                   )?.sender?.id,
+                  messageType: type,
                 },
                 '*'
               );

@@ -263,25 +263,50 @@ export default function PrivateLayout(props) {
           );
         }
       });
+
+      socket.on('messageCome', (payload) => {
+        if (payload) {
+          hotQueueIframe.current?.contentWindow?.postMessage(
+            { messageCome: payload },
+            '*'
+          );
+        }
+      });
+
+      socket.on('commentCome', (payload) => {
+        if (payload) {
+          hotQueueIframe.current?.contentWindow?.postMessage(
+            { commentCome: payload },
+            '*'
+          );
+        }
+      });
     }
   }, [socket]);
 
-  const sendData = (event) => {
+  const receiveData = (event) => {
     if (event.data?.rendered) {
       sendDataToIframe();
     } else if (event.data?.type === 'isSupporting') {
       setStartHotQueue(event.data);
     } else if (event.data?.type === 'stopSupporting') {
       setStopHotQueue(event.data);
+      notifyAgentPayload.current = null;
+      hotQueueIframe.current?.contentWindow?.postMessage(
+        { stopSupporting: true },
+        '*'
+      );
+    } else if (event.data?.closed) {
+      setHotQueue(false);
     }
   };
 
   useEffectOnce(
     () => {
-      window.addEventListener('message', sendData);
+      window.addEventListener('message', receiveData);
     },
     () => {
-      window.removeEventListener('message', sendData);
+      window.removeEventListener('message', receiveData);
     }
   );
   // #endregion
@@ -474,10 +499,7 @@ export default function PrivateLayout(props) {
               <IconButton
                 icon={<FullscreenOutlined />}
                 onClick={() => {
-                  window.open(
-                    `/hotqueue/${notifyAgentPayload.current?.messageId}`,
-                    '_blank'
-                  );
+                  window.open(`/hotqueue`, '_blank');
                 }}
               />
             </ToolTipWrapper>
@@ -488,6 +510,7 @@ export default function PrivateLayout(props) {
 
             <ToolTipWrapper tooltip="Close hotqueue popup">
               <IconButton
+                id="close-hotqueue"
                 icon={<CloseOutlined />}
                 onClick={() => setHotQueue(false)}
               />
@@ -496,8 +519,7 @@ export default function PrivateLayout(props) {
           <iframe
             ref={hotQueueIframe}
             className="hotqueue-iframe full-width"
-            src={`/hotqueue/${notifyAgentPayload.current?.messageId}`}
-            currentsocket={socket}
+            src="/hotqueue"
             scrolling="no"
           />
         </div>

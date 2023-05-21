@@ -47,10 +47,20 @@
         padding: 0;
         list-style: none;
         max-height: 89%;
+        min-height: 89%;
         overflow-y: scroll;
 
-        .lo4 {
-          color: black;
+        .ant-spin {
+          width: 100%;
+          height: calc(100vh - 20rem);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          max-height: unset;
+        }
+
+        .anticon-loading {
+          scale: 4;
         }
 
         .hotqueue-block-container {
@@ -62,6 +72,7 @@
           align-items: center;
           gap: 1rem;
 
+          &.selected,
           &:hover {
             background-color: rgb(234, 243, 255);
           }
@@ -80,6 +91,10 @@
             align-items: center;
             color: grey;
             gap: 0.4rem;
+
+            .last-date-sent {
+              min-width: 18rem;
+            }
 
             .limit-line {
               width: unset;

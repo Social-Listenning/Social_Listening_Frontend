@@ -1,7 +1,12 @@
 import { useRef, useState } from 'react';
 import { Layout, Divider, Input } from 'antd';
-import { SendOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import { useGetConversationWithUserId } from '../social-network/socialNetworkService';
+import { SendOutlined } from '@ant-design/icons';
+import { useGetHotqueueConversation } from './hotQueueService';
+import {
+  useGetConversationWithUserId,
+  useGetSocialGroups,
+} from '../social-network/socialNetworkService';
+import useUpdateEffect from '../../../components/hooks/useUpdateEffect';
 import useEffectOnce from '../../../components/hooks/useEffectOnce';
 import SearchBar from '../../../components/shared/antd/AutoComplete/SearchBar';
 import BasicAvatar from '../../../components/shared/antd/BasicAvatar';
@@ -9,6 +14,7 @@ import IconButton from '../../../components/shared/element/Button/IconButton';
 import Title from '../../../components/shared/element/Title';
 import MessageManagePage from '../social-network/social-management/message-management/MessageManagePage';
 import Hint from '../../../components/shared/element/Hint';
+import LoadingWrapper from '../../../components/shared/antd/LoadingWrapper';
 import './emptyLayout.scss';
 import '../social-network/socialNetwork.scss';
 
@@ -18,6 +24,18 @@ export default function HotQueueMessage() {
   const [socketData, setSocketData] = useState(null);
   const [userSupportedList, setUserSupportedList] = useState([]);
 
+  const canGetSocialGroups = useRef(true);
+  const { data: socialGroups } = useGetSocialGroups(
+    canGetSocialGroups.current
+  );
+  canGetSocialGroups.current = false;
+
+  const getConversation = useRef(true);
+  const { data: conversationList, isFetching: conversationFetching } =
+    useGetHotqueueConversation(getConversation.current);
+  getConversation.current = false;
+
+  const stopSupporting = useRef(false);
   const receiveDataFromParent = (payload) => {
     if (payload.data) {
       if (payload.data.messageSupport) {
@@ -27,19 +45,50 @@ export default function HotQueueMessage() {
           ),
           `Agent#${payload.data.messageSupport}`,
         ]);
+      } else if (
+        payload.data.commentCome ||
+        payload.data.messageCome
+      ) {
+        if (
+          conversationList?.find(
+            (item) =>
+              item?.sender?.senderId ===
+                payload.data.commentCome.senderId ||
+              item?.tabId === payload.data.commentCome.tabId ||
+              item?.type === payload.data.commentCome.type
+          )
+        ) {
+          getConversation.current = true;
+          setSocketData({ ...socketData });
+        }
+      } else if (payload.data.stopSupporting) {
+        stopSupporting.current = true;
+        getConversation.current = true;
+        setSocketData(null);
       } else {
         setSocketData(payload.data);
       }
     }
   };
 
-  useEffectOnce(
+  useEffectOnce(() => {
+    if (messageContainer.current) {
+      setTimeout(() => {
+        messageContainer.current.scrollTop =
+          messageContainer.current.scrollHeight;
+      }, 50);
+    }
+  });
+
+  useUpdateEffect(
     () => {
-      if (messageContainer.current) {
-        setTimeout(() => {
-          messageContainer.current.scrollTop =
-            messageContainer.current.scrollHeight;
-        }, 50);
+      if (stopSupporting.current && !conversationList?.length) {
+        window.parent.postMessage(
+          {
+            closed: true,
+          },
+          '*'
+        );
       }
 
       window.parent.postMessage(
@@ -55,12 +104,9 @@ export default function HotQueueMessage() {
         false
       );
     },
+    [conversationList],
     () => {
-      window.removeEventListener(
-        'message',
-        receiveDataFromParent,
-        false
-      );
+      window.removeEventListener('message', receiveDataFromParent);
     }
   );
 
@@ -165,36 +211,65 @@ export default function HotQueueMessage() {
         <SearchBar className="search-user" />
         <Divider />
         <ul className="hotqueue-list">
-          {Array(20)
-            .fill()
-            .map((item, index) => (
-              <li
-                key={index}
-                className="hotqueue-block-container pointer"
-              >
-                {/* <InfoCircleOutlined className='lo4'/> */}
-                <BasicAvatar />
-                <div className="hotqueue-block">
-                  <b className="hotqueue-user-name limit-line">Đức</b>
-                  <div className="last-message">
-                    <span className="limit-line">
-                      Lorem ipsum dolor sit amet, consectetur
-                      adipiscing elit. Quisque vel tempor ligula.
-                      Donec at interdum nibh. Suspendisse porta massa
-                      quis ligula blandit, et pulvinar arcu blandit.
-                      In hac habitasse platea dictumst. Praesent
-                      faucibus nisi at metus euismod accumsan id vitae
-                      metus. Praesent placerat mi eget mollis
-                      tincidunt. Integer pulvinar nunc nibh, ut
-                      finibus arcu suscipit ac. Quisque volutpat
-                      feugiat arcu, vel bibendum libero pharetra quis.
-                    </span>
-                    <span>&#183;</span>
-                    <span>28/4/2023</span>
+          <LoadingWrapper loading={conversationFetching}>
+            {conversationList?.map((item, index) => {
+              const dateSent = new Date(
+                item?.lastSent
+              )?.toLocaleString();
+
+              return (
+                <li
+                  key={index}
+                  className={`hotqueue-block-container pointer${
+                    item?.messageId === socketData?.messageId
+                      ? ' selected'
+                      : ''
+                  }`}
+                  onClick={() => {
+                    const socialPage = socialGroups.find(
+                      (x) => x.id === item.tabId
+                    );
+
+                    let pageData = null;
+                    if (socialPage?.SocialNetwork?.extendData) {
+                      pageData = JSON.parse(
+                        socialPage?.SocialNetwork?.extendData
+                      );
+                    }
+
+                    setSocketData((old) => {
+                      return {
+                        ...old,
+                        messageId: item?.messageId,
+                        messageType: item?.type,
+                        tabId: item?.tabId,
+                        socialPage: pageData,
+                      };
+                    });
+                  }}
+                >
+                  <BasicAvatar
+                    name={item?.sender?.fullName}
+                    src={item?.sender?.avatarUrl}
+                  />
+                  <div className="hotqueue-block">
+                    <b className="hotqueue-user-name limit-line">
+                      {item?.sender?.fullName}
+                    </b>
+                    <div className="last-message">
+                      <span className="limit-line">
+                        {item?.message}
+                      </span>
+                      <span>&#183;</span>
+                      <span className="last-date-sent">
+                        {dateSent}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </li>
-            ))}
+                </li>
+              );
+            })}
+          </LoadingWrapper>
         </ul>
       </Sider>
       <Layout className="full-height-screen">

@@ -136,18 +136,27 @@ export default function MessageManagePage(props) {
   };
 
   useUpdateEffect(() => {
-    socket.on('messageCome', (payload) => {
-      if (payload) {
-        refreshAllData();
-      }
-    });
+    if (socket) {
+      socket.on('messageCome', (payload) => {
+        if (payload) {
+          refreshAllData();
+        }
+      });
 
-    socket.on('commentCome', (payload) => {
-      if (payload) {
-        refreshAllData();
-      }
-    });
+      socket.on('commentCome', (payload) => {
+        if (payload) {
+          refreshAllData();
+        }
+      });
+    }
   }, [socket, msgSelected]);
+
+  // useUpdateEffect(() => {
+  //   if (messageData) {
+  //     getDetail.current = true;
+  //     setMsgSelected(messageData);
+  //   }
+  // }, [messageData]);
 
   return (
     <>
