@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react';
 import { Card } from 'antd';
 import { PlusOutlined, FacebookOutlined, WhatsAppOutlined } from '@ant-design/icons';
 import { useMutation } from 'react-query';
-import { notifyService } from '../../../../services/notifyService';
 import { getSettingByKeyAndGroup } from '../../setting/settingService';
 import { connectFacebook } from '../socialNetworkService';
 import useToggle from '../../../../components/hooks/useToggle';
@@ -12,7 +11,7 @@ import ClassicDropdown from '../../../../components/shared/antd/Dropdown/Classic
 
 const socialList = [
   { icon: <FacebookOutlined />, label: 'Connect Fanpage' },
-  { icon: <WhatsAppOutlined />, label: 'Whatapps' },
+  // { icon: <WhatsAppOutlined />, label: 'Whatapps' },
 ];
 
 export default function AddNewPage(props) {
@@ -82,7 +81,6 @@ export default function AddNewPage(props) {
 
   const useGetPageToken = useMutation(connectFacebook, {
     onSuccess: (resp) => {
-      console.log(resp);
       toggleOpen(true);
       listPage.current = resp?.data?.map((item) => {
         return {
@@ -102,7 +100,6 @@ export default function AddNewPage(props) {
     // } else {
     window.FB.login(
       function (response) {
-        console.log(response);
         socialAuth.current = response;
         if (response?.status === 'connected') {
           const userId = response?.authResponse?.userID;

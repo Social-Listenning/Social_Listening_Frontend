@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { Result, Button } from 'antd';
+import { customHistory } from '../../../routes/CustomRouter';
 import '../antd/ErrorPage/errorPage.scss';
 
 export default class ErrorBoundary extends Component {
@@ -25,15 +26,25 @@ export default class ErrorBoundary extends Component {
           title="500"
           subTitle="Sorry, something went wrong. Please refresh the page by pressing F5 or clicking the button below."
           extra={
-            <Button
-              className="redirect-btn"
-              type="primary"
-              onClick={() => {
-                window.location.reload();
-              }}
-            >
-              Refresh
-            </Button>
+            <>
+              <Button
+                className="redirect-btn"
+                type="primary"
+                onClick={() => {
+                  window.location.reload();
+                }}
+              >
+                Reload
+              </Button>
+              <Button
+                className="redirect-btn"
+                onClick={() => {
+                  customHistory.push('/home');
+                }}
+              >
+                Go Home
+              </Button>
+            </>
           }
         />
       );

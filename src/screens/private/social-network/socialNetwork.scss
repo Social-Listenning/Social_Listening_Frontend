@@ -550,6 +550,10 @@
   background-color: var(--gray-layout-color);
   border: var(--border-style);
 
+  .action-hint {
+    margin-top: 0.8rem;
+  }
+
   .flow-item-wrapper {
     flex-direction: column;
     padding: 0;
@@ -586,6 +590,8 @@
     margin-top: 1rem;
     padding: 0 0.4rem 0 1rem;
     gap: 0.8rem;
+    max-height: 53rem;
+    overflow-y: scroll;
 
     .flow-node-data {
       font-size: var(--app-font-size);
@@ -618,9 +624,7 @@
       }
 
       .intent-list-container {
-        max-height: 16.8rem;
         min-height: 8rem;
-        overflow-y: scroll;
       }
 
       .intent-tag {

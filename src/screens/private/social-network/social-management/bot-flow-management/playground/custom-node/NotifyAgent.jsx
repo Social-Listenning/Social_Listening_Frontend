@@ -14,7 +14,7 @@ export default function NotifyAgent(props) {
         Notify Agent
       </div>
       <Handle
-        id="resp-input-handle"
+        id="notify-input-handle"
         type="target"
         position="left"
       />

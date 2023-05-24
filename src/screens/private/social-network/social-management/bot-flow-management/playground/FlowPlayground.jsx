@@ -41,6 +41,7 @@ export default function FlowPlayground(props) {
   const reactFlowWrapper = useRef(null);
   const edgeUpdateSuccessful = useRef(true);
   const isDeleteNode = useRef(false);
+  const isAddNode = useRef(false);
   const [nodes, setNodes, onNodesChange] = useNodesState(
     extendData.current?.nodes
   );
@@ -132,6 +133,7 @@ export default function FlowPlayground(props) {
           position,
         })
       );
+      isAddNode.current = true;
     },
     [reactFlowInstance]
   );
@@ -165,27 +167,46 @@ export default function FlowPlayground(props) {
     });
   };
 
+  const refreshNodes = () => {
+    nodes.map((node) => {
+      // refresh all the handle in sentiment node
+      if (node?.type === 'SentimentAnalysis') {
+        syncDataFromNode(node?.id, {
+          ['sentiment-output-handle-0']: true,
+          ['sentiment-output-handle-1']: true,
+          ['sentiment-output-handle-2']: true,
+        });
+      }
+
+      node.connectable = true;
+      return node;
+    });
+  };
+
   const disableSourceHandle = () => {
+    refreshNodes();
+
     if (edges?.length > 0) {
       edges.forEach((eds) => {
         const sourceNode = nodes.filter(
           (nds) => nds.id === eds.source
         )[0];
-        setNodes((nds) => {
-          let availableNode = nds?.filter(
-            (nd) => nd?.id === sourceNode?.id
-          )[0];
-          availableNode.connectable = false;
-          return nds;
-        });
-      });
-    } else {
-      setNodes((nds) => {
-        nds.map((node) => {
-          node.connectable = true;
-          return node;
-        });
-        return nds;
+
+        if (sourceNode?.type === 'SentimentAnalysis') {
+          syncDataFromNode(sourceNode?.id, {
+            [eds.sourceHandle]: false,
+          });
+        } else {
+          setNodes((nds) => {
+            let availableNode = nds?.filter(
+              (nd) => nd?.id === sourceNode?.id
+            )[0];
+            if (availableNode) {
+              availableNode.connectable = false;
+            }
+            return nds;
+          });
+        }
       });
     }
 
@@ -207,6 +228,17 @@ export default function FlowPlayground(props) {
       goBackMenu();
     }
     isDeleteNode.current = false;
+
+    if (
+      isAddNode.current &&
+      nodes?.length > 0 &&
+      !selectedNode &&
+      (nodes[nodes.length - 1]?.type === 'SentimentAnalysis' ||
+        nodes[nodes.length - 1]?.type === 'Respond')
+    ) {
+      isAddNode.current = false;
+      setSelectedNode(nodes[nodes.length - 1]);
+    }
   }, [nodes]);
 
   useUpdateEffect(() => {
@@ -260,7 +292,6 @@ export default function FlowPlayground(props) {
         pageId={pageId}
         selectedNode={selectedNode}
         goBackMenu={goBackMenu}
-        flowDetail={flowDetail}
       />
       <ReactFlow
         snapToGrid

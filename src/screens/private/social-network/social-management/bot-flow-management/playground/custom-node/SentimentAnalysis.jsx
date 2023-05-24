@@ -9,7 +9,7 @@ import useEffectOnce from '../../../../../../../components/hooks/useEffectOnce';
 const listSentiment = ['Negative', 'Neutral', 'Positive'];
 
 export default function SentimentAnalysis(props) {
-  const { id, data, isConnectable } = props;
+  const { id, data } = props;
 
   useEffectOnce(() => {
     if (!data?.handle) {
@@ -66,7 +66,9 @@ export default function SentimentAnalysis(props) {
               className="resp-handle"
               type="source"
               position="right"
-              isConnectable={isConnectable}
+              isConnectable={
+                data?.[`sentiment-output-handle-${index}`]
+              }
             />
           </div>
         ))}
