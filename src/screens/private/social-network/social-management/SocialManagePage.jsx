@@ -7,6 +7,7 @@ import {
   RobotOutlined,
   PlayCircleOutlined,
   TeamOutlined,
+  ProjectOutlined,
 } from '@ant-design/icons';
 import ElementWithPermission from '../../../../components/shared/element/ElementWithPermission';
 import MessageManagePage from './message-management/MessageManagePage';
@@ -14,6 +15,7 @@ import SettingManagePage from './setting-mangement/SettingManagePage';
 import BotFlowManagePage from './bot-flow-management/BotFlowManagePage';
 import BotManagePage from './bot-management/BotManagePage';
 import MemberManagePage from './member-management/MemberManagePage';
+import SummaryManagePage from './summary-management/SummaryManagePage';
 import '../socialNetwork.scss';
 
 export default function SocialMangePage() {
@@ -39,6 +41,16 @@ export default function SocialMangePage() {
   const items = [
     {
       key: 1,
+      label: formatTab(<ProjectOutlined rotate={180} />, 'Summary'),
+      children: (
+        <SummaryManagePage
+          pageId={location.state?.socialId}
+          socialPage={location.state?.socialPage}
+        />
+      ),
+    },
+    {
+      key: 2,
       label: formatTab(<CommentOutlined />, 'Comment'),
       children: (
         <MessageManagePage
@@ -49,7 +61,7 @@ export default function SocialMangePage() {
       ),
     },
     {
-      key: 2,
+      key: 3,
       label: formatTab(<FormOutlined />, 'Chat'),
       children: (
         <MessageManagePage
@@ -60,7 +72,7 @@ export default function SocialMangePage() {
       ),
     },
     {
-      key: 3,
+      key: 4,
       label: formatTab(
         <PlayCircleOutlined />,
         'Design Bot Flow',
@@ -74,7 +86,7 @@ export default function SocialMangePage() {
       ),
     },
     {
-      key: 4,
+      key: 5,
       label: formatTab(<RobotOutlined />, 'Bots', 'table-workflow'),
       children: (
         <BotManagePage
@@ -84,7 +96,7 @@ export default function SocialMangePage() {
       ),
     },
     {
-      key: 5,
+      key: 6,
       label: formatTab(<TeamOutlined />, 'Member'),
       children: (
         <MemberManagePage
@@ -111,7 +123,7 @@ export default function SocialMangePage() {
       // centered
       destroyInactiveTabPane
       className="social-tab"
-      defaultActiveKey={location.state?.tab ?? 3}
+      defaultActiveKey={location.state?.tab ?? 1}
       items={items}
       key={location.state?.socialId}
     />

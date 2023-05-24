@@ -1,6 +1,6 @@
-import { Pie } from '@ant-design/plots';
 import { Modal } from 'antd';
-import './pie.scss'
+import PieChart from './PieChart';
+import './pie.scss';
 
 export default function PieChartResult(props) {
   const { open, toggleOpen, title, result } = props;
@@ -16,29 +16,6 @@ export default function PieChartResult(props) {
     },
   ];
 
-  const config = {
-    data,
-    appendPadding: 10,
-    legend: true,
-    angleField: 'value',
-    colorField: 'type',
-    radius: 0.75,
-    color: ['#28a745', '#da4c3b'],
-    label: {
-      type: 'spider',
-      labelHeight: 40,
-      content: '{name}\n{percentage}',
-    },
-    interactions: [
-      {
-        type: 'element-selected',
-      },
-      {
-        type: 'element-active',
-      },
-    ],
-  };
-
   return (
     <Modal
       destroyOnClose
@@ -50,9 +27,12 @@ export default function PieChartResult(props) {
         toggleOpen(false);
       }}
     >
-      <Pie {...config} />
+      <PieChart pieData={data} />
       <div className="pie-footer">
-        <span>Total result: {result?.total ?? result?.success + result?.fail}</span>
+        <span>
+          Total result:{' '}
+          {result?.total ?? result?.success + result?.fail}
+        </span>
         <span>Total success: {result?.success}</span>
         <span>Total fail: {result?.fail}</span>
       </div>

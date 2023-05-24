@@ -360,14 +360,14 @@ export default function PrivateLayout(props) {
       );
 
       // get notification
-      useGetAllNotification.mutate({
-        offset: 0,
-        size: 10,
-        pageNumber: 1,
-        totalElement: 10000,
-        orders: [],
-        filter: [],
-      });
+      // useGetAllNotification.mutate({
+      //   offset: 0,
+      //   size: 10,
+      //   pageNumber: 1,
+      //   totalElement: 10000,
+      //   orders: [],
+      //   filter: [],
+      // });
     },
     () => {
       // disconnect socket when destroy
@@ -418,7 +418,7 @@ export default function PrivateLayout(props) {
           </ToolTipWrapper>
 
           <div className="header-right-wrapper flex-center">
-            <ClassicDropdown
+            {/* <ClassicDropdown
               clickTrigger
               list={notiList?.data?.map((item) => item.title)}
               dropdownRender={(menu) => {
@@ -453,7 +453,7 @@ export default function PrivateLayout(props) {
                   <BellOutlined />
                 </Badge>
               </ToolTipWrapper>
-            </ClassicDropdown>
+            </ClassicDropdown> */}
 
             <ClassicDropdown
               list={menuUserHeader}
