@@ -1,10 +1,6 @@
 import { useRef, useState } from 'react';
-import { Tag, Input, Button } from 'antd';
-import {
-  SendOutlined,
-  CloseOutlined,
-  PlayCircleOutlined,
-} from '@ant-design/icons';
+import { Tag, Input } from 'antd';
+import { SendOutlined, CloseOutlined } from '@ant-design/icons';
 import { useMutation } from 'react-query';
 import { useGetDecodedToken } from '../../../../../../routes/private/privateService';
 import { useGetHotqueueInfo } from '../../../../empty-layout/hotQueueService';
@@ -19,10 +15,11 @@ import { notifyService } from '../../../../../../services/notifyService';
 import useToggle from '../../../../../../components/hooks/useToggle';
 import useUpdateEffect from '../../../../../../components/hooks/useUpdateEffect';
 import BasicAvatar from '../../../../../../components/shared/antd/BasicAvatar';
+import ClassicDropdown from '../../../../../../components/shared/antd/Dropdown/Classic';
 import IconButton from '../../../../../../components/shared/element/Button/IconButton';
 import IconMoreButton from '../../../../../../components/shared/element/Button/IconMoreButton';
-import ClassicDropdown from '../../../../../../components/shared/antd/Dropdown/Classic';
-import PostHeader from '../../post-management/PostHeader';
+import StartSupportingButton from '../../../../../../components/shared/element/Button/StartSupportingButton';
+import PostHeader from './PostHeader';
 import ChatHeader from './ChatHeader';
 
 const listAction = ['Reply'];
@@ -35,7 +32,6 @@ export default function MessageTypeContainer(props) {
     type,
     socialPage,
     isHotQueue,
-    userSupportedList = [],
   } = props;
 
   const messageContainer = useRef(null);
@@ -151,14 +147,17 @@ export default function MessageTypeContainer(props) {
       if (resp) {
         setReply(null);
         setMessageReplied(null);
-        getUserName([
-          ...messageList,
-          {
-            createdAt: new Date(),
-            type: `Agent#${data?.id}`,
-            message: reply,
-          },
-        ]);
+
+        if (!isHotQueue) {
+          getUserName([
+            ...messageList,
+            {
+              createdAt: new Date(),
+              type: `Agent#${data?.id}`,
+              message: reply,
+            },
+          ]);
+        }
 
         if (isHotQueue) {
           setMessageList((old) => {
@@ -214,6 +213,22 @@ export default function MessageTypeContainer(props) {
         setReply(null);
         setMessageReplied(null);
 
+        if (isHotQueue) {
+          setMessageList((old) => [
+            ...old,
+            {
+              createdAt: resp.createdAt,
+              message: resp?.message,
+              sender: {
+                avatarUrl: socialPage?.pictureUrl,
+                fullName: socialPage?.name,
+                senderId: socialPage?.id,
+                id: resp?.senderId,
+              },
+            },
+          ]);
+        }
+
         notifyService.showSucsessMessage({
           description: 'Reply successfully',
         });
@@ -243,25 +258,18 @@ export default function MessageTypeContainer(props) {
     }
   };
 
-  const getHotQueueInfo = useRef(true);
+  const startHotQueueInfo = useRef(true);
   const { data: hotQueueInfo } = useGetHotqueueInfo(
     {
       tabid: pageId,
       senderId: messageList?.find((item) => item?.type === 'Comment')
         ?.sender?.id,
     },
-    isHotQueue && getHotQueueInfo.current && messageList?.length > 0
+    isHotQueue && startHotQueueInfo.current && messageList?.length > 0
   );
   if (messageList?.length > 0) {
-    getHotQueueInfo.current = false;
+    startHotQueueInfo.current = false;
   }
-
-  useUpdateEffect(() => {
-    if (userSupportedList?.length > 0) {
-      getHotQueueInfo.current = true;
-      setMessageList([...messageList]);
-    }
-  }, [userSupportedList]);
 
   return (
     <>
@@ -281,11 +289,23 @@ export default function MessageTypeContainer(props) {
             )?.sender?.id,
           }}
         />
-      ) : type === 'Message' ? (
-        <ChatHeader userData={messageSelected?.sender} />
       ) : (
-        <>{/* bot type */}</>
+        <ChatHeader
+          userData={messageSelected?.sender}
+          showStop={
+            isHotQueue && hotQueueInfo?.type === 'isSupporting'
+          }
+          hotQueueData={{
+            type: 'stopSupporting',
+            tabId: pageId,
+            userId: data?.id,
+            senderId: messageList?.find(
+              (item) => item?.type === 'Comment'
+            )?.sender?.id,
+          }}
+        />
       )}
+
       <div ref={messageContainer} className="message-section">
         {messageList?.map((item, index) => {
           const dateSent = new Date(
@@ -298,6 +318,23 @@ export default function MessageTypeContainer(props) {
               (agent) => agent?.id === item?.type?.substring(6)
             )[0]?.name;
             userReply = `Agent#${agentName}`;
+          }
+
+          let isFirst = false;
+          let isNotFinal = true;
+          if (type === 'Message') {
+            if (
+              messageList[index]?.sender?.senderId !==
+              messageList[index + 1]?.sender?.senderId
+            ) {
+              isNotFinal = false;
+            }
+            if (
+              messageList[index]?.sender?.senderId !==
+              messageList[index - 1]?.sender?.senderId
+            ) {
+              isFirst = true;
+            }
           }
 
           return (
@@ -313,17 +350,19 @@ export default function MessageTypeContainer(props) {
                   : ''
               }message-item`}
             >
-              <BasicAvatar
-                src={
-                  type !== 'Message'
-                    ? item?.type !== 'Comment'
+              {!isNotFinal && (
+                <BasicAvatar
+                  src={
+                    type !== 'Message'
+                      ? item?.type !== 'Comment'
+                        ? socialPage?.pictureUrl
+                        : item?.sender?.avatarUrl
+                      : item?.sender?.senderId === socialPage?.id
                       ? socialPage?.pictureUrl
                       : item?.sender?.avatarUrl
-                    : item?.sender?.senderId === socialPage?.id
-                    ? socialPage?.pictureUrl
-                    : item?.sender?.avatarUrl
-                }
-              />
+                  }
+                />
+              )}
               <Tag
                 color={
                   type !== 'Message'
@@ -333,6 +372,15 @@ export default function MessageTypeContainer(props) {
                       'var(--primary-color)'
                 }
                 className="message-chip-container"
+                style={{
+                  marginLeft: isNotFinal ? '4rem' : 0,
+                  marginRight:
+                    item?.sender?.senderId === socialPage?.id
+                      ? isNotFinal
+                        ? '4rem'
+                        : 0
+                      : 0,
+                }}
               >
                 <div className="message-chip-user flex-center">
                   <b>
@@ -364,6 +412,7 @@ export default function MessageTypeContainer(props) {
           );
         })}
       </div>
+
       <div className="respond-section">
         {/* {showRecommend && (
           <div className="recommend-response-container">
@@ -409,10 +458,9 @@ export default function MessageTypeContainer(props) {
           </div>
         )}
         {isHotQueue && hotQueueInfo?.type !== 'isSupporting' && (
-          <Button
-            type="primary"
-            icon={<PlayCircleOutlined />}
+          <StartSupportingButton
             onClick={() => {
+              startHotQueueInfo.current = true;
               window.parent.postMessage(
                 {
                   type: 'isSupporting',
@@ -426,9 +474,7 @@ export default function MessageTypeContainer(props) {
                 '*'
               );
             }}
-          >
-            Start supporting
-          </Button>
+          />
         )}
         {(!isHotQueue ||
           (isHotQueue && hotQueueInfo?.type === 'isSupporting')) && (

@@ -1,9 +1,12 @@
 import { Badge } from 'antd';
 import BasicAvatar from '../../../../../../components/shared/antd/BasicAvatar';
-import ClassicDropdown from '../../../../../../components/shared/antd/Dropdown/Classic';
-import IconMoreButton from '../../../../../../components/shared/element/Button/IconMoreButton';
+import StopSupportingButton from '../../../../../../components/shared/element/Button/StopSupportingButton';
 
-export default function ChatHeader({ userData }) {
+export default function ChatHeader({
+  userData,
+  hotQueueData,
+  showStop,
+}) {
   return (
     <div className="chat-section">
       <div className="chat-header flex-center">
@@ -20,16 +23,15 @@ export default function ChatHeader({ userData }) {
           </div>
           <div className="chat-user-date flex-center">
             <b className="chat-user">{userData?.fullName}</b>
-            {/* <span className="message-date">Active now</span> */}
           </div>
         </div>
-        {/* <ClassicDropdown
-          clickTrigger
-          className="post-util"
-          list={['Edit', 'Delete']}
-        >
-          <IconMoreButton />
-        </ClassicDropdown> */}
+        {showStop && (
+          <StopSupportingButton
+            onClick={() => {
+              window.parent.postMessage(hotQueueData, '*');
+            }}
+          />
+        )}
       </div>
     </div>
   );

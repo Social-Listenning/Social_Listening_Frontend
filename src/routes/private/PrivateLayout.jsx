@@ -221,7 +221,7 @@ export default function PrivateLayout(props) {
 
   useUpdateEffect(() => {
     if (socket) {
-      socket.on('notifyAgent', (payload) => {
+      socket.on('notifyAgent', (payload) => {console.log(payload)
         if (payload && socialGroups?.length > 0) {
           const socialPage = socialGroups.find(
             (item) => item.id === payload.tabId
@@ -242,7 +242,11 @@ export default function PrivateLayout(props) {
           setHotQueue(true);
         }
       });
+    }
+  }, [socket, socialGroups]);
 
+  useUpdateEffect(() => {
+    if (socket) {
       if (startHotQueue) {
         socket.emit('startHotQueue', startHotQueue);
         setStartHotQueue(null);
@@ -253,7 +257,7 @@ export default function PrivateLayout(props) {
         setStopHotQueue(null);
       }
     }
-  }, [socket, socialGroups, startHotQueue, stopHotQueue]);
+  }, [socket, startHotQueue, stopHotQueue]);
 
   useUpdateEffect(() => {
     if (socket) {

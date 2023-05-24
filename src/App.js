@@ -2,7 +2,6 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import AppRoutes from './routes';
 import SocketProvider from './components/contexts/socket/SocketProvider';
-import DialogflowProvider from './components/contexts/dialogflow/DialogflowProvider';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,9 +18,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools />
       <SocketProvider>
-        <DialogflowProvider>
-          <AppRoutes />
-        </DialogflowProvider>
+        <AppRoutes />
       </SocketProvider>
     </QueryClientProvider>
   );

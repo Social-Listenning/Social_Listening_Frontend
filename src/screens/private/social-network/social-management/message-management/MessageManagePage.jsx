@@ -24,7 +24,6 @@ export default function MessageManagePage(props) {
     showHint = true,
     messageData,
     getMessageDetail = false,
-    userSupportedList = [],
   } = props;
   const { socket } = useSocket();
 
@@ -151,13 +150,6 @@ export default function MessageManagePage(props) {
     }
   }, [socket, msgSelected]);
 
-  // useUpdateEffect(() => {
-  //   if (messageData) {
-  //     getDetail.current = true;
-  //     setMsgSelected(messageData);
-  //   }
-  // }, [messageData]);
-
   return (
     <>
       {showHint && (
@@ -207,7 +199,6 @@ export default function MessageManagePage(props) {
                 socialPage={socialPage}
                 messageDetail={messageDetailList}
                 isHotQueue={!showTable && !showHint}
-                userSupportedList={userSupportedList}
               />
             </LoadingWrapper>
           ) : (

@@ -110,82 +110,8 @@ export default function HotQueueMessage() {
     }
   );
 
-  const mock = [
-    {
-      text: 'Lorem ipsum dolor sit amet, consecteturadipiscing elit. Quisque vel tempor ligula.Donec at interdum nibh. Suspendisse porta massa quis ligula blandit, et pulvinar arcu blandit.',
-      isSent: false,
-    },
-    {
-      text: 'Lorem ipsum dolor sit amet, consecteturadipiscing elit. Quisque vel tempor ligula.Donec at interdum nibh. Suspendisse porta massa quis ligula blandit, et pulvinar arcu blandit.',
-      isSent: false,
-    },
-    {
-      text: 'Lorem ipsum dolor sit amet, consecteturadipiscing elit. Quisque vel tempor ligula.Donec at interdum nibh. Suspendisse porta massa quis ligula blandit, et pulvinar arcu blandit.',
-      isSent: true,
-    },
-    {
-      text: 'Lorem ipsum dolor sit amet, consecteturadipiscing elit. Quisque vel tempor ligula.Donec at interdum nibh. Suspendisse porta massa quis ligula blandit, et pulvinar arcu blandit.',
-      isSent: false,
-    },
-    {
-      text: 'Lorem ipsum dolor sit amet, consecteturadipiscing elit. Quisque vel tempor ligula.Donec at interdum nibh. Suspendisse porta massa quis ligula blandit, et pulvinar arcu blandit.',
-      isSent: false,
-    },
-    {
-      text: 'Lorem ipsum dolor sit amet, consecteturadipiscing elit. Quisque vel tempor ligula.Donec at interdum nibh. Suspendisse porta massa quis ligula blandit, et pulvinar arcu blandit.',
-      isSent: false,
-    },
-    {
-      text: 'Lorem ipsum dolor sit amet, consecteturadipiscing elit. Quisque vel tempor ligula.Donec at interdum nibh. Suspendisse porta massa quis ligula blandit, et pulvinar arcu blandit.',
-      isSent: false,
-    },
-    {
-      text: 'Lorem ipsum dolor sit amet, consecteturadipiscing elit. Quisque vel tempor ligula.Donec at interdum nibh. Suspendisse porta massa quis ligula blandit, et pulvinar arcu blandit.',
-      isSent: false,
-    },
-    {
-      text: 'Lorem ipsum dolor sit amet, consecteturadipiscing elit. Quisque vel tempor ligula.Donec at interdum nibh. Suspendisse porta massa quis ligula blandit, et pulvinar arcu blandit.',
-      isSent: true,
-    },
-    {
-      text: 'Lorem ipsum dolor sit amet, consecteturadipiscing elit. Quisque vel tempor ligula.Donec at interdum nibh. Suspendisse porta massa quis ligula blandit, et pulvinar arcu blandit.',
-      isSent: false,
-    },
-    {
-      text: 'Lorem ipsum dolor sit amet, consecteturadipiscing elit. Quisque vel tempor ligula.Donec at interdum nibh. Suspendisse porta massa quis ligula blandit, et pulvinar arcu blandit.',
-      isSent: false,
-    },
-    {
-      text: 'Lorem ipsum dolor sit amet, consecteturadipiscing elit. Quisque vel tempor ligula.Donec at interdum nibh. Suspendisse porta massa quis ligula blandit, et pulvinar arcu blandit.',
-      isSent: false,
-    },
-    {
-      text: 'Lorem ipsum dolor sit amet, consecteturadipiscing elit. Quisque vel tempor ligula.Donec at interdum nibh. Suspendisse porta massa quis ligula blandit, et pulvinar arcu blandit.',
-      isSent: false,
-    },
-    {
-      text: 'Lorem ipsum dolor sit amet, consecteturadipiscing elit. Quisque vel tempor ligula.Donec at interdum nibh. Suspendisse porta massa quis ligula blandit, et pulvinar arcu blandit.',
-      isSent: false,
-    },
-    {
-      text: 'Lorem ipsum dolor sit amet, consecteturadipiscing elit. Quisque vel tempor ligula.Donec at interdum nibh. Suspendisse porta massa quis ligula blandit, et pulvinar arcu blandit.',
-      isSent: false,
-    },
-    {
-      text: 'Lorem ipsum dolor sit amet, consecteturadipiscing elit. Quisque vel tempor ligula.Donec at interdum nibh. Suspendisse porta massa quis ligula blandit, et pulvinar arcu blandit.',
-      isSent: true,
-    },
-    {
-      text: 'Lorem ipsum dolor sit amet, consecteturadipiscing elit. Quisque vel tempor ligula.Donec at interdum nibh. Suspendisse porta massa quis ligula blandit, et pulvinar arcu blandit.',
-      isSent: true,
-    },
-    {
-      text: 'Lorem ipsum dolor sit amet, consecteturadipiscing elit. Quisque vel tempor ligula.Donec at interdum nibh. Suspendisse porta massa quis ligula blandit, et pulvinar arcu blandit.',
-      isSent: false,
-    },
-  ];
-
-  let hotQueueMessage;
+  let hotQueueMessage =
+    'This message is notified by your bot not found intents';
   if (socketData?.notifyAgentMessage) {
     switch (socketData.notifyAgentMessage) {
       case 'Workflow':
@@ -244,6 +170,7 @@ export default function HotQueueMessage() {
                         messageType: item?.type,
                         tabId: item?.tabId,
                         socialPage: pageData,
+                        sender: item?.sender,
                       };
                     });
                   }}
@@ -273,108 +200,25 @@ export default function HotQueueMessage() {
         </ul>
       </Sider>
       <Layout className="full-height-screen">
-        {/* <Header className="hotqueue-header">
-          <b className="full-height flex-center name">Đức BCN</b> */}
-        {/* <div className="header-utils full-height flex-center">
-            <IconButton icon={<ReloadOutlined />} />
-            <IconButton icon={<CloseOutlined />} />
-          </div> */}
-        {/* </Header> */}
         <Content className="social-tab hotqueue-content">
-          {socketData?.notifyAgentMessage && (
+          {socketData?.messageType && (
             <Hint message={hotQueueMessage} type="info" />
           )}
           {socketData?.messageType && (
-            <>
-              {socketData?.messageType === 'Message' ? (
-                <>
-                  <div
-                    ref={messageContainer}
-                    className="hotqueue-conservation"
-                  >
-                    {mock.map((item, index) => {
-                      let isFinal = false;
-                      if (
-                        mock[index]?.isSent !==
-                        mock[index + 1]?.isSent
-                      ) {
-                        isFinal = true;
-                      }
-                      let isFirst = false;
-                      if (
-                        mock[index]?.isSent !==
-                        mock[index - 1]?.isSent
-                      ) {
-                        isFirst = true;
-                      }
-
-                      return (
-                        <div
-                          key={index}
-                          className="conservation-container"
-                          style={{
-                            justifyContent: item.isSent
-                              ? 'flex-end'
-                              : 'flex-start',
-                          }}
-                        >
-                          {!item.isSent && isFinal && <BasicAvatar />}
-                          <div
-                            className="conservation-block"
-                            style={{
-                              alignItems: item.isSent
-                                ? 'flex-end'
-                                : 'flex-start',
-                              marginLeft: !isFinal ? '4rem' : '0',
-                            }}
-                          >
-                            <span
-                              style={{
-                                marginLeft: item.isSent
-                                  ? 'auto'
-                                  : '0',
-                                display: !isFirst ? 'none' : 'block',
-                              }}
-                            >
-                              28/4 04:35 PM
-                            </span>
-                            <div
-                              className="conservation-text"
-                              style={{
-                                backgroundColor: item.isSent
-                                  ? 'var(--primary-color)'
-                                  : '#dedede',
-                                color: item.isSent ? '#fff' : '#000',
-                              }}
-                            >
-                              {item.text}
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <div className="hotqueue-footer">
-                    <Input allowClear className="hotqueue-respond" />
-                    <IconButton icon={<SendOutlined />} />
-                  </div>
-                </>
-              ) : (
-                <MessageManagePage
-                  pageId={socketData?.tabId}
-                  socialPage={socketData?.socialPage}
-                  type={socketData?.messageType}
-                  messageData={{
-                    id: socketData?.messageId,
-                    type: socketData?.messageType,
-                  }}
-                  showTable={false}
-                  showHint={false}
-                  getMessageDetail={true}
-                  userSupportedList={userSupportedList}
-                />
-              )}
-            </>
+            <MessageManagePage
+              pageId={socketData?.tabId}
+              socialPage={socketData?.socialPage}
+              type={socketData?.messageType}
+              messageData={{
+                id: socketData?.messageId,
+                type: socketData?.messageType,
+                sender: socketData?.sender,
+              }}
+              showTable={false}
+              showHint={false}
+              getMessageDetail={true}
+              userSupportedList={userSupportedList}
+            />
           )}
         </Content>
       </Layout>

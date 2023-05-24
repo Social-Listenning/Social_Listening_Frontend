@@ -7,7 +7,7 @@ export const DialogflowContext = createContext();
 const DialogflowProvider = ({ children }) => {
   const [dialogflowConfig, setDialogflowConfig] = useState(null);
   const key = useRef(null);
-  const location = useRef(null);
+  const location = useRef('global');
 
   useEffectOnce(() => {
     Promise.all([

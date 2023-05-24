@@ -18,6 +18,7 @@ import NotifyAgent from './custom-node/NotifyAgent';
 import BotflowNav from './BotflowNav';
 import BotFlowMenu from './BotFlowMenu';
 import useUpdateEffect from '../../../../../../components/hooks/useUpdateEffect';
+import useEffectOnce from '../../../../../../components/hooks/useEffectOnce';
 
 const nodeTypes = {
   Receive: ReceiveNode,
@@ -170,14 +171,11 @@ export default function FlowPlayground(props) {
         const sourceNode = nodes.filter(
           (nds) => nds.id === eds.source
         )[0];
-
         setNodes((nds) => {
           let availableNode = nds?.filter(
             (nd) => nd?.id === sourceNode?.id
           )[0];
-          if (availableNode?.connectable) {
-            availableNode.connectable = false;
-          }
+          availableNode.connectable = false;
           return nds;
         });
       });
@@ -198,6 +196,10 @@ export default function FlowPlayground(props) {
       })
     );
   };
+
+  useEffectOnce(() => {
+    disableSourceHandle();
+  });
 
   useUpdateEffect(() => {
     // delete node also delete the selected one

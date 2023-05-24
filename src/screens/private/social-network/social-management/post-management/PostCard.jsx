@@ -1,5 +1,5 @@
 import { Card, Badge } from 'antd';
-import PostHeader from './PostHeader';
+import PostHeader from '../message-management/message-type/PostHeader';
 import BasicAvatar from '../../../../../components/shared/antd/BasicAvatar';
 
 const { Meta } = Card;

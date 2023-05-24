@@ -1,4 +1,5 @@
 import { lazy } from 'react';
+import DialogflowProvider from '../components/contexts/dialogflow/DialogflowProvider';
 
 // #region public routes
 const LoginPage = lazy(() =>
@@ -17,7 +18,9 @@ const ForgotPasswordPage = lazy(() =>
   import('../screens/public/auth/forgot-password/ForgotPasswordPage')
 );
 const ForgotPasswordStatus = lazy(() =>
-  import('../screens/public/auth/forgot-password/ForgotPasswordStatus')
+  import(
+    '../screens/public/auth/forgot-password/ForgotPasswordStatus'
+  )
 );
 const ResetPasswordPage = lazy(() =>
   import('../screens/public/auth/forgot-password/ResetPasswordPage')
@@ -71,11 +74,20 @@ export const publicRoutes = [
   { path: 'register-success', element: <RegisterSuccessPage /> },
   { path: 'confirm-email', element: <VerifyEmailPage /> },
   { path: 'forgot-password', element: <ForgotPasswordPage /> },
-  { path: 'forgot-password-success', element: <ForgotPasswordStatus /> },
+  {
+    path: 'forgot-password-success',
+    element: <ForgotPasswordStatus />,
+  },
   { path: 'forgot-password-fail', element: <ForgotPasswordStatus /> },
   { path: 'recovery-password', element: <ResetPasswordPage /> },
-  { path: 'recovery-password-success', element: <ResetPasswordStatus /> },
-  { path: 'recovery-password-fail', element: <ResetPasswordStatus /> },
+  {
+    path: 'recovery-password-success',
+    element: <ResetPasswordStatus />,
+  },
+  {
+    path: 'recovery-password-fail',
+    element: <ResetPasswordStatus />,
+  },
 ];
 
 export const privateRoutes = [
@@ -104,11 +116,19 @@ export const privateRoutes = [
   },
   {
     path: 'social-network/:name',
-    element: <SocialManagement />,
+    element: (
+      <DialogflowProvider>
+        <SocialManagement />
+      </DialogflowProvider>
+    ),
   },
   {
     path: 'setting',
-    element: <SettingManagement />,
+    element: (
+      <DialogflowProvider>
+        <SettingManagement />
+      </DialogflowProvider>
+    ),
     permissionRequired: 'table-setting',
   },
   {

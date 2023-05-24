@@ -1,6 +1,5 @@
-import { Button } from 'antd';
-import { PoweroffOutlined } from '@ant-design/icons';
-import BasicAvatar from '../../../../../components/shared/antd/BasicAvatar';
+import BasicAvatar from '../../../../../../components/shared/antd/BasicAvatar';
+import StopSupportingButton from '../../../../../../components/shared/element/Button/StopSupportingButton';
 
 export default function PostHeader({
   hotQueueData,
@@ -24,16 +23,11 @@ export default function PostHeader({
           </div>
         </div>
         {showStop && (
-          <Button
-            type="primary"
-            danger
-            icon={<PoweroffOutlined />}
+          <StopSupportingButton
             onClick={() => {
               window.parent.postMessage(hotQueueData, '*');
             }}
-          >
-            Stop supporting
-          </Button>
+          />
         )}
       </div>
       <div className="post-detail">
