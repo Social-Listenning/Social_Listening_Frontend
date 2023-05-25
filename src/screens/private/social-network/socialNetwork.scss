@@ -666,3 +666,13 @@
     }
   }
 }
+
+.summary-container {
+  .pie-container {
+    justify-content: space-evenly;
+
+    .pie-summary {
+      max-width: 50%;
+    }
+  }
+}

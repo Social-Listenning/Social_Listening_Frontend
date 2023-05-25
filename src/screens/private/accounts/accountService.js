@@ -78,3 +78,19 @@ export const getUserNameById = async (id) => {
     name: resp?.result,
   };
 };
+
+export const updateYourAccount = async (data) => {
+  const resp = await apiService.post(
+    `${environment.auth}/update-account`,
+    data
+  );
+  return resp?.result;
+};
+
+export const updatePassword = async (data) => {
+  const resp = await apiService.post(
+    `${environment.auth}/update-password`,
+    data
+  );
+  return resp?.result;
+};

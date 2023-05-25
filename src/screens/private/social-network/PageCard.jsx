@@ -1,8 +1,11 @@
 import {
-  PauseOutlined,
   PoweroffOutlined,
   SettingOutlined,
   LoginOutlined,
+  PlayCircleOutlined,
+  RobotOutlined,
+  CommentOutlined,
+  FormOutlined
 } from '@ant-design/icons';
 import { Card } from 'antd';
 import { useMutation } from 'react-query';
@@ -30,11 +33,11 @@ export default function PageCard(props) {
     socialPage: pageData,
   };
 
-  function redirectToPage(id) {
-    if (type === 'Facebook') {
-      window.open(`https://fb.com/${id}`, '_blank');
-    }
-  }
+  // function redirectToPage(id) {
+  //   if (type === 'Facebook') {
+  //     window.open(`https://fb.com/${id}`, '_blank');
+  //   }
+  // }
 
   const useDisconnect = useMutation(disconnectFacebook, {
     onSuccess: (resp) => {
@@ -74,9 +77,34 @@ export default function PageCard(props) {
         </>
       }
       actions={[
-        // <ToolTipWrapper tooltip="Pause this page">
-        //   <PauseOutlined />
-        // </ToolTipWrapper>,
+        <ToolTipWrapper tooltip="Comments">
+          <CommentOutlined
+            onClick={(e) => {
+              e.stopPropagation();
+              customHistory.push(
+                `/social-network/${socialNetworkData?.name}`,
+                {
+                  ...forwardData,
+                  tab: 2,
+                }
+              );
+            }}
+          />
+        </ToolTipWrapper>,
+        <ToolTipWrapper tooltip="Chats">
+          <FormOutlined
+            onClick={(e) => {
+              e.stopPropagation();
+              customHistory.push(
+                `/social-network/${socialNetworkData?.name}`,
+                {
+                  ...forwardData,
+                  tab: 3,
+                }
+              );
+            }}
+          />
+        </ToolTipWrapper>,
         <ToolTipWrapper tooltip="Disconnect this page">
           <PoweroffOutlined
             onClick={(e) => {
@@ -89,30 +117,22 @@ export default function PageCard(props) {
             }}
           />
         </ToolTipWrapper>,
-        <ToolTipWrapper tooltip="Go to this page">
-          <LoginOutlined
-            onClick={(e) => {
-              e.stopPropagation();
-              redirectToPage(pageData?.id);
-            }}
-          />
-        </ToolTipWrapper>,
-        <ElementWithPermission permission="get-social-setting">
-          <ToolTipWrapper tooltip="Setting this page">
-            <SettingOutlined
-              onClick={(e) => {
-                e.stopPropagation();
-                customHistory.push(
-                  `/social-network/${socialNetworkData?.name}`,
-                  {
-                    ...forwardData,
-                    tab: 9,
-                  }
-                );
-              }}
-            />
-          </ToolTipWrapper>
-        </ElementWithPermission>,
+        // <ElementWithPermission permission="get-social-setting">
+        //   <ToolTipWrapper tooltip="Setting this page">
+        //     <SettingOutlined
+        //       onClick={(e) => {
+        //         e.stopPropagation();
+        //         customHistory.push(
+        //           `/social-network/${socialNetworkData?.name}`,
+        //           {
+        //             ...forwardData,
+        //             tab: 9,
+        //           }
+        //         );
+        //       }}
+        //     />
+        //   </ToolTipWrapper>
+        // </ElementWithPermission>,
       ]}
     >
       <Meta

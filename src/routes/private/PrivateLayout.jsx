@@ -30,6 +30,7 @@ import ClassicDropdown from '../../components/shared/antd/Dropdown/Classic';
 import BasicAvatar from '../../components/shared/antd/BasicAvatar';
 import PieChartResult from '../../components/shared/antd/Chart/PieChartResult';
 import IconButton from '../../components/shared/element/Button/IconButton';
+import AddEditUser from '../../screens/private/accounts/user/AddEditUser';
 import '../route.scss';
 
 const { Header, Content, Sider } = Layout;
@@ -221,7 +222,7 @@ export default function PrivateLayout(props) {
 
   useUpdateEffect(() => {
     if (socket) {
-      socket.on('notifyAgent', (payload) => {console.log(payload)
+      socket.on('notifyAgent', (payload) => {
         if (payload && socialGroups?.length > 0) {
           const socialPage = socialGroups.find(
             (item) => item.id === payload.tabId
@@ -316,7 +317,8 @@ export default function PrivateLayout(props) {
     }
   );
   // #endregion
-
+  
+  const [openProfile, setOpenProfile] = useToggle(false);
   async function handleMenuHeader(e) {
     // logout option
     if (menuUserHeader[e.key] === 'Logout') {
@@ -341,7 +343,7 @@ export default function PrivateLayout(props) {
     }
     // profile option
     else if (menuUserHeader[e.key] === 'Profile') {
-      navigate('/profile');
+      setOpenProfile(true);
     }
   }
 
@@ -485,6 +487,17 @@ export default function PrivateLayout(props) {
             success: resultChart.current?.importSuccess,
             fail: resultChart.current?.importFailure,
           }}
+        />
+      )}
+
+      {openProfile && (
+        <AddEditUser
+          open={openProfile}
+          onClose={() => {
+            setOpenProfile(false);
+          }}
+          selectedData={userData}
+          action="Edit"
         />
       )}
 

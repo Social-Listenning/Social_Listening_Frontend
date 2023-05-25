@@ -118,7 +118,7 @@ export default function MessageManagePage(props) {
   ];
 
   const permission = {
-    table: 'table-user',
+    table: type === 'Comment' ? 'table-comment' : 'table-message',
   };
 
   const refreshAllData = () => {

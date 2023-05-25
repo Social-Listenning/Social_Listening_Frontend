@@ -34,9 +34,6 @@ const ResetPasswordStatus = lazy(() =>
 const HomePage = lazy(() =>
   import('../screens/private/home/HomePage')
 );
-const ProfilePage = lazy(() =>
-  import('../screens/private/profile/ProfilePage')
-);
 const UserManagement = lazy(() =>
   import('../screens/private/accounts/user/UserPage')
 );
@@ -93,7 +90,6 @@ export const publicRoutes = [
 export const privateRoutes = [
   { path: '/', element: <></> },
   { path: 'home', element: <HomePage /> },
-  { path: 'profile', element: <ProfilePage /> },
   {
     path: 'account/user',
     element: <UserManagement />,

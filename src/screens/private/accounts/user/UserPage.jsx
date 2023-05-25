@@ -30,7 +30,16 @@ export default function UserManagement(props) {
 
   const [openAssign, toggleOpenAssign] = useToggle(false);
   function handleAssignUser() {
-    toggleOpenAssign(true);
+    if (
+      selectedRows?.length === 1 &&
+      selectedRows[0]?.id === userData?.id
+    ) {
+      notifyService.showWarningMessage({
+        description: 'You can not assign yourself',
+      });
+    } else {
+      toggleOpenAssign(true);
+    }
   }
 
   let formatRole = role;
@@ -66,21 +75,25 @@ export default function UserManagement(props) {
       resizeable: false,
       width: 100,
     },
-    {
-      title: 'Role',
-      dataIndex: 'role.roleName',
-      sort: false,
-      filter: {
-        filterType: 'Dropdown',
-        options: formatRole,
-      },
-      render: (record) => {
-        return <RoleChip currentRole={record} />;
-      },
-      onCell: () => ({
-        className: 'text-center',
-      }),
-    },
+    ...(userData?.role === 'ADMIN'
+      ? [
+          {
+            title: 'Role',
+            dataIndex: 'role.roleName',
+            sort: false,
+            filter: {
+              filterType: 'Dropdown',
+              options: formatRole,
+            },
+            render: (record) => {
+              return <RoleChip currentRole={record} />;
+            },
+            onCell: () => ({
+              className: 'text-center',
+            }),
+          },
+        ]
+      : []),
     {
       title: 'User Name',
       dataIndex: 'userName',
@@ -106,9 +119,9 @@ export default function UserManagement(props) {
       filter: {
         filterType: 'DateTime',
       },
-			onCell: () => ({
-				className: "text-center",
-			}),
+      onCell: () => ({
+        className: 'text-center',
+      }),
     },
     {
       title: 'Date Modified',
@@ -119,9 +132,9 @@ export default function UserManagement(props) {
       filter: {
         filterType: 'DateTime',
       },
-			onCell: () => ({
-				className: "text-center",
-			}),
+      onCell: () => ({
+        className: 'text-center',
+      }),
     },
   ];
 

@@ -290,3 +290,11 @@ export const saveConversationMessage = async (data) => {
   );
   return resp?.result;
 };
+
+export const unassignUserFromTab = async (data) => {
+  const resp = await apiService.post(
+    `${environment.user}/unassign`,
+    data
+  );
+  return resp?.result;
+};

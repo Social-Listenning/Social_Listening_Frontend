@@ -51,7 +51,11 @@ export default function SocialMangePage() {
     },
     {
       key: 2,
-      label: formatTab(<CommentOutlined />, 'Comment'),
+      label: formatTab(
+        <CommentOutlined />,
+        'Comment',
+        'table-comment'
+      ),
       children: (
         <MessageManagePage
           pageId={location.state?.socialId}
@@ -62,7 +66,7 @@ export default function SocialMangePage() {
     },
     {
       key: 3,
-      label: formatTab(<FormOutlined />, 'Chat'),
+      label: formatTab(<FormOutlined />, 'Chat', 'table-message'),
       children: (
         <MessageManagePage
           pageId={location.state?.socialId}
@@ -97,7 +101,11 @@ export default function SocialMangePage() {
     },
     {
       key: 6,
-      label: formatTab(<TeamOutlined />, 'Member'),
+      label: formatTab(
+        <TeamOutlined />,
+        'Member',
+        'table-user-in-tab'
+      ),
       children: (
         <MemberManagePage
           pageId={location.state?.socialId}
@@ -105,17 +113,17 @@ export default function SocialMangePage() {
         />
       ),
     },
-    {
-      key: 9,
-      label: formatTab(
-        <SettingOutlined />,
-        'Setting',
-        'get-social-setting'
-      ),
-      children: (
-        <SettingManagePage pageId={location.state?.socialId} />
-      ),
-    },
+    // {
+    //   key: 9,
+    //   label: formatTab(
+    //     <SettingOutlined />,
+    //     'Setting',
+    //     'get-social-setting'
+    //   ),
+    //   children: (
+    //     <SettingManagePage pageId={location.state?.socialId} />
+    //   ),
+    // },
   ];
 
   return (
