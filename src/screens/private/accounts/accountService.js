@@ -94,3 +94,11 @@ export const updatePassword = async (data) => {
   );
   return resp?.result;
 };
+
+export const updateRole = async (data) => {
+  const resp = await apiService.post(
+    `${environment.user}/role/update`,
+    data
+  );
+  return resp?.result;
+};

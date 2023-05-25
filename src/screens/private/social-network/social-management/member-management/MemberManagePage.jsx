@@ -1,8 +1,12 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { UserSwitchOutlined } from '@ant-design/icons';
 import { useMutation, useQueryClient } from 'react-query';
 import { unassignUserFromTab } from '../../socialNetworkService';
 import { RoleChip } from '../../../../../components/shared/element/Chip';
 import { role } from '../../../../../constants/environment/environment.dev';
+import { updateRole } from '../../../accounts/accountService';
+import { notifyService } from '../../../../../services/notifyService';
+import { getRole } from '../../../../../routes/private/privateService';
 import environment from '../../../../../constants/environment/environment.dev';
 import BooleanRow from '../../../../../components/shared/element/BooleanRow';
 import DateTimeFormat from '../../../../../components/shared/element/DateTimeFormat';
@@ -10,11 +14,21 @@ import AdminTable from '../../../../../components/shared/antd/Table/Table';
 import ElementWithPermission from '../../../../../components/shared/element/ElementWithPermission';
 import ToolTipWrapper from '../../../../../components/shared/antd/ToolTipWrapper';
 import AssignButton from '../../../../../components/shared/element/Button/AssignButton';
-import { notifyService } from '../../../../../services/notifyService';
+import useEffectOnce from '../../../../../components/hooks/useEffectOnce';
 
 export default function MemberManagePage({ pageId, socialPage }) {
   const queryClient = useQueryClient();
   const userData = queryClient.getQueryData('userData');
+
+  const roleList = useRef([]);
+  const useGetAvailableRoles = useMutation(getRole, {
+    onSuccess: (resp) => {
+      roleList.current = resp;
+    },
+  });
+  useEffectOnce(() => {
+    useGetAvailableRoles.mutate();
+  });
 
   const columns = [
     {
@@ -107,6 +121,41 @@ export default function MemberManagePage({ pageId, socialPage }) {
     setSelectedRows(rows);
   }
 
+  const useUpdateRole = useMutation(updateRole, {
+    onSuccess: (resp) => {
+      if (resp) {
+        notifyService.showSucsessMessage({
+          description: 'Assign manager successfully',
+        });
+      }
+    },
+  });
+
+  let actionList = [
+    {
+      icon: <UserSwitchOutlined />,
+      label: 'Assign Manager',
+    },
+  ];
+  if (!userData?.permissions?.includes('update-user')) {
+    actionList = actionList?.filter(
+      (item) => item?.label !== 'Assign Manager'
+    );
+  }
+
+  function handleActionClick(action, data) {
+    if (action === 'Assign Manager') {
+      useUpdateRole.mutate({
+        userId: data?.user?.id,
+        tabId: pageId,
+        roleId: roleList.current?.find(
+          (item) => item?.roleName === 'MANAGER'
+        )?.id,
+      });
+    }
+    return true;
+  }
+
   const useUnassignUser = useMutation(unassignUserFromTab, {
     onSuccess: (resp) => {
       if (resp) {
@@ -163,6 +212,8 @@ export default function MemberManagePage({ pageId, socialPage }) {
       scroll={{ x: 2000 }}
       getSelectedRows={getSelectedRows}
       customToolbar={customToolbar}
+      actionList={[...actionList]}
+      handleActionClick={handleActionClick}
     />
   );
 }
