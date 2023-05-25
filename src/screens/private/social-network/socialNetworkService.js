@@ -298,3 +298,14 @@ export const unassignUserFromTab = async (data) => {
   );
   return resp?.result;
 };
+
+export const getStatisticForTab = async (data) => {
+  const resp = await apiService.post(
+    `${environment.dashboard}/statistic/${data?.tabId}`,
+    data.body
+  );
+  return {
+    result: resp?.result,
+    dateList: data.body
+  };
+};

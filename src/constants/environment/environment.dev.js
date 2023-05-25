@@ -22,6 +22,7 @@ const environment = {
   message: `${baseUrl}/message`,
   botUrl: botUrl,
   hotQueue: `${baseUrl}/hotqueue`,
+  dashboard: `${baseUrl}/dashboard`,
 };
 
 export const gender = [

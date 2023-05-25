@@ -320,7 +320,6 @@ export default function MessageTypeContainer(props) {
             userReply = `Agent#${agentName}`;
           }
 
-          let isFirst = false;
           let isNotFinal = true;
           if (type === 'Message') {
             if (
@@ -329,12 +328,8 @@ export default function MessageTypeContainer(props) {
             ) {
               isNotFinal = false;
             }
-            if (
-              messageList[index]?.sender?.senderId !==
-              messageList[index - 1]?.sender?.senderId
-            ) {
-              isFirst = true;
-            }
+          } else {
+            isNotFinal = false;
           }
 
           return (

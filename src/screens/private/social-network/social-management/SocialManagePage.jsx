@@ -41,7 +41,7 @@ export default function SocialMangePage() {
   const items = [
     {
       key: 1,
-      label: formatTab(<ProjectOutlined rotate={180} />, 'Summary'),
+      label: formatTab(<ProjectOutlined rotate={180} />, 'Report'),
       children: (
         <SummaryManagePage
           pageId={location.state?.socialId}
