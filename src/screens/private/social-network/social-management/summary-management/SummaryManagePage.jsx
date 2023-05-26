@@ -1,7 +1,10 @@
 import { useRef, useState } from 'react';
 import { useMutation } from 'react-query';
 import dayjs from 'dayjs';
-import { getStatisticForTab } from '../../socialNetworkService';
+import {
+  getHotqueueStatistic,
+  getStatisticForTab,
+} from '../../socialNetworkService';
 import PieChart from '../../../../../components/shared/antd/Chart/PieChart';
 import DoubleLineChart from '../../../../../components/shared/antd/Chart/DoubleLineChart';
 import useEffectOnce from '../../../../../components/hooks/useEffectOnce';
@@ -10,6 +13,7 @@ import Title from '../../../../../components/shared/element/Title';
 
 export default function SummaryManagePage({ pageId, socialPage }) {
   const [lineChartData, setLineChartData] = useState();
+  const [hotqueueData, setHotqueueData] = useState();
 
   const addMissingDate = (dateList) => {
     // Create a set of existing dates from the original list
@@ -80,8 +84,16 @@ export default function SummaryManagePage({ pageId, socialPage }) {
             dumpList.push(item[1]);
           }
         });
-        
+
         setLineChartData(addMissingDate(dumpList));
+      }
+    },
+  });
+
+  const useGetHotqueueStatistic = useMutation(getHotqueueStatistic, {
+    onSuccess: (resp) => {
+      if (resp?.result) {
+        setHotqueueData(resp.result);
       }
     },
   });
@@ -94,25 +106,43 @@ export default function SummaryManagePage({ pageId, socialPage }) {
         endDate: dayjs(),
       },
     });
-  });
 
+    useGetHotqueueStatistic.mutate({
+      tabId: pageId,
+      body: {
+        startDate: dayjs().add(-30, 'd'),
+        endDate: dayjs(),
+      },
+    });
+  });
+  console.log(hotqueueData);
   return (
     <div className="summary-container">
-      <Title>Message statistics</Title>
-      <DateRangePincer
-        defaultValue={[dayjs().add(-30, 'd'), dayjs()]}
-        onChange={(e) => {
-          if (e) {
-            useGetStatisticForTab.mutate({
-              tabId: pageId,
-              body: {
-                startDate: e[0],
-                endDate: e[1],
-              },
-            });
-          }
-        }}
-      />
+      <Title className="summary-title">Message statistics</Title>
+      <div className="flex-center">
+        <DateRangePincer
+          defaultValue={[dayjs().add(-30, 'd'), dayjs()]}
+          onChange={(e) => {
+            if (e) {
+              useGetStatisticForTab.mutate({
+                tabId: pageId,
+                body: {
+                  startDate: e[0],
+                  endDate: e[1],
+                },
+              });
+
+              useGetHotqueueStatistic.mutate({
+                tabId: pageId,
+                body: {
+                  startDate: e[0],
+                  endDate: e[1],
+                },
+              });
+            }
+          }}
+        />
+      </div>
       <DoubleLineChart
         xConfig="date"
         yConfig={['Comments', 'Chats']}
@@ -129,12 +159,14 @@ export default function SummaryManagePage({ pageId, socialPage }) {
           <PieChart
             pieData={[
               {
-                type: 'bad one',
-                value: 3,
+                type: 'Hotqueue',
+                value: hotqueueData?.hotQueueComment,
               },
               {
-                type: 'good one',
-                value: 10,
+                type: 'Not in hotqueue',
+                value:
+                  hotqueueData?.totalComment -
+                  hotqueueData?.hotQueueComment,
               },
             ]}
           />
@@ -143,12 +175,14 @@ export default function SummaryManagePage({ pageId, socialPage }) {
           <PieChart
             pieData={[
               {
-                type: 'bad one',
-                value: 3,
+                type: 'Hotqueue',
+                value: hotqueueData?.hotQueueMessage,
               },
               {
-                type: 'good one',
-                value: 10,
+                type: 'Not in hotqueue',
+                value:
+                  hotqueueData?.totalMessage -
+                  hotqueueData?.hotQueueMessage,
               },
             ]}
           />

@@ -309,3 +309,14 @@ export const getStatisticForTab = async (data) => {
     dateList: data.body
   };
 };
+
+export const getHotqueueStatistic = async (data) => {
+  const resp = await apiService.post(
+    `${environment.dashboard}/hotqueue-statistic/${data?.tabId}`,
+    data.body
+  );
+  return {
+    result: resp?.result,
+    dateList: data.body
+  };
+};

@@ -668,11 +668,20 @@
 }
 
 .summary-container {
+  #title {
+    &.summary-title {
+      font-size: 3rem;
+      margin-top: 0;
+    }
+  }
+
   .pie-container {
     justify-content: space-evenly;
 
     .pie-summary {
-      max-width: 50%;
+      canvas {
+        width: 50rem !important;
+      }
     }
   }
 }
