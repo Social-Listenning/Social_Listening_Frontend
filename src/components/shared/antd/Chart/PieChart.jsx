@@ -1,4 +1,4 @@
-import { Pie } from '@ant-design/charts';
+import { Pie } from '@ant-design/plots';
 
 export default function PieChart(props) {
   const { pieData = [], pieConfig } = props;
