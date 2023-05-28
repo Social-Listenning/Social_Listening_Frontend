@@ -260,7 +260,7 @@ export default function AddEditIntent(props) {
           placement="left"
         >
           <Form.Item
-            label="Training"
+            label="Training Phrases"
             name="training"
             rules={[
               {
@@ -312,7 +312,7 @@ export default function AddEditIntent(props) {
         </UploadFile>
 
         <a href={downloadUrl.current} download="intent-example.xlsx">
-          <Button>Download Example Files</Button>
+          <Button>Download Example File</Button>
         </a>
       </div>
       <Table

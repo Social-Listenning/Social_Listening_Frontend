@@ -21,11 +21,19 @@ export default function DateRangePicker(props) {
     showTime = true;
   }
 
+  let presets = [];
+  if (!disabledPast) {
+    presets = presets.concat(dateRangeBefore);
+  }
+  if (!disabledFuture) {
+    presets = presets.concat(dateRangeAfter);
+  }
+
   return (
     <DatePicker.RangePicker
       format={format}
       showTime={showTime}
-      presets={dateRangeBefore.concat(dateRangeAfter)}
+      presets={presets}
       defaultValue={defaultValue}
       onChange={onChange}
       disabled={disabled}

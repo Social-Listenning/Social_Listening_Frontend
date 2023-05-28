@@ -31,6 +31,7 @@ import BasicAvatar from '../../components/shared/antd/BasicAvatar';
 import PieChartResult from '../../components/shared/antd/Chart/PieChartResult';
 import IconButton from '../../components/shared/element/Button/IconButton';
 import AddEditUser from '../../screens/private/accounts/user/AddEditUser';
+import logo from '../../assets/images/logo.png';
 import '../route.scss';
 
 const { Header, Content, Sider } = Layout;
@@ -317,7 +318,7 @@ export default function PrivateLayout(props) {
     }
   );
   // #endregion
-  
+
   const [openProfile, setOpenProfile] = useToggle(false);
   async function handleMenuHeader(e) {
     // logout option
@@ -387,13 +388,15 @@ export default function PrivateLayout(props) {
         onCollapse={(value) => setCollapsed(value)}
       >
         {/* icon */}
-        <div
-          style={{
-            height: 32,
-            margin: 16,
-            background: 'rgba(255, 255, 255, 0.2)',
-          }}
-        />
+        <div className="flex-center">
+          <img
+            style={{
+              height: collapsed ? '70px' : '140px',
+              margin: 4,
+            }}
+            src={logo}
+          />
+        </div>
         <Menu
           onSelect={handleItemSelect}
           theme="dark"

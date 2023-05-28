@@ -672,15 +672,18 @@
     &.summary-title {
       font-size: 3rem;
       margin-top: 0;
+      text-align: center;
     }
   }
 
-  .pie-container {
-    justify-content: space-evenly;
+  .chart-container {
+    .pie-container {
+      justify-content: space-evenly;
 
-    .pie-summary {
-      canvas {
-        width: 50rem !important;
+      .pie-summary {
+        canvas {
+          width: 50rem !important;
+        }
       }
     }
   }

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useMutation } from 'react-query';
 import dayjs from 'dayjs';
 import {
@@ -115,12 +115,13 @@ export default function SummaryManagePage({ pageId, socialPage }) {
       },
     });
   });
-  console.log(hotqueueData);
+
   return (
     <div className="summary-container">
       <Title className="summary-title">Message statistics</Title>
       <div className="flex-center">
         <DateRangePincer
+          disabledFuture
           defaultValue={[dayjs().add(-30, 'd'), dayjs()]}
           onChange={(e) => {
             if (e) {
@@ -143,49 +144,53 @@ export default function SummaryManagePage({ pageId, socialPage }) {
           }}
         />
       </div>
-      <DoubleLineChart
-        xConfig="date"
-        yConfig={['Comments', 'Chats']}
-        lineChartData={lineChartData?.map((item) => {
-          return {
-            date: item?.date,
-            Comments: item?.commentCount,
-            Chats: item?.messageCount,
-          };
-        })}
-      />
-      <div className="flex-center pie-container">
-        <div className="pie-summary">
-          <PieChart
-            pieData={[
-              {
-                type: 'Hotqueue',
-                value: hotqueueData?.hotQueueComment,
-              },
-              {
-                type: 'Not in hotqueue',
-                value:
-                  hotqueueData?.totalComment -
-                  hotqueueData?.hotQueueComment,
-              },
-            ]}
+      <div className="chart-container">
+        {lineChartData?.length > 0 && (
+          <DoubleLineChart
+            xConfig="date"
+            yConfig={['comments', 'chats']}
+            lineChartData={lineChartData.map((item) => {
+              return {
+                date: item?.date,
+                comments: item?.commentCount,
+                chats: item?.messageCount,
+              };
+            })}
           />
-        </div>
-        <div className="pie-summary">
-          <PieChart
-            pieData={[
-              {
-                type: 'Hotqueue',
-                value: hotqueueData?.hotQueueMessage,
-              },
-              {
-                type: 'Not in hotqueue',
-                value:
-                  hotqueueData?.totalMessage -
-                  hotqueueData?.hotQueueMessage,
-              },
-            ]}
-          />
+        )}
+        <div className="flex-center pie-container">
+          <div className="pie-summary">
+            <PieChart
+              pieData={[
+                {
+                  type: 'Hotqueue',
+                  value: hotqueueData?.hotQueueComment,
+                },
+                {
+                  type: 'Not in hotqueue',
+                  value:
+                    hotqueueData?.totalComment -
+                    hotqueueData?.hotQueueComment,
+                },
+              ]}
+            />
+          </div>
+          <div className="pie-summary">
+            <PieChart
+              pieData={[
+                {
+                  type: 'Hotqueue',
+                  value: hotqueueData?.hotQueueMessage,
+                },
+                {
+                  type: 'Not in hotqueue',
+                  value:
+                    hotqueueData?.totalMessage -
+                    hotqueueData?.hotQueueMessage,
+                },
+              ]}
+            />
+          </div>
         </div>
       </div>
     </div>
