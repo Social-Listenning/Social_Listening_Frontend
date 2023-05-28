@@ -4,7 +4,7 @@ import environment from '../../../constants/environment/environment.dev';
 export const createAccount = async (userModel) => {
   let url = `${environment.user}/create`;
   if (userModel?.role === 'ADMIN') {
-    url.concat(`/admin`);
+    url = url.concat(`/admin`);
   }
   const resp = await apiService.post(url, userModel?.data);
   return resp?.result;
