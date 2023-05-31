@@ -113,3 +113,11 @@ export const getAllPermission = async () => {
   });
   return resp?.result?.data;
 };
+
+export const removeListPermission = async (list) => {
+  const resp = await apiService.post(
+    `${environment.permission}/remove-all`,
+    { listRolePermission: list }
+  );
+  return resp?.result;
+};

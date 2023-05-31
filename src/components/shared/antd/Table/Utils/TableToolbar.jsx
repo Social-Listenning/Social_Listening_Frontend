@@ -65,7 +65,7 @@ export default function TableToolbar(props) {
           />
         </ElementWithPermission>
 
-        {/* {showDelete && (
+        {showDelete && (
           <ElementWithPermission permission={permission.delete}>
             <DeleteButton
               onClick={() => {
@@ -73,7 +73,7 @@ export default function TableToolbar(props) {
               }}
             />
           </ElementWithPermission>
-        )} */}
+        )}
 
         {customToolbar}
       </div>

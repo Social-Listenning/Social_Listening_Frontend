@@ -27,7 +27,6 @@ export default function AdminTable(props) {
     apiGetData,
     apiGetBody,
     apiDeleteOne,
-    apiDeleteMultiple,
     apiImport,
     apiExport,
     addEditComponent = <></>,
@@ -41,6 +40,7 @@ export default function AdminTable(props) {
     getSelectedRows,
     isLoading = false,
     deleteOneRow,
+    deleteMultipleRow,
     showToolbar = true,
     showTableUtils = true,
     ...other
@@ -209,8 +209,17 @@ export default function AdminTable(props) {
     }
   }
 
-  function onMultipleDelete() {
-    console.log(selectedRowKeys);
+  async function onMultipleDelete() {
+    if (deleteMultipleRow) {
+      await deleteMultipleRow(
+        dataSource?.filter(
+          (_, index) =>
+            selectedRowKeys?.filter((rows) => rows === index)
+              ?.length > 0
+        )
+      );
+      document.getElementById('refresh-table')?.click();
+    }
   }
   // #endregion
 
@@ -374,7 +383,9 @@ export default function AdminTable(props) {
           importColumns={importColumns}
           dumpImportData={dumpImportData}
           apiExport={apiExport}
-          showDelete={selectedRowKeys?.length > 0}
+          showDelete={
+            deleteMultipleRow !== null && selectedRowKeys?.length > 0
+          }
           deleteMultiple={onMultipleDelete}
           customToolbar={customToolbar}
         />

@@ -1,6 +1,9 @@
 import { useMutation } from 'react-query';
 import { MinusOutlined } from '@ant-design/icons';
-import { removePermission } from '../accountService';
+import {
+  removeListPermission,
+  removePermission,
+} from '../accountService';
 import { notifyService } from '../../../../services/notifyService';
 import { role } from '../../../../constants/environment/environment.dev';
 import { RoleChip } from '../../../../components/shared/element/Chip';
@@ -48,6 +51,7 @@ export default function PermissionManangement(props) {
   const permission = {
     table: 'table-permission',
     new: 'assign-permission',
+    delete: 'remove-list-permissions',
   };
 
   const useRemovePermission = useMutation(removePermission, {
@@ -71,6 +75,26 @@ export default function PermissionManangement(props) {
     return false;
   }
 
+  const useRemoveListPerm = useMutation(removeListPermission, {
+    onSuccess: (resp) => {
+      if (resp) {
+        notifyService.showSucsessMessage({
+          description: 'Remove list permission successfully',
+        });
+      }
+    },
+  });
+  async function deleteMultiple(rows) {
+    await useRemoveListPerm.mutateAsync(
+      rows?.map((item) => {
+        return {
+          roleId: item?.role?.id,
+          permissionId: item?.permission?.id,
+        };
+      })
+    );
+  }
+
   return (
     <AdminTable
       columns={columns}
@@ -80,7 +104,7 @@ export default function PermissionManangement(props) {
       actionList={[{ icon: <MinusOutlined />, label: 'Remove' }]}
       handleActionClick={handleActionClick}
       defaultFilter={defaultFilter}
-      disableSelect
+      deleteMultipleRow={deleteMultiple}
     />
   );
 }
