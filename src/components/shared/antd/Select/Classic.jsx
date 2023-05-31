@@ -4,20 +4,34 @@ import LoadingWrapper from '../LoadingWrapper';
 export default function ClassicSelect(props) {
   const {
     options = [],
-    handleSelect,
+    onChange,
     loading = false,
     filterLabel = false,
     multiple = false,
     placeHolder = `Select ...`,
     disabled = false,
     noneOption = false,
+    allOption = false,
+    removeAllOption = false,
     ...other
   } = props;
 
   let data = [...options];
-  const none = [{ label: 'None', value: '' }];
-  if (noneOption) {
-    data = none.concat(data);
+  if (data?.length > 0) {
+    const none = [{ label: 'None', value: '' }];
+    if (noneOption) {
+      data = none.concat(data);
+    }
+
+    const all = [{ label: 'All', value: 'all' }];
+    if (allOption) {
+      data = all.concat(data);
+    }
+
+    const removeAll = [{ label: 'Remove All', value: 'removeAll' }];
+    if (removeAllOption) {
+      data = removeAll.concat(data);
+    }
   }
 
   return (
@@ -28,7 +42,7 @@ export default function ClassicSelect(props) {
         disabled={disabled}
         style={{ width: '100%' }}
         placeholder={placeHolder}
-        onChange={handleSelect}
+        onChange={onChange}
         options={data}
         {...(multiple && {
           mode: 'multiple',

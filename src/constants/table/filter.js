@@ -8,7 +8,7 @@ const numberType = [
 ];
 
 const dateTimeType = [
-  'Is Equal To',,
+  'Is Equal To',
   'Is Before Or Equal To',
   'Is Before',
   'Is After Or Equal To',

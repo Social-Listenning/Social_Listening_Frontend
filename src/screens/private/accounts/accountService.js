@@ -102,3 +102,14 @@ export const updateRole = async (data) => {
   );
   return resp?.result;
 };
+
+export const getAllPermission = async () => {
+  const resp = await apiService.post(`${environment.permission}`, {
+    orders: [],
+    filter: [],
+    size: 10000,
+    pageNumber: 1,
+    totalElement: 10000,
+  });
+  return resp?.result?.data;
+};

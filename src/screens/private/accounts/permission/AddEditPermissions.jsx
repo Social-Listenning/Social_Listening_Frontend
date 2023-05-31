@@ -4,23 +4,27 @@ import { useMutation } from 'react-query';
 import { notifyService } from '../../../../services/notifyService';
 import {
   assignPermission,
+  getAllPermission,
   getPermissionByScreens,
   getScreens,
 } from '../accountService';
 import { useGetAllRole } from '../../../../routes/private/privateService';
 import useEffectOnce from '../../../../components/hooks/useEffectOnce';
+import useUpdateEffect from '../../../../components/hooks/useUpdateEffect';
 import AddEditWrapper from '../../../../components/shared/antd/Table/Drawer/AddEditWrapper';
 import ToolTipWrapper from '../../../../components/shared/antd/ToolTipWrapper';
 import ClassicSelect from '../../../../components/shared/antd/Select/Classic';
 import Hint from '../../../../components/shared/element/Hint';
 
 export default function AddEditPermissions(props) {
-  const { open, onClose, selectedData, action } = props;
+  const { open, onClose, action } = props;
 
   const [addEditPermissionForm] = Form.useForm();
-  const { data } = useGetAllRole();
+  const canGetRole = useRef(true);
+  const { data: allRole } = useGetAllRole(canGetRole.current);
+  canGetRole.current = false;
 
-  // #region get all screens
+  // #region get all screens and all permissions
   const [screens, setScreens] = useState([]);
   const useGetScreens = useMutation(getScreens, {
     onSuccess: (resp) => {
@@ -36,15 +40,13 @@ export default function AddEditPermissions(props) {
       }
     },
   });
-  useEffectOnce(() => {
-    useGetScreens.mutate();
-  });
   // #endregion
 
   // #region get permission by screen
-  const screenSelected = useRef([]);
   function handleSelectScreen(e) {
-    screenSelected.current = e;
+    useGetPermission.mutate({
+      screen: e,
+    });
   }
   const [permissionList, setPermissionList] = useState([]);
   const useGetPermission = useMutation(getPermissionByScreens, {
@@ -55,20 +57,74 @@ export default function AddEditPermissions(props) {
             return {
               label: item.displayName,
               value: item.id,
+              screen: item.screen,
             };
           })
         );
       }
     },
   });
-  function getPermissionsByScreen() {
-    if (screenSelected.current?.length > 0) {
-      useGetPermission.mutate({
-        screen: screenSelected.current,
-      });
-    }
-  }
   // #endregion
+
+  const allPerm = useRef([]);
+  const [permExisted, setPermExisted] = useState([]);
+  const [permSelected, setPermSelected] = useState([]);
+  const permissionInRole = useRef([]);
+  const useGetAllPermission = useMutation(getAllPermission, {
+    onSuccess: (resp) => {
+      if (resp) {
+        allPerm.current = resp;
+      }
+    },
+  });
+  useEffectOnce(() => {
+    useGetScreens.mutate();
+    useGetAllPermission.mutate();
+  });
+  useUpdateEffect(() => {
+    if (permissionList?.length > 0) {
+      if (permSelected?.includes('all')) {
+        addEditPermissionForm.setFieldValue(
+          'listPermission',
+          permissionList?.map((item) => item?.value)
+        );
+      } else {
+        addEditPermissionForm.setFieldValue(
+          'listPermission',
+          permSelected?.map((item) => item)
+        );
+      }
+    } else {
+      addEditPermissionForm.setFieldValue('listPermission', []);
+      setPermSelected([]);
+    }
+  }, [permissionList, permExisted]);
+  useUpdateEffect(() => {
+    permissionInRole.current =
+      permExisted?.filter(
+        (x) =>
+          permissionList.filter((y) => y.value === x.id)?.length > 0
+      ) ?? [];
+
+    if (
+      permissionList?.length === permissionInRole.current?.length &&
+      permissionList?.length > 0
+    ) {
+      addEditPermissionForm.setFieldValue(
+        'listPermission',
+        permissionList?.map((item) => item?.value)
+      );
+      setPermSelected(['all']);
+    } else {
+      addEditPermissionForm.setFieldValue(
+        'listPermission',
+        permissionInRole.current?.map((item) => item?.id)
+      );
+      setPermSelected(
+        permissionInRole.current?.map((item) => item?.id)
+      );
+    }
+  }, [permissionList, permExisted]);
 
   const useAssignPermission = useMutation(assignPermission, {
     onSuccess: (resp) => {
@@ -120,9 +176,16 @@ export default function AddEditPermissions(props) {
         >
           <ClassicSelect
             placeholder="Select role..."
-            options={data?.map((item) => {
+            options={allRole?.map((item) => {
               return { label: item.roleName, value: item.id };
             })}
+            onChange={(e) => {
+              setPermExisted(
+                allPerm.current
+                  ?.filter((item) => item?.role?.id === e)
+                  ?.map((item) => item?.permission)
+              );
+            }}
           />
         </Form.Item>
 
@@ -141,7 +204,6 @@ export default function AddEditPermissions(props) {
             placeholder="Select screens..."
             options={screens}
             onChange={handleSelectScreen}
-            onBlur={getPermissionsByScreen}
           />
         </Form.Item>
 
@@ -163,8 +225,35 @@ export default function AddEditPermissions(props) {
               multiple
               filterLabel
               placeholder="Select permissions..."
-              options={permissionList}
+              options={permissionList?.map((pl) => {
+                return {
+                  ...pl,
+                  disabled:
+                    permissionInRole.current?.filter(
+                      (pr) => pr?.id === pl?.value
+                    )?.length > 0,
+                };
+              })}
               loading={useGetPermission.isLoading}
+              onChange={(e) => {
+                setPermSelected(e);
+
+                if (e?.includes('all')) {
+                  addEditPermissionForm.setFieldValue(
+                    'listPermission',
+                    permissionList?.map((item) => item?.value)
+                  );
+                }
+
+                if (e?.includes('removeAll')) {
+                  addEditPermissionForm.setFieldValue(
+                    'listPermission',
+                    []
+                  );
+                }
+              }}
+              allOption={!permSelected?.includes('all')}
+              removeAllOption={permSelected?.includes('all')}
             />
           </Form.Item>
         </ToolTipWrapper>

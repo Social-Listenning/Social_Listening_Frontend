@@ -60,7 +60,7 @@ export default function TableHeader(props) {
           id={title}
           placeHolder={title}
           value={value || undefined}
-          handleSelect={handleSelect}
+          onChange={handleSelect}
         />
       );
     } else if (filter.filterType === 'Dropdown') {
@@ -71,7 +71,7 @@ export default function TableHeader(props) {
           placeHolder={title}
           value={value || undefined}
           options={filter.options}
-          handleSelect={handleSelect}
+          onChange={handleSelect}
         />
       );
     } else if (filter.filterType === 'DateTime') {
