@@ -53,6 +53,11 @@ export default function MessageManagePage(props) {
     );
   getDetail.current = false;
 
+  useUpdateEffect(() => {
+    getDetail.current = true;
+    setMsgSelected(messageData);
+  }, [messageData]);
+
   const messageDetailList =
     type === 'Comment'
       ? commentDetail
@@ -192,14 +197,16 @@ export default function MessageManagePage(props) {
                   : isMessageFetching
               }
             >
-              <MessageTypeContainer
-                pageId={pageId}
-                messageSelected={msgSelected}
-                type={msgSelected?.type ?? 'Message'}
-                socialPage={socialPage}
-                messageDetail={messageDetailList}
-                isHotQueue={!showTable && !showHint}
-              />
+              {type && (
+                <MessageTypeContainer
+                  pageId={pageId}
+                  messageSelected={msgSelected}
+                  type={type}
+                  socialPage={socialPage}
+                  messageDetail={messageDetailList}
+                  isHotQueue={!showTable && !showHint}
+                />
+              )}
             </LoadingWrapper>
           ) : (
             <div

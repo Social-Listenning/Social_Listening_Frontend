@@ -146,6 +146,8 @@ export default function TableHeader(props) {
   const [selectedKey, setSelectedKey] = useState('0');
 
   function handleFilter(e) {
+    const oldFilter = filterOperator.current;
+    
     if (filterOperator.current !== listFilter[e.key]) {
       filterOperator.current = listFilter[e.key];
 
@@ -156,13 +158,23 @@ export default function TableHeader(props) {
       );
 
       if (filter && filter?.filterType === 'DateTime') {
+        let notFilter = false;
         if (listFilter[e.key] === 'Between') {
+          notFilter = true;
           setDateRangeFilter(true);
         } else {
-          setDateRangeFilter(false);
+          if (oldFilter !== 'Between') {
+            notFilter = false;
+          } else {
+            notFilter = true;
+            setDateRangeFilter(false);
+          }
         }
-        setValue(null);
-        return;
+
+        if (notFilter) {
+          setValue(null);
+          return;
+        }
       }
 
       formatFilter(listFilter[e.key]);

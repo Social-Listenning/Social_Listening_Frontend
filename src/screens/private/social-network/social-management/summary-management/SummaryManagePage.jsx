@@ -145,6 +145,44 @@ export default function SummaryManagePage({ pageId, socialPage }) {
         />
       </div>
       <div className="chart-container">
+        <div className="flex-center pie-container">
+          <div className="pie-summary">
+            <Title className="summary-title">Comments Hotqueue</Title>
+            <PieChart
+              pieData={[
+                {
+                  type: 'In Hotqueue',
+                  value: hotqueueData?.hotQueueComment,
+                },
+                {
+                  type: 'Not in hotqueue',
+                  value:
+                    hotqueueData?.totalComment -
+                    hotqueueData?.hotQueueComment,
+                },
+              ]}
+              height={300}
+            />
+          </div>
+          <div className="pie-summary">
+            <Title className="summary-title">Chats Hotqueue</Title>
+            <PieChart
+              pieData={[
+                {
+                  type: 'In Hotqueue',
+                  value: hotqueueData?.hotQueueMessage,
+                },
+                {
+                  type: 'Not in hotqueue',
+                  value:
+                    hotqueueData?.totalMessage -
+                    hotqueueData?.hotQueueMessage,
+                },
+              ]}
+              height={300}
+            />
+          </div>
+        </div>
         {lineChartData?.length > 0 && (
           <DoubleLineChart
             xConfig="date"
@@ -156,44 +194,9 @@ export default function SummaryManagePage({ pageId, socialPage }) {
                 chats: item?.messageCount,
               };
             })}
+            height={300}
           />
         )}
-        <div className="flex-center pie-container">
-          <div className="pie-summary">
-            <Title className="summary-title">Comments Hotqueue</Title>
-            <PieChart
-              pieData={[
-                {
-                  type: 'Hotqueue',
-                  value: hotqueueData?.hotQueueComment,
-                },
-                {
-                  type: 'Not in hotqueue',
-                  value:
-                    hotqueueData?.totalComment -
-                    hotqueueData?.hotQueueComment,
-                },
-              ]}
-            />
-          </div>
-          <div className="pie-summary">
-            <Title className="summary-title">Chats Hotqueue</Title>
-            <PieChart
-              pieData={[
-                {
-                  type: 'Hotqueue',
-                  value: hotqueueData?.hotQueueMessage,
-                },
-                {
-                  type: 'Not in hotqueue',
-                  value:
-                    hotqueueData?.totalMessage -
-                    hotqueueData?.hotQueueMessage,
-                },
-              ]}
-            />
-          </div>
-        </div>
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Tabs } from 'antd';
 import {
@@ -9,6 +10,7 @@ import {
   TeamOutlined,
   ProjectOutlined,
 } from '@ant-design/icons';
+import useEffectOnce from '../../../../components/hooks/useEffectOnce';
 import ElementWithPermission from '../../../../components/shared/element/ElementWithPermission';
 import MessageManagePage from './message-management/MessageManagePage';
 import SettingManagePage from './setting-mangement/SettingManagePage';
@@ -21,12 +23,12 @@ import '../socialNetwork.scss';
 export default function SocialMangePage() {
   const location = useLocation();
 
-  function formatTab(icon, label, permission) {
+  function formatTab(index, icon, label, permission) {
     const tabFormatted = (
-      <>
+      <div id={index}>
         {icon}
         <span>{label}</span>
-      </>
+      </div>
     );
 
     return permission ? (
@@ -41,7 +43,7 @@ export default function SocialMangePage() {
   const items = [
     {
       key: 1,
-      label: formatTab(<ProjectOutlined rotate={180} />, 'Report'),
+      label: formatTab(1, <ProjectOutlined rotate={180} />, 'Report'),
       children: (
         <SummaryManagePage
           pageId={location.state?.socialId}
@@ -52,6 +54,7 @@ export default function SocialMangePage() {
     {
       key: 2,
       label: formatTab(
+        2,
         <CommentOutlined />,
         'Comment',
         'table-comment'
@@ -66,7 +69,7 @@ export default function SocialMangePage() {
     },
     {
       key: 3,
-      label: formatTab(<FormOutlined />, 'Chat', 'table-message'),
+      label: formatTab(3, <FormOutlined />, 'Chat', 'table-message'),
       children: (
         <MessageManagePage
           pageId={location.state?.socialId}
@@ -78,6 +81,7 @@ export default function SocialMangePage() {
     {
       key: 4,
       label: formatTab(
+        4,
         <PlayCircleOutlined />,
         'Design Bot Flow',
         'table-workflow'
@@ -91,7 +95,12 @@ export default function SocialMangePage() {
     },
     {
       key: 5,
-      label: formatTab(<RobotOutlined />, 'Bots', 'table-workflow'),
+      label: formatTab(
+        5,
+        <RobotOutlined />,
+        'Bots',
+        'table-workflow'
+      ),
       children: (
         <BotManagePage
           pageId={location.state?.socialId}
@@ -102,6 +111,7 @@ export default function SocialMangePage() {
     {
       key: 6,
       label: formatTab(
+        6,
         <TeamOutlined />,
         'Member',
         'table-user-in-tab'
@@ -126,13 +136,29 @@ export default function SocialMangePage() {
     // },
   ];
 
+  const [itemList, setItemList] = useState(items);
+  useEffectOnce(() => {
+    // delay to wait for the html parse in DOM
+    const timeout = setTimeout(() => {
+      setItemList(
+        items.filter(
+          (item) => document.getElementById(item.key) != null
+        )
+      );
+    }, 0);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  });
+
   return (
     <Tabs
       // centered
       destroyInactiveTabPane
       className="social-tab"
       defaultActiveKey={location.state?.tab ?? 1}
-      items={items}
+      items={itemList}
       key={location.state?.socialId}
     />
   );

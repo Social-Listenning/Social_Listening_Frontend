@@ -1,7 +1,7 @@
 import { DualAxes } from '@ant-design/plots';
 
 export default function DoubleLineChart(props) {
-  const { lineChartData = [], xConfig, yConfig } = props;
+  const { lineChartData = [], xConfig, yConfig, ...other } = props;
 
   const config = {
     data: [lineChartData, lineChartData],
@@ -23,5 +23,5 @@ export default function DoubleLineChart(props) {
       position: 'top-right',
     },
   };
-  return <DualAxes {...config} />;
+  return <DualAxes {...config} {...other} />;
 }

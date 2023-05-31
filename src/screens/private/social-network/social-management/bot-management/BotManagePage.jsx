@@ -119,16 +119,25 @@ export default function BotManagePage({ pageId, socialPage }) {
   const { data: botList, isFetching: botFetching } =
     useGetListDialogflowBot(
       dialogflowConfig,
-      getData.current && !botSelected
+      dialogflowConfig !== null && getData.current && !botSelected
     );
 
   const { data: intentList, isFetching: intentFetching } =
     useGetDialogflowIntents(
       dialogflowConfig,
       botSelected,
-      getData.current && botSelected?.length > 0
+      dialogflowConfig !== null &&
+        getData.current &&
+        botSelected?.length > 0
     );
   getData.current = false;
+
+  useUpdateEffect(() => {
+    if (dialogflowConfig) {
+      getData.current = true;
+      forceUpdate(dialogflowConfig);
+    }
+  }, [dialogflowConfig]);
 
   let data = botList?.filter((bot) =>
     bot?.display_name?.includes(`-${pageId}`)

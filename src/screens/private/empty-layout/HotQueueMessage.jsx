@@ -110,10 +110,9 @@ export default function HotQueueMessage() {
     }
   );
 
-  let hotQueueMessage =
-    'This message is notified by your bot not found intents';
-  if (socketData?.notifyAgentMessage) {
-    switch (socketData.notifyAgentMessage) {
+  let hotQueueMessage = 'This message is notified by your workflow';
+  if (socketData?.notifyAgentMessage || socketData?.reason) {
+    switch (socketData.notifyAgentMessage || socketData?.reason) {
       case 'Workflow':
         hotQueueMessage = 'This message is notified by your workflow';
         break;
@@ -123,7 +122,7 @@ export default function HotQueueMessage() {
         break;
       case 'Intent':
         hotQueueMessage =
-          'This message is notified by your bot not found intents';
+          'This message is notified by not found intents';
         break;
       default:
         break;
@@ -168,6 +167,7 @@ export default function HotQueueMessage() {
                         ...old,
                         messageId: item?.messageId,
                         messageType: item?.type,
+                        reason: item?.reason,
                         tabId: item?.tabId,
                         socialPage: pageData,
                         sender: item?.sender,
@@ -201,7 +201,7 @@ export default function HotQueueMessage() {
       </Sider>
       <Layout className="full-height-screen">
         <Content className="social-tab hotqueue-content">
-          {socketData?.messageType && (
+          {socketData?.reason && (
             <Hint message={hotQueueMessage} type="info" />
           )}
           {socketData?.messageType && (
@@ -211,7 +211,6 @@ export default function HotQueueMessage() {
               type={socketData?.messageType}
               messageData={{
                 id: socketData?.messageId,
-                type: socketData?.messageType,
                 sender: socketData?.sender,
               }}
               showTable={false}

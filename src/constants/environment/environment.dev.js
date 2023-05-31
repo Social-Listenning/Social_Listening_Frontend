@@ -1,6 +1,6 @@
-const baseUrl = 'http://51.79.165.243/:3000';
-const webSocket = 'ws://51.79.165.243/:3000';
-const botUrl = 'http://51.79.165.243/:8000';
+const baseUrl = 'http://localhost:3000';
+const webSocket = 'ws://localhost:3000';
+const botUrl = 'http://localhost:8000';
 const facebookGraph = 'https://graph.facebook.com';
 
 const environment = {

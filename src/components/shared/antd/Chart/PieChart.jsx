@@ -1,7 +1,7 @@
 import { Pie } from '@ant-design/plots';
 
 export default function PieChart(props) {
-  const { pieData = [], pieConfig } = props;
+  const { pieData = [], pieConfig, ...other } = props;
 
   const config = {
     data: pieData,
@@ -27,5 +27,5 @@ export default function PieChart(props) {
     ...pieConfig,
   };
 
-  return <Pie {...config} />;
+  return <Pie {...config} {...other} />;
 }

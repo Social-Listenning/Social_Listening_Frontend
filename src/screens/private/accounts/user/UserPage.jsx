@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { PoweroffOutlined, CheckOutlined } from '@ant-design/icons';
 import { useQueryClient, useMutation } from 'react-query';
-import { role } from '../../../../constants/environment/environment.dev';
+import { gender, role } from '../../../../constants/environment/environment.dev';
 import { RoleChip } from '../../../../components/shared/element/Chip';
 import { defaultAction } from '../../../../constants/table/action';
 import { activateUser, deactivateUser } from '../accountService';
@@ -101,6 +101,10 @@ export default function UserManagement(props) {
     {
       title: 'Gender',
       dataIndex: 'gender',
+      filter: {
+        filterType: 'Dropdown',
+        options: gender,
+      },
     },
     {
       title: 'Full Name',

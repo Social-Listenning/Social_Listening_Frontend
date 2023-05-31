@@ -50,6 +50,7 @@ export default function AddEditBot(props) {
 
     addEditBotForm.setFieldsValue({
       name: formatName,
+      language: 'English',
     });
   });
 
@@ -115,6 +116,24 @@ export default function AddEditBot(props) {
             ]}
           >
             <Input allowClear />
+          </Form.Item>
+        </ToolTipWrapper>
+
+        <ToolTipWrapper
+          tooltip="Currently only support English"
+          placement="left"
+        >
+          <Form.Item
+            label="Language"
+            name="language"
+            rules={[
+              {
+                required: true,
+                message: 'Language is required',
+              },
+            ]}
+          >
+            <Input disabled />
           </Form.Item>
         </ToolTipWrapper>
       </Form>
