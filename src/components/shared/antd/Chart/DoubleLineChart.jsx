@@ -3,6 +3,17 @@ import { DualAxes } from '@ant-design/plots';
 export default function DoubleLineChart(props) {
   const { lineChartData = [], xConfig, yConfig, ...other } = props;
 
+  let largestValue = 0;
+  lineChartData?.forEach((item) => {
+    Object.values(item)?.map((obj) => {
+      if (typeof obj === 'number') {
+        if (obj > largestValue) {
+          largestValue = obj;
+        }
+      }
+    });
+  });
+
   const config = {
     data: [lineChartData, lineChartData],
     xField: xConfig,
@@ -22,6 +33,10 @@ export default function DoubleLineChart(props) {
     legend: {
       position: 'top-right',
     },
+    yAxis: [
+      { nice: true, max: largestValue },
+      { nice: true, visible: false },
+    ],
   };
   return <DualAxes {...config} {...other} />;
 }
