@@ -160,6 +160,7 @@ export default function SummaryManagePage({ pageId, socialPage }) {
         )}
         <div className="flex-center pie-container">
           <div className="pie-summary">
+            <Title className="summary-title">Comments Hotqueue</Title>
             <PieChart
               pieData={[
                 {
@@ -176,6 +177,7 @@ export default function SummaryManagePage({ pageId, socialPage }) {
             />
           </div>
           <div className="pie-summary">
+            <Title className="summary-title">Chats Hotqueue</Title>
             <PieChart
               pieData={[
                 {

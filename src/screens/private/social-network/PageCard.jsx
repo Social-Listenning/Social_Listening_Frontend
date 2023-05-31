@@ -39,12 +39,12 @@ export default function PageCard(props) {
   //   }
   // }
 
-  const useDisconnect = useMutation(disconnectFacebook, {
-    onSuccess: (resp) => {
-      // call api to BE
-      console.log(resp);
-    },
-  });
+  // const useDisconnect = useMutation(disconnectFacebook, {
+  //   onSuccess: (resp) => {
+  //     // call api to BE
+  //     console.log(resp);
+  //   },
+  // });
 
   return (
     <Card
@@ -109,11 +109,11 @@ export default function PageCard(props) {
           <PoweroffOutlined
             onClick={(e) => {
               e.stopPropagation();
-              useDisconnect.mutate({
-                appId: 594535438672562,
-                pageId: pageData?.id,
-                accessToken: pageData?.accessToken,
-              });
+              // useDisconnect.mutate({
+              //   appId: 594535438672562,
+              //   pageId: pageData?.id,
+              //   accessToken: pageData?.accessToken,
+              // });
             }}
           />
         </ToolTipWrapper>,

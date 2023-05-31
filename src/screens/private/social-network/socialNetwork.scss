@@ -677,10 +677,14 @@
   }
 
   .chart-container {
+
     .pie-container {
       justify-content: space-evenly;
+      margin-top: var(--padding-layout);
 
       .pie-summary {
+        text-align: center;
+
         canvas {
           width: 50rem !important;
         }

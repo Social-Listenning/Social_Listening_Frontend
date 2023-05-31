@@ -85,14 +85,14 @@ export default function SettingPage() {
               record?.key === 'DIALOGFLOW_KEY'
             ) {
               updateDialogflowConfig(
-                document.getElementById(record?.id)?.value
+                document.getElementById(record?.id)?.value?.trim()
               );
             }
 
             useUpdateSetting.mutate({
               key: record?.key,
               group: record?.group,
-              value: document.getElementById(record?.id)?.value,
+              value: document.getElementById(record?.id)?.value?.trim(),
             });
           }
         }

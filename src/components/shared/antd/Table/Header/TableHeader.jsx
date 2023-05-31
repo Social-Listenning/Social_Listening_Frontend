@@ -169,11 +169,11 @@ export default function TableHeader(props) {
     }
   }
 
-  function formatFilter(filter) {
+  function formatFilter(currentFilter) {
     if (
       !Checker.isNullOrEmpty(value) ||
-      filter === 'Is Empty' ||
-      filter === 'Is Not Empty'
+      currentFilter === 'Is Empty' ||
+      currentFilter === 'Is Not Empty'
     ) {
       updateFilter((old) => {
         let index = old.findIndex((x) => x?.props === propsName);
