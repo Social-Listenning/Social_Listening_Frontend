@@ -78,7 +78,7 @@ export default function AddEditIntent(props) {
     },
   ];
 
-  const downloadUrl = useRef(null);
+  const [downloadUrl, setDownloadUrl] = useState(null);
   function generateExcelFile(data) {
     // write data to excel
     const workbook = utils.book_new(); // create workbook
@@ -98,9 +98,7 @@ export default function AddEditIntent(props) {
     });
 
     // Create url
-    downloadUrl.current = window.URL.createObjectURL(
-      new Blob([file])
-    );
+    setDownloadUrl(window.URL.createObjectURL(new Blob([file])));
   }
 
   function getDataFromFile(_, excelHeader, excelData) {
@@ -311,7 +309,7 @@ export default function AddEditIntent(props) {
           </ToolTipWrapper>
         </UploadFile>
 
-        <a href={downloadUrl.current} download="intent-example.xlsx">
+        <a href={downloadUrl} download="intent-example.xlsx">
           <Button>Download Example File</Button>
         </a>
       </div>

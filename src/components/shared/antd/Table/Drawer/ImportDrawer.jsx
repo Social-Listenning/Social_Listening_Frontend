@@ -15,16 +15,11 @@ import Hint from '../../../element/Hint';
 import ImportButton from '../../../element/Button/ImportButton';
 
 export default function ImportDrawer(props) {
-  const {
-    open,
-    close,
-    apiImport,
-    importColumns,
-    dumpImportData,
-  } = props;
+  const { open, close, apiImport, importColumns, dumpImportData } =
+    props;
 
   // #region generate example excel file
-  const downloadUrl = useRef(null);
+  const [downloadUrl, setDownloadUrl] = useState(null);
   function generateExcelFile(data) {
     // write data to excel
     const workbook = utils.book_new(); // create workbook
@@ -46,9 +41,7 @@ export default function ImportDrawer(props) {
     });
 
     // Create url
-    downloadUrl.current = window.URL.createObjectURL(
-      new Blob([file])
-    );
+    setDownloadUrl(window.URL.createObjectURL(new Blob([file])));
   }
   useEffectOnce(() => {
     generateExcelFile(dumpImportData);
@@ -195,10 +188,7 @@ export default function ImportDrawer(props) {
                   </span>
                   <span>
                     You can download example Excel file{' '}
-                    <a
-                      href={downloadUrl.current}
-                      download="example.xlsx"
-                    >
+                    <a href={downloadUrl} download="example.xlsx">
                       here
                     </a>
                     .
