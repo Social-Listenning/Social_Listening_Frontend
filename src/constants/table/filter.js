@@ -16,13 +16,7 @@ const dateTimeType = [
   'Between'
 ];
 
-const defaultWithoutEmpty = ['Contains', 'Does Not Contains'];
-
-const defaultType = [
-  ...defaultWithoutEmpty,
-  'Is Empty',
-  'Is Not Empty',
-];
+const defaultType = ['Contains', 'Does Not Contains'];
 
 const equalType = ['Is Equal To', 'Is Not Equal To'];
 
@@ -30,7 +24,6 @@ export const FilterType = {
   Number: numberType,
   DateTime: dateTimeType,
   Default: defaultType,
-  DefaultWithoutEmpty: defaultWithoutEmpty,
-  Dropdown: defaultWithoutEmpty,
+  Dropdown: equalType,
   Boolean: equalType,
 };

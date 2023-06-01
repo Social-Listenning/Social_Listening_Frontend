@@ -56,17 +56,11 @@ export default function SettingPage() {
       title: 'Key',
       dataIndex: 'key',
       sort: false,
-      filter: {
-        filterType: 'DefaultWithoutEmpty',
-      },
     },
     {
       title: 'Group',
       dataIndex: 'group',
       sort: false,
-      filter: {
-        filterType: 'DefaultWithoutEmpty',
-      },
     },
     {
       title: 'Value',
@@ -92,7 +86,9 @@ export default function SettingPage() {
             useUpdateSetting.mutate({
               key: record?.key,
               group: record?.group,
-              value: document.getElementById(record?.id)?.value?.trim(),
+              value: document
+                .getElementById(record?.id)
+                ?.value?.trim(),
             });
           }
         }

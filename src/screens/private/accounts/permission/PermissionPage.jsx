@@ -51,7 +51,7 @@ export default function PermissionManangement(props) {
   const permission = {
     table: 'table-permission',
     new: 'assign-permission',
-    delete: 'remove-list-permissions',
+    deleteMultiple: 'remove-list-permissions',
   };
 
   const useRemovePermission = useMutation(removePermission, {

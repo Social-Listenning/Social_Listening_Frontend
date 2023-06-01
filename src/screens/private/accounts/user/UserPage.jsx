@@ -165,10 +165,12 @@ export default function UserManagement(props) {
     {
       title: 'Full Name',
       dataIndex: 'fullName',
+      required: true,
     },
     {
       title: 'User Name',
       dataIndex: 'userName',
+      required: true,
     },
     {
       title: 'Phone',
@@ -180,22 +182,32 @@ export default function UserManagement(props) {
     {
       email: 'user1@gmail.com',
       password: 'secret-password',
+      fullName: 'user1',
+      userName: 'user1'
     },
     {
       email: 'user2@gmail.com',
       password: 'secret-password',
+      fullName: 'user2',
+      userName: 'user2'
     },
     {
       email: 'user3@gmail.com',
       password: 'secret-password',
+      fullName: 'user3',
+      userName: 'user3'
     },
     {
       email: 'user4@gmail.com',
       password: 'secret-password',
+      fullName: 'user4',
+      userName: 'user4'
     },
     {
       email: 'user5@gmail.com',
       password: 'secret-password',
+      fullName: 'user5',
+      userName: 'user5'
     },
   ];
 

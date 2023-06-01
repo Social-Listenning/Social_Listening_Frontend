@@ -66,7 +66,7 @@ export default function TableToolbar(props) {
         </ElementWithPermission>
 
         {showDelete && (
-          <ElementWithPermission permission={permission.delete}>
+          <ElementWithPermission permission={permission.deleteMultiple}>
             <DeleteButton
               onClick={() => {
                 deleteMultiple();
