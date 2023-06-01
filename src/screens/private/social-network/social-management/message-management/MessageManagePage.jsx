@@ -5,7 +5,6 @@ import {
 } from '../../socialNetworkService';
 import { useSocket } from '../../../../../components/contexts/socket/SocketProvider';
 import useUpdateEffect from '../../../../../components/hooks/useUpdateEffect';
-import useEffectOnce from '../../../../../components/hooks/useEffectOnce';
 import DateTimeFormat from '../../../../../components/shared/element/DateTimeFormat';
 import AdminTable from '../../../../../components/shared/antd/Table/Table';
 import MessageTypeContainer from './message-type/MessageTypeContainer';
@@ -57,6 +56,11 @@ export default function MessageManagePage(props) {
     getDetail.current = true;
     setMsgSelected(messageData);
   }, [messageData]);
+
+  let showMessageDetail = true;
+  if (!showTable && !showHint) {
+    showMessageDetail = !isCommentFetching && !isMessageFetching;
+  }
 
   const messageDetailList =
     type === 'Comment'
@@ -197,7 +201,7 @@ export default function MessageManagePage(props) {
                   : isMessageFetching
               }
             >
-              {type && (
+              {type && showMessageDetail && (
                 <MessageTypeContainer
                   pageId={pageId}
                   messageSelected={msgSelected}

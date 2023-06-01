@@ -209,6 +209,7 @@ export default function PrivateLayout(props) {
   const hotQueueIframe = useRef(null);
   const notifyAgentPayload = useRef(null);
   const [hotQueue, setHotQueue] = useState(false);
+  const [realoadHotqueue, setRealoadHotqueue] = useState(false);
   const [startHotQueue, setStartHotQueue] = useState(null);
   const [stopHotQueue, setStopHotQueue] = useState(null);
 
@@ -284,7 +285,7 @@ export default function PrivateLayout(props) {
       socket.on('commentCome', (payload) => {
         if (payload) {
           hotQueueIframe.current?.contentWindow?.postMessage(
-            { commentCome: payload },
+            { messageCome: payload },
             '*'
           );
         }
@@ -517,17 +518,22 @@ export default function PrivateLayout(props) {
       {hotQueue && (
         <div className="hotqueue-iframe-container">
           <div className="hotqueue-toolbar">
-            <ToolTipWrapper tooltip="Full screen mode">
+            {/* <ToolTipWrapper tooltip="Full screen mode">
               <IconButton
                 icon={<FullscreenOutlined />}
                 onClick={() => {
                   window.open(`/hotqueue`, '_blank');
                 }}
               />
-            </ToolTipWrapper>
+            </ToolTipWrapper> */}
 
             <ToolTipWrapper tooltip="Reload the hotqueue">
-              <IconButton icon={<ReloadOutlined />} />
+              <IconButton
+                icon={<ReloadOutlined />}
+                onClick={() => {
+                  setRealoadHotqueue((prev) => !prev);
+                }}
+              />
             </ToolTipWrapper>
 
             <ToolTipWrapper tooltip="Close hotqueue popup">
@@ -543,6 +549,7 @@ export default function PrivateLayout(props) {
             className="hotqueue-iframe full-width"
             src="/hotqueue"
             scrolling="no"
+            key={realoadHotqueue}
           />
         </div>
       )}

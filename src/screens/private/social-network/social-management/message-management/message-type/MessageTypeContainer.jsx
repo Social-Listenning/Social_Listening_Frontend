@@ -82,23 +82,22 @@ export default function MessageTypeContainer(props) {
   };
 
   useUpdateEffect(() => {
-    if (showRecommend && messageContainer.current) {
-      messageContainer.current.scrollTop =
-        messageContainer.current.scrollHeight;
-    }
-  }, [showRecommend]);
-
-  useUpdateEffect(() => {
     if (type !== 'Message') {
       setMessageReplied(null);
       document.getElementById('respond-input')?.focus();
 
       if (messageDetail?.message?.length > 0) {
+        if (isHotQueue) {
+          startHotQueueInfo.current = true;
+        }
         getUserName(messageDetail.message);
         setMessageList(messageDetail.message);
       }
     } else {
       if (messageDetail?.length > 0) {
+        if (isHotQueue) {
+          startHotQueueInfo.current = true;
+        }
         getUserName(messageDetail);
         setMessageList(messageDetail);
       }

@@ -1,25 +1,22 @@
 import { useRef, useState } from 'react';
-import { Layout, Divider, Input } from 'antd';
-import { SendOutlined } from '@ant-design/icons';
+import { Layout, Divider } from 'antd';
 import { useGetHotqueueConversation } from './hotQueueService';
-import {
-  useGetConversationWithUserId,
-  useGetSocialGroups,
-} from '../social-network/socialNetworkService';
+import { useGetSocialGroups } from '../social-network/socialNetworkService';
+import { useSocket } from '../../../components/contexts/socket/SocketProvider';
 import useUpdateEffect from '../../../components/hooks/useUpdateEffect';
 import useEffectOnce from '../../../components/hooks/useEffectOnce';
 import SearchBar from '../../../components/shared/antd/AutoComplete/SearchBar';
 import BasicAvatar from '../../../components/shared/antd/BasicAvatar';
-import IconButton from '../../../components/shared/element/Button/IconButton';
 import Title from '../../../components/shared/element/Title';
-import MessageManagePage from '../social-network/social-management/message-management/MessageManagePage';
 import Hint from '../../../components/shared/element/Hint';
 import LoadingWrapper from '../../../components/shared/antd/LoadingWrapper';
+import MessageManagePage from '../social-network/social-management/message-management/MessageManagePage';
 import './emptyLayout.scss';
 import '../social-network/socialNetwork.scss';
 
-const { Header, Sider, Content } = Layout;
+const { Sider, Content } = Layout;
 export default function HotQueueMessage() {
+  const { socket } = useSocket();
   const messageContainer = useRef(null);
   const [socketData, setSocketData] = useState(null);
   const [userSupportedList, setUserSupportedList] = useState([]);
@@ -31,8 +28,11 @@ export default function HotQueueMessage() {
   canGetSocialGroups.current = false;
 
   const getConversation = useRef(true);
-  const { data: conversationList, isFetching: conversationFetching } =
-    useGetHotqueueConversation(getConversation.current);
+  const {
+    data: conversationList,
+    isFetching: conversationFetching,
+    refetch: refetchConversationList,
+  } = useGetHotqueueConversation(getConversation.current);
   getConversation.current = false;
 
   const stopSupporting = useRef(false);
@@ -45,21 +45,17 @@ export default function HotQueueMessage() {
           ),
           `Agent#${payload.data.messageSupport}`,
         ]);
-      } else if (
-        payload.data.commentCome ||
-        payload.data.messageCome
-      ) {
+      } else if (payload.data.messageCome) {
         if (
           conversationList?.find(
             (item) =>
               item?.sender?.senderId ===
-                payload.data.commentCome.senderId ||
-              item?.tabId === payload.data.commentCome.tabId ||
-              item?.type === payload.data.commentCome.type
+                payload.data.messageCome?.senderId ||
+              item?.tabId === payload.data.messageCome?.tabId ||
+              item?.type === payload.data.messageCome?.type
           )
         ) {
-          getConversation.current = true;
-          setSocketData({ ...socketData });
+          refetchConversationList();
         }
       } else if (payload.data.stopSupporting) {
         stopSupporting.current = true;
@@ -129,6 +125,12 @@ export default function HotQueueMessage() {
     }
   }
 
+  useUpdateEffect(() => {
+    if (socket) {
+      
+    }
+  }, [socket]);
+  console.log(socket)
   return (
     <Layout className="hotqueue-layout">
       <Sider width={400}>
@@ -201,10 +203,10 @@ export default function HotQueueMessage() {
       </Sider>
       <Layout className="full-height-screen">
         <Content className="social-tab hotqueue-content">
-          {socketData?.reason && (
+          {(socketData?.reason || socketData?.notifyAgentMessage) && (
             <Hint message={hotQueueMessage} type="info" />
           )}
-          {socketData?.messageType && (
+          {socketData?.messageType && !conversationFetching && (
             <MessageManagePage
               pageId={socketData?.tabId}
               socialPage={socketData?.socialPage}
