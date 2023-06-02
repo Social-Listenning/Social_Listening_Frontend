@@ -68,7 +68,7 @@ export default function BotFlowMenu(props) {
         setBotSelected(Object.keys(selectedNode.data.dialogFlow)[0]);
       }
 
-      if (selectedNode?.data?.notifyAgent) {
+      if (!selectedNode?.data?.notifyAgent) {
         selectedNode?.data?.syncData(selectedNode?.id, {
           notifyAgent: true,
         });
