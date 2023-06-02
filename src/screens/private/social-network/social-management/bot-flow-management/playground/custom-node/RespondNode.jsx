@@ -3,9 +3,21 @@ import {
   MessageOutlined,
   CloseCircleOutlined,
 } from '@ant-design/icons';
+import useEffectOnce from '../../../../../../../components/hooks/useEffectOnce';
 
 export default function RespondNode(props) {
   const { id, data } = props;
+
+  useEffectOnce(() => {
+    if (
+      data?.notifyAgent === null ||
+      data?.notifyAgent === undefined
+    ) {
+      data?.syncData(id, {
+        notifyAgent: true,
+      });
+    }
+  });
 
   return (
     <div

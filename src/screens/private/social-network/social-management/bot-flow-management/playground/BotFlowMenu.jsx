@@ -67,15 +67,6 @@ export default function BotFlowMenu(props) {
         fetchBotDialogflow.current = true;
         setBotSelected(Object.keys(selectedNode.data.dialogFlow)[0]);
       }
-
-      if (
-        selectedNode?.data?.notifyAgent === null ||
-        selectedNode?.data?.notifyAgent === undefined
-      ) {
-        selectedNode?.data?.syncData(selectedNode?.id, {
-          notifyAgent: true,
-        });
-      }
     }
   }, [selectedNode]);
 
