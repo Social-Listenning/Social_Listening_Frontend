@@ -14,6 +14,7 @@ import { getUserNameById } from '../../../../accounts/accountService';
 import { notifyService } from '../../../../../../services/notifyService';
 import useToggle from '../../../../../../components/hooks/useToggle';
 import useUpdateEffect from '../../../../../../components/hooks/useUpdateEffect';
+import useEffectOnce from '../../../../../../components/hooks/useEffectOnce';
 import BasicAvatar from '../../../../../../components/shared/antd/BasicAvatar';
 import ClassicDropdown from '../../../../../../components/shared/antd/Dropdown/Classic';
 import IconButton from '../../../../../../components/shared/element/Button/IconButton';
@@ -103,6 +104,13 @@ export default function MessageTypeContainer(props) {
       }
     }
   }, [messageDetail]);
+
+  useEffectOnce(() => {
+    if (isHotQueue && messageContainer.current) {
+      messageContainer.current.scrollTop =
+        messageContainer.current.scrollHeight;
+    }
+  });
 
   useUpdateEffect(() => {
     if (messageContainer.current) {
@@ -260,9 +268,10 @@ export default function MessageTypeContainer(props) {
   const startHotQueueInfo = useRef(true);
   const { data: hotQueueInfo } = useGetHotqueueInfo(
     {
-      tabid: pageId,
+      tabId: pageId,
       senderId: messageList?.find((item) => item?.type === 'Comment')
         ?.sender?.id,
+      messageType: type,
     },
     isHotQueue && startHotQueueInfo.current && messageList?.length > 0
   );
