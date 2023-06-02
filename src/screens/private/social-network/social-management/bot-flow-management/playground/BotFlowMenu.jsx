@@ -137,7 +137,7 @@ export default function BotFlowMenu(props) {
         },
       });
     }
-    setRespond(null);
+    // setRespond(null);
   };
   useUpdateEffect(() => {
     const resp = selectedNode.data.dialogFlow?.[botSelected]?.filter(

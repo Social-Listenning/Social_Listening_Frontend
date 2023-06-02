@@ -150,7 +150,7 @@ export default function AddEditBotFlow(props) {
                 value: 'Comment',
               },
               {
-                label: 'Message',
+                label: 'Chat',
                 value: 'Message',
               },
             ]}

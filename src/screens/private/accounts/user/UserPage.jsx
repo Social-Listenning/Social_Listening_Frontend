@@ -209,6 +209,36 @@ export default function UserManagement(props) {
       fullName: 'user5',
       userName: 'user5'
     },
+    {
+      email: 'user6@gmail.com',
+      password: 'secret-password',
+      fullName: 'user6',
+      userName: 'user6'
+    },
+    {
+      email: 'user7@gmail.com',
+      password: 'secret-password',
+      fullName: 'user7',
+      userName: 'user7'
+    },
+    {
+      email: 'user8@gmail.com',
+      password: 'secret-password',
+      fullName: 'user8',
+      userName: 'user8'
+    },
+    {
+      email: 'user9@gmail.com',
+      password: 'secret-password',
+      fullName: 'user9',
+      userName: 'user9'
+    },
+    {
+      email: 'user10@gmail.com',
+      password: 'secret-password',
+      fullName: 'user10',
+      userName: 'user10'
+    },
   ];
 
   const customToolbar = (

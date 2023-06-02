@@ -64,10 +64,13 @@ export default function TableBotFlow({ pageId, getCurrentFlow }) {
             value: 'Comment',
           },
           {
-            label: 'Message',
+            label: 'Chat',
             value: 'Message',
           },
         ],
+      },
+      render: (record) => {
+        return <>{record === 'Message' ? 'Chat' : record}</>;
       },
       onCell: () => ({
         className: 'text-center',

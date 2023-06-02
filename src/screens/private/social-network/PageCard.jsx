@@ -1,20 +1,23 @@
+import { useState } from 'react';
 import {
   PoweroffOutlined,
-  SettingOutlined,
-  LoginOutlined,
-  PlayCircleOutlined,
-  RobotOutlined,
   CommentOutlined,
-  FormOutlined
+  FormOutlined,
 } from '@ant-design/icons';
-import { Card } from 'antd';
+import { Card, Modal } from 'antd';
 import { useMutation } from 'react-query';
 import { customHistory } from '../../../routes/CustomRouter';
-import { disconnectFacebook } from './socialNetworkService';
+import {
+  disconnectFacebook,
+  removeSocialPage,
+  useGetSocialGroups,
+} from './socialNetworkService';
+import { notifyService } from '../../../services/notifyService';
 import emptyImage from '../../../assets/images/image_not_available.png';
 import BasicAvatar from '../../../components/shared/antd/BasicAvatar';
 import ToolTipWrapper from '../../../components/shared/antd/ToolTipWrapper';
 import ElementWithPermission from '../../../components/shared/element/ElementWithPermission';
+import Hint from '../../../components/shared/element/Hint';
 
 const { Meta } = Card;
 
@@ -39,113 +42,142 @@ export default function PageCard(props) {
   //   }
   // }
 
-  // const useDisconnect = useMutation(disconnectFacebook, {
-  //   onSuccess: (resp) => {
-  //     // call api to BE
-  //     console.log(resp);
-  //   },
-  // });
+  const { refetch } = useGetSocialGroups(false);
+  const [openConfirmRemove, setOpenConfirmRemove] = useState(false);
+  const useRemovePage = useMutation(removeSocialPage, {
+    onSuccess: (resp) => {
+      if (resp) {
+        setOpenConfirmRemove(false);
+        refetch();
+        notifyService.showSucsessMessage({
+          description: 'Disconnect page successfully',
+        });
+      }
+    },
+  });
+
+  const useDisconnect = useMutation(disconnectFacebook, {
+    onSuccess: (resp) => {
+      if (resp) {
+        useRemovePage.mutate(socialNetworkData.id);
+      }
+    },
+  });
 
   return (
-    <Card
-      onClick={() => {
-        customHistory.push(
-          `/social-network/${socialNetworkData?.name}`,
-          forwardData
-        );
-      }}
-      className="page-card"
-      cover={
-        <>
-          {pageData?.wallpaperUrl ? (
-            <img
-              className="wall-container"
-              alt="wallpaper"
-              src={pageData?.wallpaperUrl}
-              onError={(e) => {
-                e.currentTarget.src = emptyImage;
-                e.currentTarget.className += ' empty-wall';
+    <>
+      <Card
+        onClick={() => {
+          customHistory.push(
+            `/social-network/${socialNetworkData?.name}`,
+            forwardData
+          );
+        }}
+        className="page-card"
+        cover={
+          <>
+            {pageData?.wallpaperUrl ? (
+              <img
+                className="wall-container"
+                alt="wallpaper"
+                src={pageData?.wallpaperUrl}
+                onError={(e) => {
+                  e.currentTarget.src = emptyImage;
+                  e.currentTarget.className += ' empty-wall';
+                }}
+              />
+            ) : (
+              <img
+                className="wall-container empty-wall"
+                alt="wallpaper"
+                src={emptyImage}
+              />
+            )}
+          </>
+        }
+        actions={[
+          <ToolTipWrapper tooltip="Comments">
+            <CommentOutlined
+              onClick={(e) => {
+                e.stopPropagation();
+                customHistory.push(
+                  `/social-network/${socialNetworkData?.name}`,
+                  {
+                    ...forwardData,
+                    tab: 2,
+                  }
+                );
               }}
             />
-          ) : (
-            <img
-              className="wall-container empty-wall"
-              alt="wallpaper"
-              src={emptyImage}
+          </ToolTipWrapper>,
+          <ToolTipWrapper tooltip="Chats">
+            <FormOutlined
+              onClick={(e) => {
+                e.stopPropagation();
+                customHistory.push(
+                  `/social-network/${socialNetworkData?.name}`,
+                  {
+                    ...forwardData,
+                    tab: 3,
+                  }
+                );
+              }}
             />
-          )}
-        </>
-      }
-      actions={[
-        <ToolTipWrapper tooltip="Comments">
-          <CommentOutlined
-            onClick={(e) => {
-              e.stopPropagation();
-              customHistory.push(
-                `/social-network/${socialNetworkData?.name}`,
-                {
-                  ...forwardData,
-                  tab: 2,
-                }
-              );
-            }}
+          </ToolTipWrapper>,
+          <ElementWithPermission permission="delete-social-tab">
+            <ToolTipWrapper tooltip="Disconnect this page">
+              <PoweroffOutlined
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpenConfirmRemove(true);
+                }}
+              />
+            </ToolTipWrapper>
+          </ElementWithPermission>,
+        ]}
+      >
+        <Meta
+          avatar={
+            <BasicAvatar
+              size={44}
+              src={pageData?.pictureUrl}
+              name={pageData?.name}
+            />
+          }
+          title={pageData?.name}
+          description={`Social type: ${type}`}
+        />
+      </Card>
+
+      {openConfirmRemove && (
+        <Modal
+          destroyOnClose
+          centered
+          open={openConfirmRemove}
+          title={
+            <b style={{ fontSize: '2rem' }}>
+              Are you sure you want to disconnect{' '}
+              {socialNetworkData?.name}?
+            </b>
+          }
+          maskClosable={false}
+          onCancel={() => {
+            setOpenConfirmRemove(false);
+          }}
+          onOk={() => {
+            useDisconnect.mutate({
+              appId: 594535438672562,
+              pageId: pageData?.id,
+              accessToken: pageData?.accessToken,
+            });
+          }}
+        >
+          <Hint
+            message={`All your datas from the page ${socialNetworkData?.name} will be deleted and can't be recovered`}
+            type="info"
           />
-        </ToolTipWrapper>,
-        <ToolTipWrapper tooltip="Chats">
-          <FormOutlined
-            onClick={(e) => {
-              e.stopPropagation();
-              customHistory.push(
-                `/social-network/${socialNetworkData?.name}`,
-                {
-                  ...forwardData,
-                  tab: 3,
-                }
-              );
-            }}
-          />
-        </ToolTipWrapper>,
-        <ToolTipWrapper tooltip="Disconnect this page">
-          <PoweroffOutlined
-            onClick={(e) => {
-              e.stopPropagation();
-              // useDisconnect.mutate({
-              //   appId: 594535438672562,
-              //   pageId: pageData?.id,
-              //   accessToken: pageData?.accessToken,
-              // });
-            }}
-          />
-        </ToolTipWrapper>,
-        // <ElementWithPermission permission="get-social-setting">
-        //   <ToolTipWrapper tooltip="Setting this page">
-        //     <SettingOutlined
-        //       onClick={(e) => {
-        //         e.stopPropagation();
-        //         customHistory.push(
-        //           `/social-network/${socialNetworkData?.name}`,
-        //           {
-        //             ...forwardData,
-        //             tab: 9,
-        //           }
-        //         );
-        //       }}
-        //     />
-        //   </ToolTipWrapper>
-        // </ElementWithPermission>,
-      ]}
-    >
-      <Meta
-        avatar={
-          <BasicAvatar
-            size={44}
-            src={pageData?.pictureUrl}
-            name={pageData?.name}
-          />
-        }
-        title={pageData?.name}
-        description={`Social type: ${type}`}
-      />
-    </Card>
+        </Modal>
+      )}
+    </>
   );
 }

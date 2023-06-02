@@ -306,7 +306,7 @@ export const getStatisticForTab = async (data) => {
   );
   return {
     result: resp?.result,
-    dateList: data.body
+    dateList: data.body,
   };
 };
 
@@ -317,6 +317,13 @@ export const getHotqueueStatistic = async (data) => {
   );
   return {
     result: resp?.result,
-    dateList: data.body
+    dateList: data.body,
   };
+};
+
+export const removeSocialPage = async (data) => {
+  const resp = await apiService.delete(
+    `${environment.socialTab}/${data}`
+  );
+  return resp?.result;
 };

@@ -130,7 +130,7 @@ export default function HotQueueMessage() {
       
     }
   }, [socket]);
-  console.log(socket)
+
   return (
     <Layout className="hotqueue-layout">
       <Sider width={400}>
