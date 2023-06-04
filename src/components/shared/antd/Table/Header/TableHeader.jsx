@@ -212,7 +212,7 @@ export default function TableHeader(props) {
         );
 
         if (
-          availableFilter?.propsName ||
+          availableFilter?.props ||
           availableFilter?.filterOperator === 'Is Empty' ||
           availableFilter?.filterOperator === 'Is Not Empty'
         ) {

@@ -151,14 +151,14 @@ export default function SummaryManagePage({ pageId, socialPage }) {
             <PieChart
               pieData={[
                 {
-                  type: 'In Hotqueue',
-                  value: hotqueueData?.hotQueueComment,
-                },
-                {
                   type: 'Not in hotqueue',
                   value:
                     hotqueueData?.totalComment -
                     hotqueueData?.hotQueueComment,
+                },
+                {
+                  type: 'In Hotqueue',
+                  value: hotqueueData?.hotQueueComment,
                 },
               ]}
               height={300}
@@ -169,14 +169,14 @@ export default function SummaryManagePage({ pageId, socialPage }) {
             <PieChart
               pieData={[
                 {
-                  type: 'In Hotqueue',
-                  value: hotqueueData?.hotQueueMessage,
-                },
-                {
                   type: 'Not in hotqueue',
                   value:
                     hotqueueData?.totalMessage -
                     hotqueueData?.hotQueueMessage,
+                },
+                {
+                  type: 'In Hotqueue',
+                  value: hotqueueData?.hotQueueMessage,
                 },
               ]}
               height={300}

@@ -43,6 +43,7 @@ export default function AdminTable(props) {
     deleteMultipleRow,
     showToolbar = true,
     showTableUtils = true,
+    filterFE = false,
     ...other
   } = props;
 
@@ -99,7 +100,7 @@ export default function AdminTable(props) {
     }
   });
 
-  function formatData(data) {
+  async function formatData(data) {
     for (let prop of originPropsNested) {
       data?.map((x) => {
         let dataNested = prop
@@ -109,7 +110,74 @@ export default function AdminTable(props) {
         return x;
       });
     }
-    setDataSource(data);
+    await setDataSource(data);
+  }
+
+  async function filterData() {
+    await formatData();
+
+    let dumpData = tableData;
+    if (filterType?.length > 0) {
+      for (let item of filterType) {
+        if (item?.filterType === 'Default') {
+          if (item?.filterOperator === 'Contains') {
+            dumpData = dumpData?.filter((x) =>
+              x[item?.props]
+                ?.toLowerCase()
+                .includes(item?.value?.toLowerCase())
+            );
+          } else if (item?.filterOperator === 'Does Not Contains') {
+            dumpData = dumpData?.filter(
+              (x) =>
+                !x[item?.props]
+                  ?.toLowerCase()
+                  .includes(item?.value?.toLowerCase())
+            );
+          }
+        } else if (
+          item?.filterType === 'Dropdown' ||
+          item?.filterType === 'Boolean'
+        ) {
+          if (item?.filterOperator === 'Is Equal To') {
+            dumpData = dumpData?.filter((x) =>
+              item?.value?.includes(x[item?.props])
+            );
+          } else if (item?.filterOperator === 'Is Not Equal To') {
+            dumpData = dumpData?.filter(
+              (x) => !item?.value?.includes(x[item?.props])
+            );
+          }
+        } else if (item?.filterType === 'DateTime') {
+          if (item?.filterOperator === 'Is Equal To') {
+            dumpData = dumpData?.filter(
+              (x) => x[item?.props] === x[item?.props]
+            );
+          } else if (
+            item?.filterOperator === 'Is Before Or Equal To'
+          ) {
+            dumpData = dumpData?.filter(
+              (x) => x[item?.props] !== x[item?.props]
+            );
+          } else if (item?.filterOperator === 'Is Before') {
+            dumpData = dumpData?.filter(
+              (x) => x[item?.props] !== x[item?.props]
+            );
+          } else if (
+            item?.filterOperator === 'Is After Or Equal To'
+          ) {
+            dumpData = dumpData?.filter(
+              (x) => x[item?.props] !== x[item?.props]
+            );
+          } else if (item?.filterOperator === 'Is After') {
+            dumpData = dumpData?.filter(
+              (x) => x[item?.props] !== x[item?.props]
+            );
+          } else if (item?.filterOperator === 'Between') {
+          }
+        }
+      }
+    }
+    setDataSource(dumpData);
   }
 
   // make sure when the tableData change table auto update
@@ -170,6 +238,10 @@ export default function AdminTable(props) {
         console.log(ex);
       }
       toggleLoading(false);
+    }
+
+    if (filterFE) {
+      filterData();
     }
   }
   // #endregion

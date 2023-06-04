@@ -17,6 +17,7 @@ import useUpdateEffect from '../../../../../../components/hooks/useUpdateEffect'
 import useEffectOnce from '../../../../../../components/hooks/useEffectOnce';
 import BasicAvatar from '../../../../../../components/shared/antd/BasicAvatar';
 import ClassicDropdown from '../../../../../../components/shared/antd/Dropdown/Classic';
+import LoadingWrapper from '../../../../../../components/shared/antd/LoadingWrapper';
 import IconButton from '../../../../../../components/shared/element/Button/IconButton';
 import IconMoreButton from '../../../../../../components/shared/element/Button/IconMoreButton';
 import StartSupportingButton from '../../../../../../components/shared/element/Button/StartSupportingButton';
@@ -33,6 +34,7 @@ export default function MessageTypeContainer(props) {
     type,
     socialPage,
     isHotQueue,
+    userSupportedList = [],
   } = props;
 
   const messageContainer = useRef(null);
@@ -107,8 +109,14 @@ export default function MessageTypeContainer(props) {
 
   useEffectOnce(() => {
     if (isHotQueue && messageContainer.current) {
-      messageContainer.current.scrollTop =
-        messageContainer.current.scrollHeight;
+      const timeout = setTimeout(() => {
+        messageContainer.current.scrollTop =
+          messageContainer.current.scrollHeight;
+      }, 50);
+
+      return () => {
+        clearTimeout(timeout);
+      };
     }
   });
 
@@ -265,22 +273,41 @@ export default function MessageTypeContainer(props) {
     }
   };
 
+  const [isStartHotqueue, setIsStartHotqueue] = useState(false);
   const startHotQueueInfo = useRef(true);
-  const { data: hotQueueInfo } = useGetHotqueueInfo(
-    {
-      tabId: pageId,
-      senderId: messageList?.find((item) => item?.type === 'Comment')
-        ?.sender?.id,
-      messageType: type,
-    },
-    isHotQueue && startHotQueueInfo.current && messageList?.length > 0
-  );
+  const { data: hotQueueInfo, isFetching: hotqueueInfoFetching } =
+    useGetHotqueueInfo(
+      {
+        tabId: pageId,
+        senderId: messageList?.find(
+          (item) => item?.type === 'Comment'
+        )?.sender?.id,
+        messageType: type,
+      },
+      isHotQueue &&
+        startHotQueueInfo.current &&
+        messageList?.length > 0
+    );
   if (messageList?.length > 0) {
     startHotQueueInfo.current = false;
   }
 
+  let hotQueueData = null;
+  if (isHotQueue) {
+    hotQueueData = {
+      type: 'stopSupporting',
+      tabId: pageId,
+      userId: data?.id,
+      senderId: messageList?.find((item) => item?.type === 'Comment')
+        ?.sender?.id,
+    };
+  }
+
   return (
-    <>
+    <LoadingWrapper
+      className="message-type-loader"
+      loading={hotqueueInfoFetching}
+    >
       {type === 'Comment' ? (
         <PostHeader
           pageData={socialPage}
@@ -288,14 +315,7 @@ export default function MessageTypeContainer(props) {
           showStop={
             isHotQueue && hotQueueInfo?.type === 'isSupporting'
           }
-          hotQueueData={{
-            type: 'stopSupporting',
-            tabId: pageId,
-            userId: data?.id,
-            senderId: messageList?.find(
-              (item) => item?.type === 'Comment'
-            )?.sender?.id,
-          }}
+          hotQueueData={hotQueueData}
         />
       ) : (
         <ChatHeader
@@ -303,14 +323,7 @@ export default function MessageTypeContainer(props) {
           showStop={
             isHotQueue && hotQueueInfo?.type === 'isSupporting'
           }
-          hotQueueData={{
-            type: 'stopSupporting',
-            tabId: pageId,
-            userId: data?.id,
-            senderId: messageList?.find(
-              (item) => item?.type === 'Comment'
-            )?.sender?.id,
-          }}
+          hotQueueData={hotQueueData}
         />
       )}
 
@@ -463,20 +476,16 @@ export default function MessageTypeContainer(props) {
         {isHotQueue && hotQueueInfo?.type !== 'isSupporting' && (
           <StartSupportingButton
             onClick={() => {
-              startHotQueueInfo.current = true;
+              setIsStartHotqueue(true);
               window.parent.postMessage(
                 {
+                  ...hotQueueData,
                   type: 'isSupporting',
-                  tabId: pageId,
-                  userId: data?.id,
-                  senderId: messageList?.find(
-                    (item) => item?.type === 'Comment'
-                  )?.sender?.id,
-                  messageType: type,
                 },
                 '*'
               );
             }}
+            loading={isStartHotqueue}
           />
         )}
         {(!isHotQueue ||
@@ -528,6 +537,6 @@ export default function MessageTypeContainer(props) {
           </div>
         )}
       </div>
-    </>
+    </LoadingWrapper>
   );
 }

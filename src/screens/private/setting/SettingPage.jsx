@@ -135,6 +135,7 @@ export default function SettingPage() {
       permission={permission}
       isLoading={isFetching}
       disableSelect
+      filterFE
     />
   );
 }

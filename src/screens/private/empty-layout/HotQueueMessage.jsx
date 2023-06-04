@@ -62,6 +62,9 @@ export default function HotQueueMessage() {
         getConversation.current = true;
         setSocketData(null);
       } else {
+        if (!conversationList?.length && !conversationFetching) {
+          getConversation.current = true;
+        }
         setSocketData(payload.data);
       }
     }
@@ -69,10 +72,14 @@ export default function HotQueueMessage() {
 
   useEffectOnce(() => {
     if (messageContainer.current) {
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         messageContainer.current.scrollTop =
           messageContainer.current.scrollHeight;
       }, 50);
+
+      return () => {
+        clearTimeout(timeout);
+      };
     }
   });
 
@@ -85,6 +92,8 @@ export default function HotQueueMessage() {
           },
           '*'
         );
+
+        stopSupporting.current = false;
       }
 
       window.parent.postMessage(
@@ -127,7 +136,6 @@ export default function HotQueueMessage() {
 
   useUpdateEffect(() => {
     if (socket) {
-      
     }
   }, [socket]);
 
@@ -135,7 +143,7 @@ export default function HotQueueMessage() {
     <Layout className="hotqueue-layout">
       <Sider width={400}>
         <Title>Hotqueue Message</Title>
-        <SearchBar className="search-user" />
+        {/* <SearchBar className="search-user" /> */}
         <Divider />
         <ul className="hotqueue-list">
           <LoadingWrapper loading={conversationFetching}>

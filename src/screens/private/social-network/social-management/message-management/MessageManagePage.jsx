@@ -22,7 +22,7 @@ export default function MessageManagePage(props) {
     showTable = true,
     showHint = true,
     messageData,
-    getMessageDetail = false,
+    getMessageDetail = false
   } = props;
   const { socket } = useSocket();
 
