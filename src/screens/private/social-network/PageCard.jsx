@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import {
   PoweroffOutlined,
   CommentOutlined,
@@ -9,8 +9,7 @@ import { useMutation } from 'react-query';
 import { customHistory } from '../../../routes/CustomRouter';
 import {
   disconnectFacebook,
-  removeSocialPage,
-  useGetSocialGroups,
+  removeSocialPage
 } from './socialNetworkService';
 import { notifyService } from '../../../services/notifyService';
 import emptyImage from '../../../assets/images/image_not_available.png';
@@ -22,7 +21,7 @@ import Hint from '../../../components/shared/element/Hint';
 const { Meta } = Card;
 
 export default function PageCard(props) {
-  const { socialNetworkData, type } = props;
+  const { socialNetworkData, type, updateSocialGroups } = props;
 
   let pageData = null;
   if (socialNetworkData?.SocialNetwork?.extendData) {
@@ -36,16 +35,14 @@ export default function PageCard(props) {
     socialPage: pageData,
   };
 
-  const refetchSocialGroups = useRef(false);
-  const { isFetching: socialGroupFetching } = useGetSocialGroups(
-    refetchSocialGroups.current
-  );
   const [openConfirmRemove, setOpenConfirmRemove] = useState(false);
-
   const useRemovePage = useMutation(removeSocialPage, {
     onSuccess: (resp) => {
       if (resp) {
-        refetchSocialGroups.current = true;
+        if (updateSocialGroups) {
+          updateSocialGroups();
+        }
+
         setOpenConfirmRemove(false);
         notifyService.showSucsessMessage({
           description: 'Disconnect page successfully',
@@ -170,14 +167,12 @@ export default function PageCard(props) {
           okButtonProps={{
             loading:
               useDisconnect.isLoading ||
-              useRemovePage.isLoading ||
-              socialGroupFetching,
+              useRemovePage.isLoading,
           }}
           cancelButtonProps={{
             loading:
               useDisconnect.isLoading ||
-              useRemovePage.isLoading ||
-              socialGroupFetching,
+              useRemovePage.isLoading,
           }}
         >
           <Hint

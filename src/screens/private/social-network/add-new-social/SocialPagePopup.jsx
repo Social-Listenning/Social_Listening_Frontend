@@ -69,8 +69,9 @@ export default function SocialPagePopup(props) {
   const useConnectPageToSystem = useMutation(connectPageToSystem, {
     onSuccess: (resp) => {
       if (resp) {
-        getAllSocialConnected.current = true;
+        currentConnected.current = null;
         listConnected.current?.push(currentConnected.current?.id);
+        getAllSocialConnected.current = true;
         notifyService.showSucsessMessage({
           description: 'Connect successfully',
         });
@@ -112,7 +113,7 @@ export default function SocialPagePopup(props) {
             listConnected.current?.includes(item?.id) &&
             'This page is already connected'
           }
-          // placement="left"
+        // placement="left"
         >
           <Card className="social-page-container">
             <div className="flex-center social-page-wrapper">
@@ -135,12 +136,16 @@ export default function SocialPagePopup(props) {
                       accessToken: item?.accessToken,
                     });
                   }}
-                  loading={
-                    useSubscribeFbPage.isLoading ||
+                  loading={currentConnected.current?.id === item?.id &&
+                    (useSubscribeFbPage.isLoading ||
+                      useExtendFbToken.isLoading ||
+                      useConnectPageToSystem.isLoading ||
+                      socialGroupFetching)
+                  }
+                  disabled={currentConnected.current?.id !== item?.id && (useSubscribeFbPage.isLoading ||
                     useExtendFbToken.isLoading ||
                     useConnectPageToSystem.isLoading ||
-                    socialGroupFetching
-                  }
+                    socialGroupFetching)}
                 >
                   Connect
                 </Button>
