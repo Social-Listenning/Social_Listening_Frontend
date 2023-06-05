@@ -239,6 +239,12 @@ export default function FlowPlayground(props) {
       isAddNode.current = false;
       setSelectedNode(nodes[nodes.length - 1]);
     }
+
+    if (selectedNode) {
+      setSelectedNode(
+        nodes.filter((nds) => nds.id === selectedNode.id)[0]
+      );
+    }
   }, [nodes]);
 
   useUpdateEffect(() => {

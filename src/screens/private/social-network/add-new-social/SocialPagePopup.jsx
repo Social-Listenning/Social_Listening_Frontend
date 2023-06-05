@@ -134,6 +134,11 @@ export default function SocialPagePopup(props) {
                       accessToken: item?.accessToken,
                     });
                   }}
+                  loading={
+                    useSubscribeFbPage.isLoading ||
+                    useExtendFbToken.isLoading ||
+                    useConnectPageToSystem.isLoading
+                  }
                 >
                   Connect
                 </Button>

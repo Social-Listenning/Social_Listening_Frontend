@@ -66,6 +66,8 @@ export default function BotFlowMenu(props) {
       if (selectedNode?.data?.dialogFlow) {
         fetchBotDialogflow.current = true;
         setBotSelected(Object.keys(selectedNode.data.dialogFlow)[0]);
+      } else {
+        setBotSelected(null);
       }
     }
   }, [selectedNode]);

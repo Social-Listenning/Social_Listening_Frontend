@@ -61,22 +61,19 @@ export default function PrivateLayout(props) {
 
   useUpdateEffect(() => {
     if (socialGroups?.length > 0) {
+      let dumpMenu = menuSidebar;
       setAvailableMenu([
-        ...availableMenu?.map((item) => {
+        ...dumpMenu?.map((item) => {
           if (item.key === 'social-network') {
             item.children = [
               ...item.children,
-              ...socialGroups
-                ?.filter((sg) =>
-                  item.children.map((x) => x?.id !== sg?.id)
-                )
-                ?.map((sg) => {
-                  return {
-                    key: `social-network/${sg?.name}`,
-                    label: sg?.name,
-                    id: sg?.id,
-                  };
-                }),
+              ...socialGroups?.map((sg) => {
+                return {
+                  key: `social-network/${sg?.name}`,
+                  label: sg?.name,
+                  id: sg?.id,
+                };
+              }),
             ];
           }
           return item;
