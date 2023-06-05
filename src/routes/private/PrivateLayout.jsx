@@ -30,7 +30,8 @@ import BasicAvatar from '../../components/shared/antd/BasicAvatar';
 import PieChartResult from '../../components/shared/antd/Chart/PieChartResult';
 import IconButton from '../../components/shared/element/Button/IconButton';
 import AddEditUser from '../../screens/private/accounts/user/AddEditUser';
-import logo from '../../assets/images/logo.png';
+import bigLogo from '../../assets/icons/SocialListeningLogo.svg';
+import smallLogo from '../../assets/icons/SocialListeningLogoOnly.svg';
 import '../route.scss';
 
 const { Header, Content, Sider } = Layout;
@@ -81,14 +82,16 @@ export default function PrivateLayout(props) {
       ]);
     } else {
       setAvailableMenu(
-        menuSidebar.map((item) => {
-          if (item.key === 'social-network') {
-            if (item.children) {
-              item.children = [item.children[0]];
+        filterMenuSidebar(userData.permissions, userData.role)?.map(
+          (item) => {
+            if (item.key === 'social-network') {
+              if (item.children) {
+                item.children = [item.children[0]];
+              }
             }
+            return item;
           }
-          return item;
-        })
+        )
       );
     }
   }, [socialGroups]);
@@ -99,7 +102,11 @@ export default function PrivateLayout(props) {
         const filteredChildren = item.children.filter(
           (child) =>
             (!child.permission ||
-              permission.includes(child.permission)) &&
+              permission.includes(child.permission) ||
+              (child.permission?.includes(',') &&
+                child.permission
+                  .split(', ')
+                  ?.some((ch) => permission.includes(ch)))) &&
             (!child.role || child.role?.includes(role))
         );
         return { ...item, children: filteredChildren };
@@ -382,10 +389,9 @@ export default function PrivateLayout(props) {
         <div className="flex-center">
           <img
             style={{
-              height: collapsed ? '70px' : '140px',
-              margin: 4,
+              margin: '2rem',
             }}
-            src={logo}
+            src={collapsed ? smallLogo : bigLogo}
           />
         </div>
         <Menu
@@ -393,7 +399,7 @@ export default function PrivateLayout(props) {
           theme="dark"
           mode="inline"
           items={availableMenu}
-          selectedKeys={[path?.replace('%20', ' ')]}
+          selectedKeys={[path?.replaceAll('%20', ' ')]}
           defaultOpenKeys={[openKey ? openKey : 'social-network']}
         />
       </Sider>
@@ -465,7 +471,9 @@ export default function PrivateLayout(props) {
         </Header>
 
         <Content className="private-content">
-          <Title>{listPath?.join(' / ')?.replace('%20', ' ')}</Title>
+          <Title>
+            {listPath?.join(' / ')?.replaceAll('%20', ' ')}
+          </Title>
 
           <div className="body">{props.children}</div>
         </Content>

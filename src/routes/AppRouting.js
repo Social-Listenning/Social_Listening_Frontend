@@ -93,7 +93,7 @@ export const privateRoutes = [
   {
     path: 'account/user',
     element: <UserManagement />,
-    permissionRequired: 'table-user',
+    permissionRequired: 'table-user, table-user-in-tab',
   },
   {
     path: 'account/permission',

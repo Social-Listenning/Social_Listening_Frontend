@@ -20,7 +20,7 @@ export const menuSidebar = [
       {
         key: 'account/user',
         label: 'User',
-        permission: 'table-user',
+        permission: 'table-user, table-user-in-tab',
       },
       {
         key: 'account/role',

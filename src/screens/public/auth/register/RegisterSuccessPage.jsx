@@ -54,7 +54,8 @@ export default function RegisterSuccessPage() {
           <span style={{ fontWeight: 'bold' }}>
             {authModel.email}
           </span>{' '}
-          is your email address.
+          is your email address. Please take a moment to confirm your
+          email within the next hour.
         </div>
         <div style={{ marginBottom: '2.8rem', textAlign: 'center' }}>
           But you can Login now with less permissions/function by

@@ -24,7 +24,7 @@ export default function SocialNetworkPage() {
 
   return (
     <div className="social-network-contain">
-      <LoadingWrapper className="social-manage-page" loading={true}>
+      <LoadingWrapper className="social-manage-page" loading={isFetching}>
         <div className="social-network">
           <AddNewPage listPageConnected={listPageConnected} />
           {data?.map((item, index) => (

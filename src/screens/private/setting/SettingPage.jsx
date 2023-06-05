@@ -166,7 +166,9 @@ export default function SettingPage() {
   return (
     <AdminTable
       columns={columns}
-      tableData={data?.sort((a, b) => +a?.key.localeCompare(b?.key))}
+      tableData={data
+        ?.sort((a, b) => +a?.group.localeCompare(b?.group))
+        ?.sort((a, b) => +a?.key.localeCompare(b?.key))}
       permission={permission}
       isLoading={isFetching}
       disableSelect

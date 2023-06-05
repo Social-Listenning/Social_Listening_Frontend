@@ -7,10 +7,9 @@ import ModalDetail from './ModalDetail';
 import './rolePage.scss';
 
 export default function RolePage() {
-  
   const getRole = useRef(true);
-  const { data } = useGetAllRole(getRole.current);
-  getRole.current = false
+  const { data: roleList } = useGetAllRole(getRole.current);
+  getRole.current = false;
 
   const [openModal, toggleOpenModal] = useToggle(false);
   const type = useRef(null);
@@ -24,8 +23,22 @@ export default function RolePage() {
 
   return (
     <div className="role-page-wrapper">
-      {data?.map((item, index) => (
-        <Card key={index} title={item?.roleName}>
+      {roleList?.map((item, index) => (
+        <Card
+          key={index}
+          className={
+            item?.roleName === 'OWNER'
+              ? 'owner'
+              : item?.roleName === 'ADMIN'
+              ? 'admin'
+              : item?.roleName === 'MANAGER'
+              ? 'manager'
+              : item?.roleName === 'SUPPORTER'
+              ? 'supporter'
+              : ''
+          }
+          title={item?.roleName}
+        >
           <ToolTipWrapper tooltip="Click to open details">
             <div
               className="role-summarize"
@@ -54,12 +67,14 @@ export default function RolePage() {
         </Card>
       ))}
 
-      <ModalDetail
-        open={openModal}
-        close={closeMoreDetail}
-        type={type.current}
-        role={role.current}
-      />
+      {openModal && (
+        <ModalDetail
+          open={openModal}
+          close={closeMoreDetail}
+          type={type.current}
+          role={role.current}
+        />
+      )}
     </div>
   );
 }

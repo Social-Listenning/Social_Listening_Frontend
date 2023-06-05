@@ -232,7 +232,9 @@ export default function AdminTable(props) {
   async function refreshData(resetData = true) {
     // remove the select
     if (selectedRowKeys?.length > 0) {
-      getSelectedRows([]);
+      if (getSelectedRows) {
+        getSelectedRows([]);
+      }
       setSelectedRowKeys([]);
     }
 

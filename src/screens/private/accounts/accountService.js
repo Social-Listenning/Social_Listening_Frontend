@@ -66,7 +66,7 @@ export const activateUser = async (id) => {
 
 export const deactivateUser = async (id) => {
   const resp = await apiService.post(
-    `${environment.user}/activate/${id}`
+    `${environment.user}/deactivate/${id}`
   );
   return resp?.result;
 };

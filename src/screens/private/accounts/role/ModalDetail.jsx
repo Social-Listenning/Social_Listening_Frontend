@@ -21,6 +21,7 @@ export default function ModalDetail(props) {
       onCancel={close}
       footer={null}
       destroyOnClose
+      centered
     >
       {type === 'User' ? (
         <AdminAccountPage defaultFilter={defaultFilter} />

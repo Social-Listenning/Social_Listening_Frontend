@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { PoweroffOutlined, CheckOutlined } from '@ant-design/icons';
 import { useQueryClient, useMutation } from 'react-query';
-import { gender, role } from '../../../../constants/environment/environment.dev';
+import {
+  gender,
+  role,
+} from '../../../../constants/environment/environment.dev';
 import { RoleChip } from '../../../../components/shared/element/Chip';
 import { defaultAction } from '../../../../constants/table/action';
 import { activateUser, deactivateUser } from '../accountService';
@@ -143,7 +146,8 @@ export default function UserManagement(props) {
   ];
 
   const permission = {
-    table: 'table-user',
+    table:
+      userData?.role === 'ADMIN' ? 'table-user' : 'table-user-in-tab',
     new: 'create-user',
     ...(userData?.role === 'OWNER' && { import: 'import-user' }),
     export: 'export-user',
@@ -183,61 +187,61 @@ export default function UserManagement(props) {
       email: 'user1@gmail.com',
       password: 'secret-password',
       fullName: 'user1',
-      userName: 'user1'
+      userName: 'user1',
     },
     {
       email: 'user2@gmail.com',
       password: 'secret-password',
       fullName: 'user2',
-      userName: 'user2'
+      userName: 'user2',
     },
     {
       email: 'user3@gmail.com',
       password: 'secret-password',
       fullName: 'user3',
-      userName: 'user3'
+      userName: 'user3',
     },
     {
       email: 'user4@gmail.com',
       password: 'secret-password',
       fullName: 'user4',
-      userName: 'user4'
+      userName: 'user4',
     },
     {
       email: 'user5@gmail.com',
       password: 'secret-password',
       fullName: 'user5',
-      userName: 'user5'
+      userName: 'user5',
     },
     {
       email: 'user6@gmail.com',
       password: 'secret-password',
       fullName: 'user6',
-      userName: 'user6'
+      userName: 'user6',
     },
     {
       email: 'user7@gmail.com',
       password: 'secret-password',
       fullName: 'user7',
-      userName: 'user7'
+      userName: 'user7',
     },
     {
       email: 'user8@gmail.com',
       password: 'secret-password',
       fullName: 'user8',
-      userName: 'user8'
+      userName: 'user8',
     },
     {
       email: 'user9@gmail.com',
       password: 'secret-password',
       fullName: 'user9',
-      userName: 'user9'
+      userName: 'user9',
     },
     {
       email: 'user10@gmail.com',
       password: 'secret-password',
       fullName: 'user10',
-      userName: 'user10'
+      userName: 'user10',
     },
   ];
 
@@ -279,13 +283,7 @@ export default function UserManagement(props) {
   });
 
   let additionalList = [
-    ...defaultAction.filter((item) => {
-      if (userData?.role === 'ADMIN') {
-        return item?.label !== 'Delete';
-      } else {
-        return item;
-      }
-    }),
+    ...defaultAction,
     {
       icon: <CheckOutlined />,
       label: 'Activate',
@@ -295,6 +293,9 @@ export default function UserManagement(props) {
       label: 'Deactivate',
     },
   ];
+  if (userData?.role === 'ADMIN') {
+    additionalList = [];
+  }
   if (!userData?.permissions?.includes('activate-user')) {
     additionalList = additionalList?.filter(
       (item) => item?.label !== 'Activate'
@@ -334,6 +335,7 @@ export default function UserManagement(props) {
         handleActionClick={handleActionClick}
         getSelectedRows={getSelectedRows}
         scroll={{ x: 2000 }}
+        disableSelect={userData?.role === 'ADMIN'}
       />
 
       {openAssign && (
