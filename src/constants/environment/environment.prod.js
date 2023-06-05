@@ -1,30 +1,83 @@
-const baseUrl = 'http://51.79.165.243:3000';
-const webSocket = 'ws://51.79.165.243:3000';
-const botUrl = 'http://51.79.165.243:8000';
+let baseUrl = 'http://localhost:3000';
+let webSocket = 'ws://localhost:3000';
+let botUrl = 'http://localhost:8000';
 const facebookGraph = 'https://graph.facebook.com';
 
-const environment = {
-  baseUrl: baseUrl,
-  webSocket: webSocket,
-  facebookGraph: facebookGraph,
-  auth: `${baseUrl}/auth`,
-  user: `${baseUrl}/user`,
-  role: `${baseUrl}/role`,
-  permission: `${baseUrl}/permission`,
-  notification: `${baseUrl}/notification`,
-  socialNetwork: `${baseUrl}/socialNetwork`,
-  socialGroup: `${baseUrl}/socialGroup`,
-  socialMessage: `${baseUrl}/social-message`,
-  socialPost: `${baseUrl}/social-post`,
-  setting: `${baseUrl}/setting`,
-  socialTabSetting: `${baseUrl}/socialTabSeting`,
-  workflow: `${baseUrl}/workflow`,
-  message: `${baseUrl}/message`,
-  botUrl: botUrl,
-  hotQueue: `${baseUrl}/hotqueue`,
-  dashboard: `${baseUrl}/dashboard`,
-  socialTab: `${baseUrl}/socialTab`,
+let environment = {
+  get baseUrl() {
+    return baseUrl;
+  },
+  get webSocket() {
+    return webSocket;
+  },
+  get botUrl() {
+    return botUrl;
+  },
+  get facebookGraph() {
+    return facebookGraph;
+  },
+  get auth() {
+    return `${baseUrl}/auth`;
+  },
+  get user() {
+    return `${baseUrl}/user`;
+  },
+  get role() {
+    return `${baseUrl}/role`;
+  },
+  get permission() {
+    return `${baseUrl}/permission`;
+  },
+  get notification() {
+    return `${baseUrl}/notification`;
+  },
+  get socialNetwork() {
+    return `${baseUrl}/socialNetwork`;
+  },
+  get socialGroup() {
+    return `${baseUrl}/socialGroup`;
+  },
+  get socialMessage() {
+    return `${baseUrl}/social-message`;
+  },
+  get socialPost() {
+    return `${baseUrl}/social-post`;
+  },
+  get setting() {
+    return `${baseUrl}/setting`;
+  },
+  get socialTabSetting() {
+    return `${baseUrl}/socialTabSeting`;
+  },
+  get workflow() {
+    return `${baseUrl}/workflow`;
+  },
+  get message() {
+    return `${baseUrl}/message`;
+  },
+  get hotQueue() {
+    return `${baseUrl}/hotqueue`;
+  },
+  get dashboard() {
+    return `${baseUrl}/dashboard`;
+  },
+  get socialTab() {
+    return `${baseUrl}/socialTab`;
+  },
 };
+
+function updateBaseUrls(newBaseUrl, newBotUrl) {
+  if (newBaseUrl) {
+    baseUrl = newBaseUrl;
+    webSocket = newBaseUrl.replace(/^https?:/, (match) =>
+      match.startsWith('https') ? 'wss:' : 'ws:'
+    );
+  }
+
+  if (newBotUrl) {
+    botUrl = newBotUrl;
+  }
+}
 
 export const gender = [
   { label: 'Male', value: 'Male' },
@@ -39,4 +92,5 @@ export const role = [
   { label: 'Supporter', value: 'SUPPORTER', color: 'purple' },
 ];
 
+export { updateBaseUrls };
 export default environment;

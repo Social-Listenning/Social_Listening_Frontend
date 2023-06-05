@@ -2,8 +2,8 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useQueryClient } from 'react-query';
 import { decodeToken } from 'react-jwt';
 import { Checker } from '../../utils/dataChecker';
-import { useSocket } from '../../components/contexts/socket/SocketProvider';
-import useEffectOnce from '../../components/hooks/useEffectOnce';
+import { getSettingByKeyAndGroup } from '../../screens/private/setting/settingService';
+import { updateBaseUrls } from '../../constants/environment/environment.dev';
 
 export default function PrivateRoute() {
   let isAuth = true;
@@ -21,6 +21,19 @@ export default function PrivateRoute() {
 
   if (isAuth) {
     queryClient.setQueryData('userData', decodedToken);
+    Promise.all([
+      getSettingByKeyAndGroup({
+        key: 'DOMAIN_BACKEND',
+        group: 'DOMAIN',
+      }),
+      getSettingByKeyAndGroup({
+        key: 'DOMAIN_BOT',
+        group: 'DOMAIN',
+      }),
+    ]).then(([backEndUrl, botUrl]) => {
+      updateBaseUrls(backEndUrl?.value, botUrl?.value);
+    });
+
     return <Outlet />;
   } else {
     return <Navigate to={{ pathname: '/login' }} />;

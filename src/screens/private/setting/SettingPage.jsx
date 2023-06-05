@@ -3,12 +3,13 @@ import { Input } from 'antd';
 import { SaveTwoTone } from '@ant-design/icons';
 import { useMutation } from 'react-query';
 import { updateSetting, useGetAllSetting } from './settingService';
+import { useDialogflow } from '../../../components/contexts/dialogflow/DialogflowProvider';
+import { updateBaseUrls } from '../../../constants/environment/environment.dev';
 import { notifyService } from '../../../services/notifyService';
 import useEffectOnce from '../../../components/hooks/useEffectOnce';
 import AdminTable from '../../../components/shared/antd/Table/Table';
 import ElementWithPermission from '../../../components/shared/element/ElementWithPermission';
 import ToolTipWrapper from '../../../components/shared/antd/ToolTipWrapper';
-import { useDialogflow } from '../../../components/contexts/dialogflow/DialogflowProvider';
 
 export default function SettingPage() {
   const { updateDialogflowConfig } = useDialogflow();
@@ -44,6 +45,49 @@ export default function SettingPage() {
       if (resp) {
         getAllSetting.current = true;
 
+        // #region update dialogflow URL
+        if (
+          resp?.group === 'GOOGLE_API' &&
+          resp?.key === 'DIALOGFLOW_KEY'
+        ) {
+          updateDialogflowConfig(
+            resp?.value,
+            data?.filter(
+              (item) =>
+                item?.group === 'GOOGLE_API' &&
+                item?.key === 'DIALOGFLOW_LOCATION'
+            )[0]?.value
+          );
+        }
+
+        if (
+          resp?.group === 'GOOGLE_API' &&
+          resp?.key === 'DIALOGFLOW_LOCATION'
+        ) {
+          updateDialogflowConfig(
+            data?.filter(
+              (item) =>
+                item?.group === 'GOOGLE_API' &&
+                item?.key === 'DIALOGFLOW_KEY'
+            )[0]?.value,
+            resp?.value
+          );
+        }
+        // #endregion
+
+        // #region update domain URL
+        if (
+          resp?.group === 'DOMAIN' &&
+          resp?.key === 'DOMAIN_BACKEND'
+        ) {
+          updateBaseUrls(resp?.value);
+        }
+
+        if (resp?.group === 'DOMAIN' && resp?.key === 'DOMAIN_BOT') {
+          updateBaseUrls(null, resp?.value);
+        }
+        // #endregion
+
         notifyService.showSucsessMessage({
           description: 'Save setting successfully',
         });
@@ -74,15 +118,6 @@ export default function SettingPage() {
             record.value !==
             document.getElementById(record?.id)?.value
           ) {
-            if (
-              record?.group === 'GOOGLE_API' &&
-              record?.key === 'DIALOGFLOW_KEY'
-            ) {
-              updateDialogflowConfig(
-                document.getElementById(record?.id)?.value?.trim()
-              );
-            }
-
             useUpdateSetting.mutate({
               key: record?.key,
               group: record?.group,
@@ -131,7 +166,7 @@ export default function SettingPage() {
   return (
     <AdminTable
       columns={columns}
-      tableData={data}
+      tableData={data?.sort((a, b) => +a?.key.localeCompare(b?.key))}
       permission={permission}
       isLoading={isFetching}
       disableSelect
