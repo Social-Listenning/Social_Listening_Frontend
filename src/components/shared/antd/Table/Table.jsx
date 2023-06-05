@@ -147,34 +147,67 @@ export default function AdminTable(props) {
               (x) => !item?.value?.includes(x[item?.props])
             );
           }
-        } else if (item?.filterType === 'DateTime') {
+        } else if (item?.filterType === 'Number') {
           if (item?.filterOperator === 'Is Equal To') {
             dumpData = dumpData?.filter(
-              (x) => x[item?.props] === x[item?.props]
+              (x) =>
+                parseInt(item?.value) === parseInt(x[item?.props])
+            );
+          } else if (item?.filterOperator === 'Is Not Equal To') {
+            dumpData = dumpData?.filter(
+              (x) =>
+                parseInt(item?.value) !== parseInt(x[item?.props])
             );
           } else if (
-            item?.filterOperator === 'Is Before Or Equal To'
+            item?.filterOperator === 'Is Greater Than Or Equal To'
           ) {
             dumpData = dumpData?.filter(
-              (x) => x[item?.props] !== x[item?.props]
+              (x) => parseInt(x[item?.props]) >= parseInt(item?.value)
             );
-          } else if (item?.filterOperator === 'Is Before') {
+          } else if (item?.filterOperator === 'Is Greater Than') {
             dumpData = dumpData?.filter(
-              (x) => x[item?.props] !== x[item?.props]
+              (x) => parseInt(x[item?.props]) > parseInt(item?.value)
             );
           } else if (
-            item?.filterOperator === 'Is After Or Equal To'
+            item?.filterOperator === 'Is Less Than Or Equal To'
           ) {
             dumpData = dumpData?.filter(
-              (x) => x[item?.props] !== x[item?.props]
+              (x) => parseInt(x[item?.props]) <= parseInt(item?.value)
             );
-          } else if (item?.filterOperator === 'Is After') {
+          } else if (item?.filterOperator === 'Is Less Than') {
             dumpData = dumpData?.filter(
-              (x) => x[item?.props] !== x[item?.props]
+              (x) => parseInt(x[item?.props]) < parseInt(item?.value)
             );
-          } else if (item?.filterOperator === 'Between') {
           }
         }
+        // else if (item?.filterType === 'DateTime') {
+        //   if (item?.filterOperator === 'Is Equal To') {
+        //     dumpData = dumpData?.filter(
+        //       (x) => x[item?.props] === x[item?.props]
+        //     );
+        //   } else if (
+        //     item?.filterOperator === 'Is Before Or Equal To'
+        //   ) {
+        //     dumpData = dumpData?.filter(
+        //       (x) => x[item?.props] !== x[item?.props]
+        //     );
+        //   } else if (item?.filterOperator === 'Is Before') {
+        //     dumpData = dumpData?.filter(
+        //       (x) => x[item?.props] !== x[item?.props]
+        //     );
+        //   } else if (
+        //     item?.filterOperator === 'Is After Or Equal To'
+        //   ) {
+        //     dumpData = dumpData?.filter(
+        //       (x) => x[item?.props] !== x[item?.props]
+        //     );
+        //   } else if (item?.filterOperator === 'Is After') {
+        //     dumpData = dumpData?.filter(
+        //       (x) => x[item?.props] !== x[item?.props]
+        //     );
+        //   } else if (item?.filterOperator === 'Between') {
+        //   }
+        // }
       }
     }
     setDataSource(dumpData);

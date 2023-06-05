@@ -34,7 +34,13 @@ export default function TableHeader(props) {
       : null
   );
   let [dateRangeFilter, setDateRangeFilter] = useState(false);
-  let listFilter = FilterType.Default;
+  let listFilter =
+    FilterType[filter?.filterType] ?? FilterType.Default;
+
+  const [selectedKey, setSelectedKey] = useState('0');
+  let filterOperator = useRef(null);
+  filterOperator.current = listFilter[parseInt(selectedKey)];
+
   let inputHeader = (
     <FloatInput
       id={title}
@@ -46,12 +52,11 @@ export default function TableHeader(props) {
       }}
       onBlur={formatFilter}
       onPressEnter={(e) => e.currentTarget.blur()}
+      type={filter?.filterType === 'Number' ? 'number' : 'text'}
     />
   );
-  if (filter && filter.filterType) {
-    // filter dropdown list
-    listFilter = FilterType[filter.filterType];
 
+  if (filter && filter.filterType) {
     // input UI
     if (filter.filterType === 'Boolean') {
       inputHeader = (
@@ -142,12 +147,9 @@ export default function TableHeader(props) {
   // #endregion
 
   // #region handle fitler
-  const filterOperator = useRef(listFilter[0]);
-  const [selectedKey, setSelectedKey] = useState('0');
-
   function handleFilter(e) {
     const oldFilter = filterOperator.current;
-    
+
     if (filterOperator.current !== listFilter[e.key]) {
       filterOperator.current = listFilter[e.key];
 

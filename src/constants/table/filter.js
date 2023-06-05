@@ -1,10 +1,10 @@
 const numberType = [
+  'Is Equal To',
+  'Is Not Equal To',
   'Is Greater Than Or Equal To',
   'Is Greater Than',
   'Is Less Than Or Equal To',
   'Is Less Than',
-  'Is Equal To',
-  'Is Not Equal To',
 ];
 
 const dateTimeType = [

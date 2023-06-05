@@ -97,6 +97,9 @@ export default function BotManagePage({ pageId, socialPage }) {
     {
       title: 'Priority',
       dataIndex: 'priority',
+      filter: {
+        filterType: 'Number',
+      },
       onCell: () => ({
         className: 'text-center',
       }),
@@ -259,6 +262,7 @@ export default function BotManagePage({ pageId, socialPage }) {
       deleteOneRow={onClickDelete}
       customToolbar={customToolbar}
       disableSelect
+      filterFE
     />
   );
 }
