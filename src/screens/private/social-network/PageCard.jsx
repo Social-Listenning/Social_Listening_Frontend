@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   PoweroffOutlined,
   CommentOutlined,
@@ -36,19 +36,17 @@ export default function PageCard(props) {
     socialPage: pageData,
   };
 
-  // function redirectToPage(id) {
-  //   if (type === 'Facebook') {
-  //     window.open(`https://fb.com/${id}`, '_blank');
-  //   }
-  // }
-
-  const { refetch } = useGetSocialGroups(false);
+  const refetchSocialGroups = useRef(false);
+  const { isFetching: socialGroupFetching } = useGetSocialGroups(
+    refetchSocialGroups.current
+  );
   const [openConfirmRemove, setOpenConfirmRemove] = useState(false);
+
   const useRemovePage = useMutation(removeSocialPage, {
     onSuccess: (resp) => {
       if (resp) {
+        refetchSocialGroups.current = true;
         setOpenConfirmRemove(false);
-        refetch();
         notifyService.showSucsessMessage({
           description: 'Disconnect page successfully',
         });
@@ -58,9 +56,7 @@ export default function PageCard(props) {
 
   const useDisconnect = useMutation(disconnectFacebook, {
     onSuccess: (resp) => {
-      if (resp) {
-        useRemovePage.mutate(socialNetworkData.id);
-      }
+      useRemovePage.mutate(socialNetworkData.id);
     },
   });
 
@@ -170,6 +166,18 @@ export default function PageCard(props) {
               pageId: pageData?.id,
               accessToken: pageData?.accessToken,
             });
+          }}
+          okButtonProps={{
+            loading:
+              useDisconnect.isLoading ||
+              useRemovePage.isLoading ||
+              socialGroupFetching,
+          }}
+          cancelButtonProps={{
+            loading:
+              useDisconnect.isLoading ||
+              useRemovePage.isLoading ||
+              socialGroupFetching,
           }}
         >
           <Hint

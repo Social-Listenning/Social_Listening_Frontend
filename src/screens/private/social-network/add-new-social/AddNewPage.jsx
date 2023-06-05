@@ -1,6 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { Card } from 'antd';
-import { PlusOutlined, FacebookOutlined, WhatsAppOutlined } from '@ant-design/icons';
+import {
+  PlusOutlined,
+  FacebookOutlined,
+  WhatsAppOutlined,
+} from '@ant-design/icons';
 import { useMutation } from 'react-query';
 import { getSettingByKeyAndGroup } from '../../setting/settingService';
 import { connectFacebook } from '../socialNetworkService';
@@ -16,7 +20,6 @@ const socialList = [
 
 export default function AddNewPage(props) {
   const { listPageConnected } = props;
-  const socialAuth = useRef(null);
   const socialType = useRef(null);
   const [open, toggleOpen] = useToggle(false);
 
@@ -31,14 +34,14 @@ export default function AddNewPage(props) {
     }).then((resp) => {
       appId.current = resp?.value;
     });
-    
+
     getSettingByKeyAndGroup({
       key: 'FACEBOOK_APP_CONFIG_ID',
       group: 'CONNECTOR',
     }).then((resp) => {
       appConfigId.current = resp?.value;
     });
-    
+
     getSettingByKeyAndGroup({
       key: 'FACEBOOK_APP_SECRET',
       group: 'CONNECTOR',
@@ -60,10 +63,6 @@ export default function AddNewPage(props) {
       });
 
       window.FB.AppEvents.logPageView();
-
-      window.FB.getLoginStatus(function (response) {
-        socialAuth.current = response;
-      });
     };
 
     (function (d, s, id) {
@@ -94,35 +93,31 @@ export default function AddNewPage(props) {
     },
   });
 
-  function onFacebookLogin() {
-    // if (socialAuth.current?.status === 'connected') {
-    //   // do something when already connected
-    // } else {
+  function onFacebookLogin(isRefresh = false) {
     window.FB.login(
       function (response) {
-        socialAuth.current = response;
         if (response?.status === 'connected') {
-          const userId = response?.authResponse?.userID;
-          const userToken = response?.authResponse?.accessToken;
+          if (!isRefresh) {
+            const userId = response?.authResponse?.userID;
+            const userToken = response?.authResponse?.accessToken;
 
-          if (userId && userToken) {
-            useGetPageToken.mutate({
-              userId: userId,
-              userToken: userToken,
+            if (userId && userToken) {
+              useGetPageToken.mutate({
+                userId: userId,
+                userToken: userToken,
+              });
+            }
+          } else {
+            window.FB.logout(function (response) {
+              onFacebookLogin();
             });
           }
         }
-        // else {
-        //   notifyService.showErrorMessage({
-        //     description: "Can't connect to your facebook account",
-        //   });
-        // }
       },
       {
         config_id: appConfigId.current, // configuration ID goes here
       }
     );
-    // }
   }
   // #endregion
 
@@ -162,7 +157,7 @@ export default function AddNewPage(props) {
           listPageConnected={listPageConnected}
           onRefreshClick={() => {
             if (socialType.current === 'Facebook') {
-              onFacebookLogin();
+              onFacebookLogin(true);
             }
           }}
           appId={appId.current}

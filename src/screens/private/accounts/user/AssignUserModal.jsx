@@ -13,7 +13,8 @@ export default function AssignUserModal(props) {
   const { open, close, userList = [] } = props;
 
   const firstRender = useRef(true);
-  const { data: socialList } = useGetSocialGroups(firstRender.current);
+  const { data: socialList, isFetching: socialListFetching } =
+    useGetSocialGroups(firstRender.current);
   firstRender.current = false;
 
   const [assignUserForm] = Form.useForm();
@@ -50,6 +51,12 @@ export default function AssignUserModal(props) {
       onOk={() => {
         assignUserForm.submit();
       }}
+      okButtonProps={{
+        loading: useAssignUser.isLoading,
+      }}
+      cancelButtonProps={{
+        loading: useAssignUser.isLoading,
+      }}
       destroyOnClose
     >
       <Title>Please choose your social page</Title>
@@ -78,6 +85,7 @@ export default function AssignUserModal(props) {
                 value: item?.id,
               };
             })}
+            loading={socialListFetching}
           />
         </Form.Item>
       </Form>

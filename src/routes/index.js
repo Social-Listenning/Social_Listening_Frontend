@@ -11,8 +11,23 @@ import {
   privateRoutes,
   errorRoutes,
 } from './AppRouting';
+import { getSettingByKeyAndGroup } from '../screens/private/setting/settingService';
+import { updateBaseUrls } from '../constants/environment/environment.dev';
 
 export default function AppRoutes() {
+  Promise.all([
+    getSettingByKeyAndGroup({
+      key: 'DOMAIN_BACKEND',
+      group: 'DOMAIN',
+    }),
+    getSettingByKeyAndGroup({
+      key: 'DOMAIN_BOT',
+      group: 'DOMAIN',
+    }),
+  ]).then(([backEndUrl, botUrl]) => {
+    updateBaseUrls(backEndUrl?.value, botUrl?.value);
+  });
+
   return (
     <ErrorBoundary>
       <CustomBrowserRouter>

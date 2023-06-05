@@ -44,7 +44,7 @@ export const connectFacebook = async (data) => {
 };
 
 export const disconnectFacebook = async (data) => {
-  const resp = await apiService.delete(
+  const resp = await axios.delete(
     `${environment.facebookGraph}/${data?.pageId}/subscribed_apps?access_token=${data?.accessToken}&app_id=${data?.appId}`
   );
   return resp;

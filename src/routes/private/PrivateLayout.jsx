@@ -11,7 +11,7 @@ import {
   FullscreenOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { useMutation, useQueryClient } from 'react-query';
+import { useQueryClient } from 'react-query';
 import { Getter } from '../../utils/dataGetter';
 import { Converter } from '../../utils/dataConverter';
 import { apiService } from '../../services/apiService';
@@ -19,7 +19,6 @@ import { notifyService } from '../../services/notifyService';
 import { menuSidebar } from '../../constants/menu/sidebar';
 import { menuUserHeader } from '../../constants/menu/header';
 import { useSocket } from '../../components/contexts/socket/SocketProvider';
-import { getAllNotification } from './privateService';
 import { useGetSocialGroups } from '../../screens/private/social-network/socialNetworkService';
 import useEffectOnce from '../../components/hooks/useEffectOnce';
 import useUpdateEffect from '../../components/hooks/useUpdateEffect';
@@ -47,7 +46,9 @@ export default function PrivateLayout(props) {
   const listPath = path?.split('/');
   const currentPath = listPath[listPath?.length - 1];
 
-  const [availableMenu, setAvailableMenu] = useState(menuSidebar);
+  const [availableMenu, setAvailableMenu] = useState([
+    ...menuSidebar,
+  ]);
   const openKey = Getter.getOpenKeyForMenu(
     availableMenu,
     Converter.convertStringToTitleCase(currentPath)
@@ -61,12 +62,11 @@ export default function PrivateLayout(props) {
 
   useUpdateEffect(() => {
     if (socialGroups?.length > 0) {
-      let dumpMenu = menuSidebar;
       setAvailableMenu([
-        ...dumpMenu?.map((item) => {
+        ...availableMenu?.map((item) => {
           if (item.key === 'social-network') {
             item.children = [
-              ...item.children,
+              item.children[0],
               ...socialGroups?.map((sg) => {
                 return {
                   key: `social-network/${sg?.name}`,
@@ -79,6 +79,17 @@ export default function PrivateLayout(props) {
           return item;
         }),
       ]);
+    } else {
+      setAvailableMenu(
+        menuSidebar.map((item) => {
+          if (item.key === 'social-network') {
+            if (item.children) {
+              item.children = [item.children[0]];
+            }
+          }
+          return item;
+        })
+      );
     }
   }, [socialGroups]);
 
@@ -96,6 +107,7 @@ export default function PrivateLayout(props) {
         return item;
       }
     });
+
     return filtered.filter(
       (item) =>
         (!item.permission || permission.includes(item.permission)) &&
@@ -141,15 +153,6 @@ export default function PrivateLayout(props) {
       state: forwardData,
     });
   }
-  // #endregion
-
-  // #region notification
-  const [notiList, setNotiList] = useState([]);
-  const useGetAllNotification = useMutation(getAllNotification, {
-    onSuccess: (resp) => {
-      setNotiList(resp);
-    },
-  });
   // #endregion
 
   // #region chart notification
@@ -359,16 +362,6 @@ export default function PrivateLayout(props) {
       setAvailableMenu(
         filterMenuSidebar(userData.permissions, userData.role)
       );
-
-      // get notification
-      // useGetAllNotification.mutate({
-      //   offset: 0,
-      //   size: 10,
-      //   pageNumber: 1,
-      //   totalElement: 10000,
-      //   orders: [],
-      //   filter: [],
-      // });
     },
     () => {
       // disconnect socket when destroy

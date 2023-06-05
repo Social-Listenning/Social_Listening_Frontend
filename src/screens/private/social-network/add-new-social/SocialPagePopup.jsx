@@ -37,7 +37,8 @@ export default function SocialPagePopup(props) {
   );
   listConnected.current = listPageConnected;
 
-  const { data } = useGetSocialGroups(getAllSocialConnected.current);
+  const { data, isFetching: socialGroupFetching } =
+    useGetSocialGroups(getAllSocialConnected.current);
   getAllSocialConnected.current = false;
 
   const useSubscribeFbPage = useMutation(subscribeFacebookPage, {
@@ -137,7 +138,8 @@ export default function SocialPagePopup(props) {
                   loading={
                     useSubscribeFbPage.isLoading ||
                     useExtendFbToken.isLoading ||
-                    useConnectPageToSystem.isLoading
+                    useConnectPageToSystem.isLoading ||
+                    socialGroupFetching
                   }
                 >
                   Connect
