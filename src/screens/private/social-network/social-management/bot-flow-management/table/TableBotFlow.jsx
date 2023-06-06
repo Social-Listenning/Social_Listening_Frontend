@@ -129,10 +129,10 @@ export default function TableBotFlow({ pageId, getCurrentFlow }) {
     },
   });
 
-  function handleActionClick(action, data) {
+  async function handleActionClick(action, data) {
     if (action === 'Activate') {
       currentAction.current = 'Activate';
-      useChangeStatusFlow.mutate({
+      await useChangeStatusFlow.mutateAsync({
         id: data?.id,
         body: {
           activate: true,
@@ -140,7 +140,7 @@ export default function TableBotFlow({ pageId, getCurrentFlow }) {
       });
     } else if (action === 'Deactivate') {
       currentAction.current = 'Deactivate';
-      useChangeStatusFlow.mutate({
+      await useChangeStatusFlow.mutateAsync({
         id: data?.id,
         body: {
           activate: false,

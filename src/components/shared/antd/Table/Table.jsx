@@ -295,7 +295,7 @@ export default function AdminTable(props) {
             formatEndpoint = `${apiDeleteOne}/${key}`;
           }
 
-          apiService.post(formatEndpoint).then((resp) => {
+          await apiService.post(formatEndpoint).then((resp) => {
             if (resp?.result) {
               notifyService.showSucsessMessage({
                 description: 'Delete successfully',

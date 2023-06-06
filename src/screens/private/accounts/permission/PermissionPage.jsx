@@ -63,9 +63,9 @@ export default function PermissionManangement(props) {
       }
     },
   });
-  function handleActionClick(action, data) {
+  async function handleActionClick(action, data) {
     if (action === 'Remove') {
-      useRemovePermission.mutate({
+      await useRemovePermission.mutateAsync({
         roleId: data?.role?.id,
         permissionId: data?.permission?.id,
       });

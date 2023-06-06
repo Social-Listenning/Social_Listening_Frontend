@@ -1,5 +1,4 @@
 import { Checker } from '../../../../../utils/dataChecker';
-import { defaultAction } from '../../../../../constants/table/action';
 import ClassicDropdown from '../../Dropdown/Classic';
 import IconMoreButton from '../../../element/Button/IconMoreButton';
 
@@ -13,17 +12,17 @@ export default function TableAction(props) {
     handleActionClick,
   } = props;
 
-  function handleAction(e) {
+  async function handleAction(e) {
     selectAction(actionList[e.key]?.label);
 
     if (actionList[e.key]?.label === 'Edit') {
       openAddEdit();
     } else if (actionList[e.key]?.label === 'Delete') {
-      onClickDelete(selectedRecord);
+      await onClickDelete(selectedRecord);
     } else {
       if (!Checker.isNullOrEmpty(handleActionClick)) {
         let reset = false;
-        reset = handleActionClick(
+        reset = await handleActionClick(
           actionList[e.key]?.label,
           selectedRecord
         );

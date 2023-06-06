@@ -37,7 +37,7 @@ export default function ForgotPasswordStatus() {
       <div className="auth-body" style={{ padding: '0 4rem' }}>
         <div style={{ marginBottom: '2.8rem', textAlign: 'center' }}>
           {success
-            ? 'Reset password request was sent successfully. Please checkyour email for instructions to reset password.'
+            ? 'Reset password request was sent successfully. Please check your email for instructions to reset password.'
             : 'Your reset password request has been denied.'}
         </div>
       </div>

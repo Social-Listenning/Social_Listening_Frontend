@@ -307,11 +307,11 @@ export default function UserManagement(props) {
     );
   }
 
-  function handleActionClick(action, data) {
+  async function handleActionClick(action, data) {
     if (action === 'Activate') {
-      useActivateUser.mutate(data?.id);
+      await useActivateUser.mutateAsync(data?.id);
     } else if (action === 'Deactivate') {
-      useDeactivateUser.mutate(data?.id);
+      await useDeactivateUser.mutateAsync(data?.id);
     }
     return true;
   }

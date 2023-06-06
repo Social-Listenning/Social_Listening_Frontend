@@ -143,9 +143,9 @@ export default function MemberManagePage({ pageId, socialPage }) {
     );
   }
 
-  function handleActionClick(action, data) {
+  async function handleActionClick(action, data) {
     if (action === 'Assign Manager') {
-      useUpdateRole.mutate({
+      await useUpdateRole.mutateAsync({
         userId: data?.user?.id,
         tabId: pageId,
         roleId: roleList.current?.find(
