@@ -43,7 +43,6 @@ export const menuSidebar = [
       {
         key: 'social-network/pages-management',
         label: 'Manage Pages',
-        permission: 'connect-social-network',
       },
     ],
   },

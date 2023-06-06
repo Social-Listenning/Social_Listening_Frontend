@@ -2,12 +2,15 @@ import { useRef } from 'react';
 import { useGetSocialGroups } from './socialNetworkService';
 import PageCard from './PageCard';
 import AddNewPage from './add-new-social/AddNewPage';
-import LoadingWrapper from '../../../components/shared/antd/LoadingWrapper'
+import LoadingWrapper from '../../../components/shared/antd/LoadingWrapper';
+import ElementWithPermission from '../../../components/shared/element/ElementWithPermission';
 import './socialNetwork.scss';
 
 export default function SocialNetworkPage() {
   const firstRender = useRef(true);
-  const { data, isFetching, refetch } = useGetSocialGroups(firstRender.current);
+  const { data, isFetching, refetch } = useGetSocialGroups(
+    firstRender.current
+  );
   firstRender.current = false;
   const listPageConnected = data?.map((item) => {
     let extendData = null;
@@ -24,9 +27,14 @@ export default function SocialNetworkPage() {
 
   return (
     <div className="social-network-contain">
-      <LoadingWrapper className="social-manage-page" loading={isFetching}>
+      <LoadingWrapper
+        className="social-manage-page"
+        loading={isFetching}
+      >
         <div className="social-network">
-          <AddNewPage listPageConnected={listPageConnected} />
+          <ElementWithPermission permission="connect-social-network">
+            <AddNewPage listPageConnected={listPageConnected} />
+          </ElementWithPermission>
           {data?.map((item, index) => (
             <PageCard
               key={index}

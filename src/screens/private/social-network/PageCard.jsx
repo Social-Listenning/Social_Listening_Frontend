@@ -9,9 +9,10 @@ import { useMutation } from 'react-query';
 import { customHistory } from '../../../routes/CustomRouter';
 import {
   disconnectFacebook,
-  removeSocialPage
+  removeSocialPage,
 } from './socialNetworkService';
 import { notifyService } from '../../../services/notifyService';
+import useEffectOnce from '../../../components/hooks/useEffectOnce';
 import emptyImage from '../../../assets/images/image_not_available.png';
 import BasicAvatar from '../../../components/shared/antd/BasicAvatar';
 import ToolTipWrapper from '../../../components/shared/antd/ToolTipWrapper';
@@ -57,6 +58,70 @@ export default function PageCard(props) {
     },
   });
 
+  const [pageAction, setPageAction] = useState([
+    <ElementWithPermission permission="table-comment">
+      <ToolTipWrapper tooltip="Comments">
+        <CommentOutlined
+          id="table-comment"
+          onClick={(e) => {
+            e.stopPropagation();
+            customHistory.push(
+              `/social-network/${socialNetworkData?.name}`,
+              {
+                ...forwardData,
+                tab: 2,
+              }
+            );
+          }}
+        />
+      </ToolTipWrapper>
+    </ElementWithPermission>,
+    <ElementWithPermission permission="table-message">
+      <ToolTipWrapper tooltip="Chats">
+        <FormOutlined
+          id="table-message"
+          onClick={(e) => {
+            e.stopPropagation();
+            customHistory.push(
+              `/social-network/${socialNetworkData?.name}`,
+              {
+                ...forwardData,
+                tab: 3,
+              }
+            );
+          }}
+        />
+      </ToolTipWrapper>
+    </ElementWithPermission>,
+    <ElementWithPermission permission="disconnect-social-network">
+      <ToolTipWrapper tooltip="Disconnect this page">
+        <PoweroffOutlined
+          id="disconnect-social-network"
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpenConfirmRemove(true);
+          }}
+        />
+      </ToolTipWrapper>
+    </ElementWithPermission>,
+  ]);
+
+  useEffectOnce(() => {
+    // delay to wait for the html parse in DOM
+    const timeout = setTimeout(() => {
+      setPageAction(
+        pageAction.filter(
+          (item) =>
+            document.getElementById(item.props?.permission) != null
+        )
+      );
+    }, 0);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  });
+
   return (
     <>
       <Card
@@ -88,46 +153,7 @@ export default function PageCard(props) {
             )}
           </>
         }
-        actions={[
-          <ToolTipWrapper tooltip="Comments">
-            <CommentOutlined
-              onClick={(e) => {
-                e.stopPropagation();
-                customHistory.push(
-                  `/social-network/${socialNetworkData?.name}`,
-                  {
-                    ...forwardData,
-                    tab: 2,
-                  }
-                );
-              }}
-            />
-          </ToolTipWrapper>,
-          <ToolTipWrapper tooltip="Chats">
-            <FormOutlined
-              onClick={(e) => {
-                e.stopPropagation();
-                customHistory.push(
-                  `/social-network/${socialNetworkData?.name}`,
-                  {
-                    ...forwardData,
-                    tab: 3,
-                  }
-                );
-              }}
-            />
-          </ToolTipWrapper>,
-          <ElementWithPermission permission="delete-social-tab">
-            <ToolTipWrapper tooltip="Disconnect this page">
-              <PoweroffOutlined
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setOpenConfirmRemove(true);
-                }}
-              />
-            </ToolTipWrapper>
-          </ElementWithPermission>,
-        ]}
+        actions={pageAction}
       >
         <Meta
           avatar={
@@ -166,13 +192,11 @@ export default function PageCard(props) {
           }}
           okButtonProps={{
             loading:
-              useDisconnect.isLoading ||
-              useRemovePage.isLoading,
+              useDisconnect.isLoading || useRemovePage.isLoading,
           }}
           cancelButtonProps={{
             loading:
-              useDisconnect.isLoading ||
-              useRemovePage.isLoading,
+              useDisconnect.isLoading || useRemovePage.isLoading,
           }}
         >
           <Hint

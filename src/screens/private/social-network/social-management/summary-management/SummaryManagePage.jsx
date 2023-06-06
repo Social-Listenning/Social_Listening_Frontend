@@ -187,7 +187,7 @@ export default function SummaryManagePage({ pageId, socialPage }) {
           <DoubleLineChart
             xConfig="date"
             yConfig={['comments', 'chats']}
-            lineChartData={lineChartData.map((item) => {
+            lineChartData={lineChartData?.map((item) => {
               return {
                 date: item?.date,
                 comments: item?.commentCount,

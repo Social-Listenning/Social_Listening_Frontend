@@ -108,7 +108,6 @@ export const privateRoutes = [
   {
     path: 'social-network/pages-management',
     element: <SocialNetworkPage />,
-    permissionRequired: 'connect-social-network',
   },
   {
     path: 'social-network/:name',

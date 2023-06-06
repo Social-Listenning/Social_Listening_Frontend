@@ -32,3 +32,17 @@ export const getAllNotification = async (page) => {
   const resp = await apiService.post(environment.notification, page);
   return resp?.result;
 };
+
+export const getAllUser = async () => {
+  const resp = await apiService.post(
+    `${environment.user}/get-all-user`
+  );
+  return resp?.result;
+};
+
+export const getAllTab = async () => {
+  const resp = await apiService.post(
+    `${environment.socialTab}/get-all-tab`
+  );
+  return resp?.result;
+};

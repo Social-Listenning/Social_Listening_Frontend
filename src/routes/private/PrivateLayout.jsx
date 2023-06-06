@@ -22,6 +22,7 @@ import { useSocket } from '../../components/contexts/socket/SocketProvider';
 import { useGetSocialGroups } from '../../screens/private/social-network/socialNetworkService';
 import useEffectOnce from '../../components/hooks/useEffectOnce';
 import useUpdateEffect from '../../components/hooks/useUpdateEffect';
+import useDeepCompareEffect from '../../components/hooks/useDeepCompareEffect';
 import useToggle from '../../components/hooks/useToggle';
 import Title from '../../components/shared/element/Title';
 import ToolTipWrapper from '../../components/shared/antd/ToolTipWrapper';
@@ -61,7 +62,7 @@ export default function PrivateLayout(props) {
   );
   canGetSocialGroups.current = false;
 
-  useUpdateEffect(() => {
+  useDeepCompareEffect(() => {
     if (socialGroups?.length > 0) {
       setAvailableMenu([
         ...availableMenu?.map((item) => {
@@ -94,7 +95,7 @@ export default function PrivateLayout(props) {
         )
       );
     }
-  }, [socialGroups]);
+  }, [socialGroups, path]);
 
   function filterMenuSidebar(permission, role) {
     const filtered = menuSidebar.map((item) => {
