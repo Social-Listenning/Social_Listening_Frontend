@@ -28,7 +28,7 @@ function getOpenKeyForMenu(list, current) {
   list.forEach((item) => {
     if (item?.children?.length > 0) {
       item.children.forEach((x) => {
-        if (x.label === current) {
+        if (x?.label === current) {
           openKey = item.key;
         }
       });

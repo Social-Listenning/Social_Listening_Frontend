@@ -115,11 +115,14 @@ export default function PrivateLayout(props) {
       }
     });
 
-    return filtered.filter(
-      (item) =>
-        (!item.permission || permission.includes(item.permission)) &&
-        (!item.role || item.role?.includes(role))
-    );
+    return filtered
+      ?.filter(
+        (item) =>
+          (!item.permission ||
+            permission.includes(item.permission)) &&
+          (!item.role || item.role?.includes(role))
+      )
+      ?.filter((item) => item?.children?.length !== 0);
   }
 
   function handleItemSelect(e) {

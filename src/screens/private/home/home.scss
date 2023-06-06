@@ -1,0 +1,21 @@
+.home-container {
+  .block-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(32rem, 1fr));
+    grid-gap: 1rem;
+
+    .block {
+      min-width: 2rem;
+      min-height: 12rem;
+      color: #fff;
+      border-radius: 1rem;
+      flex: 1 0 24%;
+      gap: 1rem;
+      flex-direction: column;
+
+      .anticon {
+        font-size: 4rem;
+      }
+    }
+  }
+}
