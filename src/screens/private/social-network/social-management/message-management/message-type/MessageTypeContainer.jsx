@@ -34,7 +34,6 @@ export default function MessageTypeContainer(props) {
     type,
     socialPage,
     isHotQueue,
-    userSupportedList = [],
   } = props;
 
   const messageContainer = useRef(null);
@@ -65,6 +64,9 @@ export default function MessageTypeContainer(props) {
       if (typeof msg === 'object') {
         if (msg?.type?.includes('Agent')) {
           agentId = msg.type.substring(6);
+        }
+        else if(msg?.sender?.id) {
+          agentId = msg.sender.id;
         }
       } else if (typeof msg === 'string') {
         if (msg?.includes('Agent')) {
@@ -113,6 +115,12 @@ export default function MessageTypeContainer(props) {
         messageContainer.current.scrollTop =
           messageContainer.current.scrollHeight;
       }, 50);
+
+      if (type !== 'Message') {
+        getUserName(messageDetail.message);
+      } else {
+        getUserName(messageDetail);
+      }
 
       return () => {
         clearTimeout(timeout);
@@ -163,16 +171,14 @@ export default function MessageTypeContainer(props) {
         setReply(null);
         setMessageReplied(null);
 
-        if (!isHotQueue) {
-          getUserName([
-            ...messageList,
-            {
-              createdAt: new Date(),
-              type: `Agent#${data?.id}`,
-              message: reply,
-            },
-          ]);
-        }
+        getUserName([
+          ...messageList,
+          {
+            createdAt: new Date(),
+            type: `Agent#${data?.id}`,
+            message: reply,
+          },
+        ]);
 
         if (isHotQueue) {
           setMessageList((old) => {
@@ -227,6 +233,20 @@ export default function MessageTypeContainer(props) {
       if (resp) {
         setReply(null);
         setMessageReplied(null);
+
+        getUserName([
+          ...messageList,
+          {
+            createdAt: resp.createdAt,
+            message: resp?.message,
+            sender: {
+              avatarUrl: socialPage?.pictureUrl,
+              fullName: socialPage?.name,
+              senderId: socialPage?.id,
+              id: resp?.senderId,
+            },
+          },
+        ]);
 
         if (isHotQueue) {
           setMessageList((old) => [

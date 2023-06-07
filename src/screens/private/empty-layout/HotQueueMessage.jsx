@@ -62,7 +62,7 @@ export default function HotQueueMessage() {
         getConversation.current = true;
         setSocketData(null);
       } else {
-        if (!conversationList?.length && !conversationFetching) {
+        if (conversationList?.length <= 0 && !conversationFetching) {
           getConversation.current = true;
         }
         setSocketData(payload.data);
@@ -226,7 +226,6 @@ export default function HotQueueMessage() {
               showTable={false}
               showHint={false}
               getMessageDetail={true}
-              userSupportedList={userSupportedList}
             />
           )}
         </Content>

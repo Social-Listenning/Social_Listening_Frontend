@@ -507,15 +507,17 @@ export default function PrivateLayout(props) {
         />
       )}
 
-      <div className="user-util">
-        <Button
-          shape="circle"
-          type="primary"
-          onClick={() => setHotQueue(!hotQueue)}
-        >
-          <MessageOutlined />
-        </Button>
-      </div>
+      {userData?.role !== 'ADMIN' && (
+        <div className="user-util">
+          <Button
+            shape="circle"
+            type="primary"
+            onClick={() => setHotQueue(!hotQueue)}
+          >
+            <MessageOutlined />
+          </Button>
+        </div>
+      )}
 
       {hotQueue && (
         <div className="hotqueue-iframe-container">
