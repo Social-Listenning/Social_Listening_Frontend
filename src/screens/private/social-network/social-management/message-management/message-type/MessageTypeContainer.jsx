@@ -234,20 +234,6 @@ export default function MessageTypeContainer(props) {
         setReply(null);
         setMessageReplied(null);
 
-        getUserName([
-          ...messageList,
-          {
-            createdAt: resp.createdAt,
-            message: resp?.message,
-            sender: {
-              avatarUrl: socialPage?.pictureUrl,
-              fullName: socialPage?.name,
-              senderId: socialPage?.id,
-              id: resp?.senderId,
-            },
-          },
-        ]);
-
         if (isHotQueue) {
           setMessageList((old) => [
             ...old,
